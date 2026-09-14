@@ -1,0 +1,98 @@
+'use client';
+
+import React from 'react';
+import { useTransactionStore } from '@/lib/stores/transactionStore';
+import { ExpensePieChart } from '@/components/charts/ExpensePieChart';
+import { Card } from '@/components/ui/Card';
+import { formatRupiah } from '@/lib/utils/currency';
+import { formatMonthYear } from '@/lib/utils/date';
+import { ArrowDownLeft, ArrowUpRight, PiggyBank } from 'lucide-react';
+
+export default function ReportsPage() {
+  const { currentMonth, monthlySummary, expenseByCategory } = useTransactionStore();
+
+  const totalExpense = monthlySummary?.totalExpense || 0;
+  const totalIncome = monthlySummary?.totalIncome || 0;
+  const netSavings = monthlySummary?.netSavings || 0;
+
+  const savingsRate =
+    totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 0;
+
+  return (
+    <div className="flex flex-col gap-6 max-w-3xl mx-auto">
+      {/* Header Info */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-base font-bold text-[#2D2A26]">
+            Analisis & Grafik Keuangan
+          </h2>
+          <p className="text-xs text-[#68635B]">
+            Periode {formatMonthYear(currentMonth)}
+          </p>
+        </div>
+      </div>
+
+      {/* Summary Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <Card className="p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#4A6B53]/15 text-[#4A6B53] flex items-center justify-center shrink-0">
+            <ArrowDownLeft className="w-5 h-5 stroke-[2.5]" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold text-[#68635B]">Total Masuk</p>
+            <p className="text-sm sm:text-base font-bold text-[#4A6B53] truncate">
+              {formatRupiah(totalIncome)}
+            </p>
+          </div>
+        </Card>
+
+        <Card className="p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#B0473C]/15 text-[#B0473C] flex items-center justify-center shrink-0">
+            <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold text-[#68635B]">Total Keluar</p>
+            <p className="text-sm sm:text-base font-bold text-[#B0473C] truncate">
+              {formatRupiah(totalExpense)}
+            </p>
+          </div>
+        </Card>
+
+        <Card className="p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#C86446]/15 text-[#C86446] flex items-center justify-center shrink-0">
+            <PiggyBank className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold text-[#68635B]">Arus Kas Bersih</p>
+            <p
+              className={`text-sm sm:text-base font-bold truncate ${
+                netSavings >= 0 ? 'text-[#2D2A26]' : 'text-[#B0473C]'
+              }`}
+            >
+              {formatRupiah(netSavings)}
+            </p>
+            {totalIncome > 0 && (
+              <span className="text-[10px] text-[#68635B]">Rasio tabungan: {savingsRate}%</span>
+            )}
+          </div>
+        </Card>
+      </div>
+
+      {/* Pie Chart Section */}
+      <Card className="p-5 flex flex-col gap-4">
+        <div className="flex items-center justify-between border-b border-[#E5DCD0]/70 pb-3">
+          <div>
+            <h3 className="text-sm font-bold text-[#2D2A26]">
+              Komposisi Pengeluaran per Kategori
+            </h3>
+            <p className="text-xs text-[#68635B]">
+              Sentuh atau arahkan kursor ke slice grafik untuk melihat persentase
+            </p>
+          </div>
+        </div>
+
+        <ExpensePieChart data={expenseByCategory} totalExpense={totalExpense} />
+      </Card>
+    </div>
+  );
+}

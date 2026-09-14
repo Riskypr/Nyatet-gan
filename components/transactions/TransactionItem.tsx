@@ -1,0 +1,128 @@
+'use client';
+
+import React from 'react';
+import { Transaction, Category, Wallet } from '@/lib/types';
+import { CategoryIcon } from '@/components/ui/CategoryIcon';
+import { formatRupiah } from '@/lib/utils/currency';
+import { formatDateDisplay } from '@/lib/utils/date';
+import { ArrowDownLeft, ArrowUpRight, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils/cn';
+
+export interface TransactionItemProps {
+  transaction: Transaction;
+  category?: Category;
+  wallet?: Wallet;
+  onEdit?: (tx: Transaction) => void;
+  onDelete?: (id: string) => void;
+}
+
+export function TransactionItem({
+  transaction,
+  category,
+  wallet,
+  onEdit,
+  onDelete,
+}: TransactionItemProps) {
+  const [showMenu, setShowMenu] = React.useState(false);
+  const isIncome = transaction.type === 'income';
+
+  return (
+    <div className="relative group flex items-center justify-between p-3.5 bg-white hover:bg-[#FAF7F2] rounded-2xl border border-[#E5DCD0]/70 transition-all duration-150">
+      <div className="flex items-center gap-3 min-w-0">
+        <CategoryIcon
+          name={category?.icon || (isIncome ? 'Coins' : 'Tag')}
+          color={category?.color || (isIncome ? '#4A6B53' : '#C86446')}
+          size="md"
+        />
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-semibold text-[#2D2A26] truncate">
+              {category?.name || (isIncome ? 'Pemasukan' : 'Pengeluaran')}
+            </p>
+            {wallet && (
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-[#F2ECE1] text-[#68635B] truncate max-w-[90px]">
+                {wallet.name}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 mt-0.5 text-xs text-[#68635B]">
+            <span>{formatDateDisplay(transaction.date)}</span>
+            {transaction.note && (
+              <>
+                <span>•</span>
+                <span className="truncate max-w-[130px] sm:max-w-[200px] italic">
+                  &ldquo;{transaction.note}&rdquo;
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 shrink-0">
+        <div className="text-right">
+          <div
+            className={cn(
+              'flex items-center justify-end gap-1 font-bold text-sm sm:text-base',
+              isIncome ? 'text-[#4A6B53]' : 'text-[#B0473C]'
+            )}
+          >
+            {isIncome ? (
+              <ArrowDownLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+            ) : (
+              <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
+            )}
+            <span>{isIncome ? '+' : '-'}{formatRupiah(transaction.amount)}</span>
+          </div>
+        </div>
+
+        {(onEdit || onDelete) && (
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-1 rounded-lg text-[#9E968B] hover:text-[#2D2A26] hover:bg-[#E5DCD0]/40 transition-colors"
+              aria-label="Opsi transaksi"
+            >
+              <MoreVertical className="w-4 h-4" />
+            </button>
+
+            {showMenu && (
+              <>
+                <div
+                  className="fixed inset-0 z-20"
+                  onClick={() => setShowMenu(false)}
+                />
+                <div className="absolute right-0 top-full mt-1 z-30 w-32 bg-white rounded-xl shadow-lg border border-[#E5DCD0] py-1 text-xs animate-in fade-in duration-100">
+                  {onEdit && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        onEdit(transaction);
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 text-[#2D2A26] hover:bg-[#FAF7F2] transition-colors"
+                    >
+                      <Pencil className="w-3.5 h-3.5 text-[#68635B]" />
+                      <span>Ubah</span>
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        onDelete(transaction.id);
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 text-[#B0473C] hover:bg-[#FAF7F2] transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-[#B0473C]" />
+                      <span>Hapus</span>
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
