@@ -58,7 +58,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-screen bg-[#FAF7F2] flex flex-col items-center justify-center p-4">
         <div className="w-12 h-12 rounded-2xl bg-[#C86446] text-white flex items-center justify-center text-xl shadow-md animate-bounce mb-3">
-          🌱
+          <img src="Logo.png" alt="Logo" className="w-10 h-10" />
         </div>
         <div className="flex items-center gap-2 text-sm font-semibold text-[#2D2A26]">
           <Loader2 className="w-4 h-4 animate-spin text-[#C86446]" />
@@ -93,8 +93,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           editingTransaction
             ? 'Ubah Transaksi'
             : transactionModalType === 'expense'
-            ? 'Catat Pengeluaran'
-            : 'Catat Pemasukan'
+              ? 'Catat Pengeluaran'
+              : 'Catat Pemasukan'
         }
         description={
           editingTransaction

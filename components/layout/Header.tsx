@@ -35,8 +35,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-30 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-[#E5DCD0]/70 px-4 py-3 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <div className="md:hidden w-7 h-7 rounded-xl bg-[#C86446] text-white flex items-center justify-center text-xs font-bold shadow-xs">
-          🌱
+        <div className="md:hidden w-7 h-7 rounded-xl bg-[#C86446] text-white flex items-center justify-center overflow-hidden shadow-xs">
+          <img src="/Logo.png" alt="Nyatet Gan" className="w-full h-full object-cover" />
         </div>
         <div>
           <h1 className="text-base sm:text-lg font-bold text-[#2D2A26] leading-tight">
