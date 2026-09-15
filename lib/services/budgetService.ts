@@ -54,7 +54,11 @@ export const budgetService = {
   }> {
     const budgets = await this.getBudgets(monthKey);
     const txs = await transactionService.getByMonth(monthKey);
-    const expenseTxs = txs.filter((tx) => tx.type === 'expense');
+    // Transfer pokok antar dompet bukan pengeluaran konsumtif.
+    // Biaya admin transfer tetap dihitung karena tidak memiliki toWalletId.
+    const expenseTxs = txs.filter(
+      (tx) => tx.type === 'expense' && !(tx.transferPairId && tx.toWalletId)
+    );
 
     const totalSpent = expenseTxs.reduce((sum, tx) => sum + tx.amount, 0);
 
