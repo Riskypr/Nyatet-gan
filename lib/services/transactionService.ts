@@ -147,14 +147,18 @@ export const transactionService = {
 
   async getMonthlySummary(monthKey: string): Promise<MonthlySummary> {
     const txs = await this.getByMonth(monthKey);
-
     let totalIncome = 0;
     let totalExpense = 0;
 
     for (const tx of txs) {
+      // Transfer antar dompet bukan pemasukan/pengeluaran baru.
+      // Biaya admin transfer tidak memiliki toWalletId, sehingga tetap dihitung.
+      const isInternalTransfer = Boolean(tx.transferPairId && tx.toWalletId);
+      if (isInternalTransfer) continue;
+
       if (tx.type === 'income') {
         totalIncome += tx.amount;
-      } else {
+      } else if (tx.type === 'expense') {
         totalExpense += tx.amount;
       }
     }
@@ -173,7 +177,10 @@ export const transactionService = {
 
   async getExpenseByCategory(monthKey: string): Promise<ExpenseByCategorySummary[]> {
     const txs = await this.getByMonth(monthKey);
-    const expenseTxs = txs.filter((tx) => tx.type === 'expense');
+    // Transfer pokok tidak masuk komposisi pengeluaran; biaya admin tetap masuk.
+    const expenseTxs = txs.filter(
+      (tx) => tx.type === 'expense' && !(tx.transferPairId && tx.toWalletId)
+    );
 
     const totalExpense = expenseTxs.reduce((sum, tx) => sum + tx.amount, 0);
 
