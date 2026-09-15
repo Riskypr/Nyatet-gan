@@ -6,17 +6,19 @@ import { useUIStore } from '@/lib/stores/uiStore';
 import { Wallet } from '@/lib/types';
 import { WalletCard } from '@/components/wallets/WalletCard';
 import { WalletModal } from '@/components/wallets/WalletModal';
+import { TransferModal } from '@/components/wallets/TransferModal';
 import { formatRupiah } from '@/lib/utils/currency';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { confirmWithToast } from '@/lib/utils/confirmToast';
-import { Plus, Wallet as WalletIcon, Info } from 'lucide-react';
+import { Plus, Wallet as WalletIcon, Info, ArrowRightLeft } from 'lucide-react';
 
 export default function WalletsPage() {
   const { wallets, totalBalance, deleteOrArchiveWallet } = useWalletStore();
   const { showToast } = useUIStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [editingWallet, setEditingWallet] = useState<Wallet | null>(null);
 
   const handleEdit = (w: Wallet) => {
@@ -71,10 +73,16 @@ export default function WalletsPage() {
             </div>
           </div>
 
-          <Button variant="primary" size="md" onClick={handleAddNew} className="gap-2 shrink-0">
-            <Plus className="w-4 h-4" />
-            <span>Tambah Dompet</span>
-          </Button>
+          <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
+            <Button variant="secondary" size="md" onClick={() => setIsTransferModalOpen(true)} className="gap-2 flex-1 sm:flex-initial">
+              <ArrowRightLeft className="w-4 h-4" />
+              <span>Transfer Dana</span>
+            </Button>
+            <Button variant="primary" size="md" onClick={handleAddNew} className="gap-2 flex-1 sm:flex-initial">
+              <Plus className="w-4 h-4" />
+              <span>Tambah Dompet</span>
+            </Button>
+          </div>
         </div>
       </Card>
 
@@ -109,6 +117,11 @@ export default function WalletsPage() {
           setEditingWallet(null);
         }}
         wallet={editingWallet}
+      />
+
+      <TransferModal
+        isOpen={isTransferModalOpen}
+        onClose={() => setIsTransferModalOpen(false)}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-export type TransactionType = 'expense' | 'income';
+export type TransactionType = 'expense' | 'income' | 'transfer';
 
 export interface Wallet {
   id: string;
@@ -30,8 +30,19 @@ export interface Transaction {
   amount: number;
   date: string; // ISO date format: YYYY-MM-DD
   note?: string;
+  transferPairId?: string;
+  toWalletId?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface TransferPayload {
+  fromWalletId: string;
+  toWalletId: string;
+  amount: number;
+  fee?: number;
+  date: string;
+  note?: string;
 }
 
 export interface Budget {

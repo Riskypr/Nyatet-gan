@@ -18,6 +18,11 @@ export const DEFAULT_CATEGORIES: Omit<Category, 'id' | 'createdAt'>[] = [
   { name: 'Hadiah', type: 'income', icon: 'Gift', color: '#C86446', isDefault: true },
   { name: 'Investasi', type: 'income', icon: 'TrendingUp', color: '#3D7068', isDefault: true },
   { name: 'Lainnya', type: 'income', icon: 'Coins', color: '#68635B', isDefault: true },
+
+  // Transfer System Categories
+  { name: 'Transfer Keluar', type: 'expense', icon: 'ArrowRightLeft', color: '#A84D32', isDefault: true },
+  { name: 'Transfer Masuk', type: 'income', icon: 'ArrowRightLeft', color: '#3D7068', isDefault: true },
+  { name: 'Biaya Admin Transfer', type: 'expense', icon: 'Receipt', color: '#B0473C', isDefault: true },
 ];
 
 export async function seedInitialDataIfNeeded(): Promise<void> {
