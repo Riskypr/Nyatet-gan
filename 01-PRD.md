@@ -1,5 +1,5 @@
 # PRD — Aplikasi Pencatatan Keuangan Pribadi
-**Codename:** MoneyEarth (working title, base color earth-tone)
+**Codename:** Nyatet GaN (working title, base color earth-tone)
 
 ## 1. Latar Belakang
 Banyak orang kesulitan melacak pengeluaran & pemasukan bulanan secara konsisten karena aplikasi yang ada terlalu rumit atau butuh koneksi internet/server. Dibutuhkan web app ringan, mobile-first, bisa dipasang sebagai PWA, dan bekerja offline-first untuk mencatat transaksi harian dengan cepat.

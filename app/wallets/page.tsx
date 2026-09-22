@@ -11,10 +11,10 @@ import { formatRupiah } from '@/lib/utils/currency';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { confirmWithToast } from '@/lib/utils/confirmToast';
-import { Plus, Wallet as WalletIcon, Info, ArrowRightLeft } from 'lucide-react';
+import { Plus, Wallet as WalletIcon, Info, ArrowRightLeft, Eye, EyeOff } from 'lucide-react';
 
 export default function WalletsPage() {
-  const { wallets, totalBalance, deleteOrArchiveWallet } = useWalletStore();
+  const { wallets, totalBalance, isBalanceHidden, toggleBalanceHidden, deleteOrArchiveWallet } = useWalletStore();
   const { showToast } = useUIStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,9 +66,24 @@ export default function WalletsPage() {
               <WalletIcon className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-[#68635B]">Total Saldo Seluruh Dompet</p>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2D2A26]">
-                {formatRupiah(totalBalance)}
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-semibold text-[#68635B]">Total Saldo Seluruh Dompet</p>
+                <button
+                  type="button"
+                  onClick={toggleBalanceHidden}
+                  className="p-1 rounded-lg text-[#68635B] hover:text-[#2D2A26] hover:bg-[#E5DCD0]/50 transition-colors cursor-pointer"
+                  title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+                  aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+                >
+                  {isBalanceHidden ? (
+                    <EyeOff className="w-3.5 h-3.5" />
+                  ) : (
+                    <Eye className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2D2A26]" suppressHydrationWarning>
+                {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(totalBalance)}
               </h2>
             </div>
           </div>

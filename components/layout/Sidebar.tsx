@@ -36,7 +36,7 @@ export function Sidebar() {
         {/* Logo / Brand */}
         <div className="flex items-center gap-3 px-2">
           <div className="w-10 h-10 rounded-2xl bg-[#C86446] text-white flex items-center justify-center shadow-sm shadow-[#C86446]/30 font-bold text-lg">
-            <img src="/Logo.png" alt="Logo" className="w-full h-full object-cover" />
+            <img src="/Logo.png" alt="Logo" />
           </div>
           <div>
             <h1 className="font-bold text-base text-[#2D2A26] leading-tight tracking-tight">

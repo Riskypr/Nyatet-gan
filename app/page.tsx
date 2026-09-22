@@ -10,6 +10,8 @@ import {
   Sparkles,
   Wallet as WalletIcon,
   PiggyBank,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useWalletStore } from '@/lib/stores/walletStore';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
@@ -27,7 +29,7 @@ import { TransactionItem } from '@/components/transactions/TransactionItem';
 import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function DashboardPage() {
-  const { wallets, totalBalance } = useWalletStore();
+  const { wallets, totalBalance, isBalanceHidden, toggleBalanceHidden } = useWalletStore();
   const { currentMonth, transactions, monthlySummary, deleteTransaction } = useTransactionStore();
   const { openTransactionModal } = useUIStore();
 
@@ -63,9 +65,24 @@ export default function DashboardPage() {
         
         <div className="relative z-10 flex flex-col gap-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-white/85">
-              Total Saldo Semua Dompet
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-white/85">
+                Total Saldo Semua Dompet
+              </span>
+              <button
+                type="button"
+                onClick={toggleBalanceHidden}
+                className="p-1 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
+                title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+                aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+              >
+                {isBalanceHidden ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
             <span className="flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-white font-medium">
               <Sparkles className="w-3 h-3 text-[#E8A590]" />
               Aktif
@@ -73,8 +90,8 @@ export default function DashboardPage() {
           </div>
 
           <div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              {formatRupiah(totalBalance)}
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight" suppressHydrationWarning>
+              {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(totalBalance)}
             </h2>
           </div>
 

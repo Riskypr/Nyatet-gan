@@ -4,6 +4,7 @@ import React from 'react';
 import { Wallet } from '@/lib/types';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 import { formatRupiah } from '@/lib/utils/currency';
+import { useWalletStore } from '@/lib/stores/walletStore';
 import { Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
@@ -15,6 +16,8 @@ export interface WalletCardProps {
 }
 
 export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: WalletCardProps) {
+  const isBalanceHidden = useWalletStore((s) => s.isBalanceHidden);
+
   if (isCompact) {
     return (
       <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-[#E5DCD0]/80 shadow-xs shrink-0 min-w-[150px]">
@@ -26,8 +29,8 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
         </div>
         <div className="min-w-0">
           <p className="text-xs font-medium text-[#68635B] truncate">{wallet.name}</p>
-          <p className="text-xs font-bold text-[#2D2A26] truncate">
-            {formatRupiah(wallet.currentBalance)}
+          <p className="text-xs font-bold text-[#2D2A26] truncate tracking-wide" suppressHydrationWarning>
+            {isBalanceHidden ? '••••••••' : formatRupiah(wallet.currentBalance)}
           </p>
         </div>
       </div>
@@ -41,8 +44,8 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
           <CategoryIcon name={wallet.icon || 'Wallet'} color={wallet.color} size="md" />
           <div>
             <h4 className="text-sm font-bold text-[#2D2A26] leading-tight">{wallet.name}</h4>
-            <p className="text-[11px] text-[#68635B] mt-0.5">
-              Saldo Awal: {formatRupiah(wallet.initialBalance)}
+            <p className="text-[11px] text-[#68635B] mt-0.5" suppressHydrationWarning>
+              Saldo Awal: {isBalanceHidden ? '••••••••' : formatRupiah(wallet.initialBalance)}
             </p>
           </div>
         </div>
@@ -75,13 +78,15 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
         <span className="text-xs text-[#68635B]">Saldo Berjalan</span>
         <span
           className={cn(
-            'text-base font-bold',
+            'text-base font-bold tracking-wide',
             wallet.currentBalance >= 0 ? 'text-[#2D2A26]' : 'text-[#B0473C]'
           )}
+          suppressHydrationWarning
         >
-          {formatRupiah(wallet.currentBalance)}
+          {isBalanceHidden ? '••••••••' : formatRupiah(wallet.currentBalance)}
         </span>
       </div>
     </div>
   );
 }
+
