@@ -27,10 +27,11 @@ import { WalletModal } from '@/components/wallets/WalletModal';
 import { BudgetProgressBar } from '@/components/budget/BudgetProgressBar';
 import { TransactionItem } from '@/components/transactions/TransactionItem';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { ExpenseCalendar } from '@/components/calendar/ExpenseCalendar';
 
 export default function DashboardPage() {
   const { wallets, totalBalance, isBalanceHidden, toggleBalanceHidden } = useWalletStore();
-  const { currentMonth, transactions, monthlySummary, deleteTransaction } = useTransactionStore();
+  const { currentMonth, setCurrentMonth, transactions, monthlySummary, deleteTransaction } = useTransactionStore();
   const { openTransactionModal } = useUIStore();
 
   const [categories, setCategories] = useState<Map<string, Category>>(new Map());
@@ -203,6 +204,18 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Kalender Pengeluaran Interaktif */}
+      <ExpenseCalendar
+        transactions={transactions}
+        categories={categories}
+        wallets={walletMap}
+        currentMonth={currentMonth}
+        onMonthChange={(m) => setCurrentMonth(m)}
+        onEditTransaction={(tx) => openTransactionModal(tx.type, tx.id)}
+        onDeleteTransaction={(id) => deleteTransaction(id)}
+        onAddTransaction={(type) => openTransactionModal(type)}
+      />
 
       {/* 4. Transaksi Terbaru (5 items) */}
       <div className="flex flex-col gap-3">
