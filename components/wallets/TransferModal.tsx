@@ -66,10 +66,10 @@ export function TransferModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
             const setter = isFrom ? setFromWalletId : setToWalletId;
             return (
               <div key={kind} className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-[#2D2A26]">{isFrom ? 'Dari Dompet' : 'Ke Dompet'}</label>
+                <label className="text-xs font-semibold text-text-primary">{isFrom ? 'Dari Dompet' : 'Ke Dompet'}</label>
                 <div className="flex flex-col gap-2">
                   {wallets.map((wallet) => (
-                    <button key={wallet.id} type="button" onClick={() => { setter(wallet.id); setError(''); }} className={cn('flex items-center gap-2 px-3 py-2 rounded-xl border text-left text-xs font-medium transition-all', selected === wallet.id ? 'border-[#C86446] bg-[#C86446] text-white' : 'border-[#E5DCD0] bg-white text-[#2D2A26] hover:bg-[#FAF7F2]')}>
+                    <button key={wallet.id} type="button" onClick={() => { setter(wallet.id); setError(''); }} className={cn('flex items-center gap-2 px-3 py-2 rounded-xl border text-left text-xs font-medium transition-all', selected === wallet.id ? 'border-primary bg-primary text-white shadow-xs' : 'border-border bg-surface text-text-primary hover:bg-surface-alt')}>
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: selected === wallet.id ? '#FFF' : wallet.color }} />
                       <span className="truncate">{wallet.name}</span>
                     </button>
@@ -79,7 +79,7 @@ export function TransferModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
             );
           })}
         </div>
-        {error && <p className="text-xs text-[#B0473C] font-medium">{error}</p>}
+        {error && <p className="text-xs text-danger font-medium">{error}</p>}
         <NumberInput label="Nominal Transfer" value={amount} onChange={setAmount} placeholder="0" autoFocus />
         <NumberInput label="Biaya Admin (Opsional)" value={fee} onChange={setFee} placeholder="0" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

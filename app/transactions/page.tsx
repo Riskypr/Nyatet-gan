@@ -104,16 +104,16 @@ export default function TransactionsPage() {
 
       {/* Summary of Filtered Items */}
       {filteredTransactions.length > 0 && (
-        <div className="flex items-center justify-between px-3 py-2 bg-white rounded-xl border border-[#E5DCD0]/80 text-xs">
-          <span className="text-[#68635B]">
-            Menampilkan <strong>{filteredTransactions.length}</strong> transaksi
+        <div className="flex items-center justify-between px-3.5 py-2.5 bg-surface rounded-xl border border-border shadow-xs text-xs">
+          <span className="text-text-secondary">
+            Menampilkan <strong className="text-text-primary">{filteredTransactions.length}</strong> transaksi
           </span>
           <div className="flex items-center gap-3 font-semibold">
             {totalFilteredIncome > 0 && (
-              <span className="text-[#4A6B53]">+{formatRupiah(totalFilteredIncome)}</span>
+              <span className="text-secondary">+{formatRupiah(totalFilteredIncome)}</span>
             )}
             {totalFilteredExpense > 0 && (
-              <span className="text-[#B0473C]">-{formatRupiah(totalFilteredExpense)}</span>
+              <span className="text-danger">-{formatRupiah(totalFilteredExpense)}</span>
             )}
           </div>
         </div>
@@ -127,10 +127,10 @@ export default function TransactionsPage() {
             return (
               <div key={dateStr} className="flex flex-col gap-2">
                 <div className="flex items-center justify-between px-1">
-                  <h3 className="text-xs font-bold text-[#68635B] uppercase tracking-wider">
+                  <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">
                     {formatGroupDateHeader(dateStr)}
                   </h3>
-                  <span className="text-[11px] text-[#9E968B]">
+                  <span className="text-[11px] text-text-muted">
                     {txs.length} transaksi
                   </span>
                 </div>

@@ -51,13 +51,13 @@ export function NumberInput({
   return (
     <div className="w-full flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-xs font-semibold text-[#2D2A26] tracking-wide">
+        <label htmlFor={inputId} className="text-xs font-semibold text-text-primary tracking-wide">
           {label}
         </label>
       )}
       <div className="relative flex items-center">
         {prefix && (
-          <span className="absolute left-3.5 text-sm font-semibold text-[#68635B] pointer-events-none select-none">
+          <span className="absolute left-3.5 text-sm font-semibold text-text-secondary pointer-events-none select-none">
             {prefix}
           </span>
         )}
@@ -70,16 +70,16 @@ export function NumberInput({
           onChange={handleChange}
           placeholder={placeholder}
           className={cn(
-            'w-full h-12 rounded-xl bg-white border border-[#E5DCD0] text-[#2D2A26] placeholder-[#9E968B]',
+            'w-full h-12 rounded-xl bg-surface border border-border text-text-primary placeholder-text-muted',
             prefix ? 'pl-11 pr-3.5' : 'px-3.5',
-            'font-semibold text-lg focus:outline-none focus:ring-2 focus:ring-[#C86446]/30 focus:border-[#C86446] transition-all',
-            error && 'border-[#B0473C] focus:ring-[#B0473C]/20 focus:border-[#B0473C]',
+            'font-semibold text-lg focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all',
+            error && 'border-danger focus:ring-danger/20 focus:border-danger',
             className
           )}
         />
       </div>
-      {error && <p className="text-xs text-[#B0473C] font-medium">{error}</p>}
-      {helperText && !error && <p className="text-xs text-[#68635B]">{helperText}</p>}
+      {error && <p className="text-xs text-danger font-medium">{error}</p>}
+      {helperText && !error && <p className="text-xs text-text-secondary">{helperText}</p>}
     </div>
   );
 }

@@ -20,21 +20,23 @@ export function confirmWithToast({
   onConfirm,
   onCancel,
 }: ConfirmToastOptions): void {
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+
   toast(
     ({ closeToast }) => (
       <div className="flex flex-col gap-2.5 p-1 select-none">
         <div className="flex flex-col">
-          <span className="text-xs font-bold text-[#2D2A26]">{title}</span>
-          <p className="text-xs text-[#68635B] mt-0.5 leading-relaxed">{message}</p>
+          <span className="text-xs font-bold text-text-primary">{title}</span>
+          <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">{message}</p>
         </div>
-        <div className="flex items-center justify-end gap-2 pt-1 border-t border-[#E5DCD0]/70">
+        <div className="flex items-center justify-end gap-2 pt-1 border-t border-border/70">
           <button
             type="button"
             onClick={() => {
               closeToast();
               if (onCancel) onCancel();
             }}
-            className="px-3 py-1.5 text-xs font-semibold rounded-xl border border-[#E5DCD0] bg-white text-[#68635B] hover:bg-[#F2ECE1] transition-colors"
+            className="px-3 py-1.5 text-xs font-semibold rounded-xl border border-border bg-surface text-text-secondary hover:bg-surface-alt transition-colors"
           >
             {cancelLabel}
           </button>
@@ -46,8 +48,8 @@ export function confirmWithToast({
             }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-xl text-white shadow-xs transition-colors ${
               isDestructive
-                ? 'bg-[#B0473C] hover:bg-[#8F3930]'
-                : 'bg-[#C86446] hover:bg-[#A84D32]'
+                ? 'bg-danger hover:opacity-90'
+                : 'bg-primary hover:opacity-90'
             }`}
           >
             {confirmLabel}
@@ -60,7 +62,7 @@ export function confirmWithToast({
       autoClose: false,
       closeOnClick: false,
       draggable: false,
-      theme: 'light',
+      theme: isDark ? 'dark' : 'light',
     }
   );
 }

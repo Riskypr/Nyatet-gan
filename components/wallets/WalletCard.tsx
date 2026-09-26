@@ -20,16 +20,16 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
 
   if (isCompact) {
     return (
-      <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-[#E5DCD0]/80 shadow-xs shrink-0 min-w-[150px]">
+      <div className="flex items-center gap-3 p-3 bg-surface rounded-2xl border border-border shadow-xs shrink-0 min-w-[155px] transition-colors">
         <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 text-xs font-bold"
+          className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 text-xs font-bold shadow-xs"
           style={{ backgroundColor: wallet.color }}
         >
           {wallet.name.charAt(0).toUpperCase()}
         </div>
         <div className="min-w-0">
-          <p className="text-xs font-medium text-[#68635B] truncate">{wallet.name}</p>
-          <p className="text-xs font-bold text-[#2D2A26] truncate tracking-wide" suppressHydrationWarning>
+          <p className="text-xs font-medium text-text-secondary truncate">{wallet.name}</p>
+          <p className="text-xs font-bold text-text-primary truncate tracking-wide" suppressHydrationWarning>
             {isBalanceHidden ? '••••••••' : formatRupiah(wallet.currentBalance)}
           </p>
         </div>
@@ -38,13 +38,13 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
   }
 
   return (
-    <div className="relative group p-4 bg-white rounded-2xl border border-[#E5DCD0] shadow-xs flex flex-col justify-between transition-all hover:shadow-sm">
+    <div className="relative group p-4 bg-surface rounded-2xl border border-border shadow-xs flex flex-col justify-between transition-all hover:border-primary/40 hover:shadow-sm">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3">
           <CategoryIcon name={wallet.icon || 'Wallet'} color={wallet.color} size="md" />
           <div>
-            <h4 className="text-sm font-bold text-[#2D2A26] leading-tight">{wallet.name}</h4>
-            <p className="text-[11px] text-[#68635B] mt-0.5" suppressHydrationWarning>
+            <h4 className="text-sm font-bold text-text-primary leading-tight">{wallet.name}</h4>
+            <p className="text-[11px] text-text-secondary mt-0.5" suppressHydrationWarning>
               Saldo Awal: {isBalanceHidden ? '••••••••' : formatRupiah(wallet.initialBalance)}
             </p>
           </div>
@@ -55,7 +55,7 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
             {onEdit && (
               <button
                 onClick={() => onEdit(wallet)}
-                className="p-1.5 rounded-lg text-[#68635B] hover:bg-[#F2ECE1] transition-colors"
+                className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors"
                 aria-label="Ubah Dompet"
               >
                 <Pencil className="w-3.5 h-3.5" />
@@ -64,7 +64,7 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
             {onDelete && (
               <button
                 onClick={() => onDelete(wallet)}
-                className="p-1.5 rounded-lg text-[#B0473C] hover:bg-[#F2ECE1] transition-colors"
+                className="p-1.5 rounded-lg text-danger hover:bg-surface-alt transition-colors"
                 aria-label="Hapus atau Arsip Dompet"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -74,12 +74,12 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
         )}
       </div>
 
-      <div className="mt-4 pt-3 border-t border-[#E5DCD0]/60 flex items-center justify-between">
-        <span className="text-xs text-[#68635B]">Saldo Berjalan</span>
+      <div className="mt-4 pt-3 border-t border-border/70 flex items-center justify-between">
+        <span className="text-xs text-text-secondary">Saldo Berjalan</span>
         <span
           className={cn(
             'text-base font-bold tracking-wide',
-            wallet.currentBalance >= 0 ? 'text-[#2D2A26]' : 'text-[#B0473C]'
+            wallet.currentBalance >= 0 ? 'text-text-primary' : 'text-danger'
           )}
           suppressHydrationWarning
         >
@@ -89,4 +89,3 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
     </div>
   );
 }
-

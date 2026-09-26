@@ -23,10 +23,10 @@ export default function ReportsPage() {
       {/* Header Info */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-bold text-[#2D2A26]">
+          <h2 className="text-base font-bold text-text-primary">
             Analisis & Grafik Keuangan
           </h2>
-          <p className="text-xs text-[#68635B]">
+          <p className="text-xs text-text-secondary">
             Periode {formatMonthYear(currentMonth)}
           </p>
         </div>
@@ -35,44 +35,44 @@ export default function ReportsPage() {
       {/* Summary Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card className="p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#4A6B53]/15 text-[#4A6B53] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center shrink-0 shadow-xs">
             <ArrowDownLeft className="w-5 h-5 stroke-[2.5]" />
           </div>
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold text-[#68635B]">Total Masuk</p>
-            <p className="text-sm sm:text-base font-bold text-[#4A6B53] truncate">
+            <p className="text-[11px] font-semibold text-text-secondary">Total Masuk</p>
+            <p className="text-sm sm:text-base font-bold text-secondary truncate">
               {formatRupiah(totalIncome)}
             </p>
           </div>
         </Card>
 
         <Card className="p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#B0473C]/15 text-[#B0473C] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-danger/15 text-danger flex items-center justify-center shrink-0 shadow-xs">
             <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
           </div>
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold text-[#68635B]">Total Keluar</p>
-            <p className="text-sm sm:text-base font-bold text-[#B0473C] truncate">
+            <p className="text-[11px] font-semibold text-text-secondary">Total Keluar</p>
+            <p className="text-sm sm:text-base font-bold text-danger truncate">
               {formatRupiah(totalExpense)}
             </p>
           </div>
         </Card>
 
         <Card className="p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#C86446]/15 text-[#C86446] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0 shadow-xs">
             <PiggyBank className="w-5 h-5" />
           </div>
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold text-[#68635B]">Arus Kas Bersih</p>
+            <p className="text-[11px] font-semibold text-text-secondary">Arus Kas Bersih</p>
             <p
               className={`text-sm sm:text-base font-bold truncate ${
-                netSavings >= 0 ? 'text-[#2D2A26]' : 'text-[#B0473C]'
+                netSavings >= 0 ? 'text-text-primary' : 'text-danger'
               }`}
             >
               {formatRupiah(netSavings)}
             </p>
             {totalIncome > 0 && (
-              <span className="text-[10px] text-[#68635B]">Rasio tabungan: {savingsRate}%</span>
+              <span className="text-[10px] text-text-muted">Rasio tabungan: {savingsRate}%</span>
             )}
           </div>
         </Card>
@@ -80,12 +80,12 @@ export default function ReportsPage() {
 
       {/* Pie Chart Section */}
       <Card className="p-5 flex flex-col gap-4">
-        <div className="flex items-center justify-between border-b border-[#E5DCD0]/70 pb-3">
+        <div className="flex items-center justify-between border-b border-border/70 pb-3">
           <div>
-            <h3 className="text-sm font-bold text-[#2D2A26]">
+            <h3 className="text-sm font-bold text-text-primary">
               Komposisi Pengeluaran per Kategori
             </h3>
-            <p className="text-xs text-[#68635B]">
+            <p className="text-xs text-text-secondary">
               Sentuh atau arahkan kursor ke slice grafik untuk melihat persentase
             </p>
           </div>

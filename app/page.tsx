@@ -61,9 +61,11 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto">
       {/* 1. Card Saldo Total (Hero Card) */}
-      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#A84D32] via-[#C86446] to-[#A84D32] p-6 text-white shadow-lg shadow-[#C86446]/25">
-        <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 w-44 h-44 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-        
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#943F28] via-[#C86446] to-[#7D341F] p-6 text-white shadow-xl shadow-primary/20 transition-all">
+        {/* Modern glowing blurred meshes */}
+        <div className="absolute right-0 top-0 translate-x-6 -translate-y-6 w-48 h-48 rounded-full bg-white/15 blur-2xl pointer-events-none" />
+        <div className="absolute left-0 bottom-0 -translate-x-6 translate-y-6 w-36 h-36 rounded-full bg-black/15 blur-xl pointer-events-none" />
+
         <div className="relative z-10 flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -97,9 +99,9 @@ export default function DashboardPage() {
           </div>
 
           {/* Sub-card: Pemasukan vs Pengeluaran Bulan Ini */}
-          <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/20">
+          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/20">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-[#9AB8A2]">
+              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-[#9AB8A2] shadow-xs">
                 <ArrowDownLeft className="w-4 h-4 stroke-[3]" />
               </div>
               <div className="min-w-0">
@@ -111,7 +113,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-[#E8A590]">
+              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-[#E8A590] shadow-xs">
                 <ArrowUpRight className="w-4 h-4 stroke-[3]" />
               </div>
               <div className="min-w-0">
@@ -129,22 +131,22 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 gap-3">
         <button
           onClick={() => openTransactionModal('expense')}
-          className="flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl bg-white border border-[#E5DCD0] shadow-xs hover:border-[#B0473C] transition-all group"
+          className="flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl bg-surface border border-border shadow-xs hover:border-danger/40 hover:bg-surface-alt/40 transition-all group cursor-pointer"
         >
-          <div className="w-8 h-8 rounded-xl bg-[#B0473C]/10 text-[#B0473C] flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="w-8 h-8 rounded-xl bg-danger/10 text-danger flex items-center justify-center group-hover:scale-110 transition-transform">
             <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
           </div>
-          <span className="text-xs sm:text-sm font-bold text-[#2D2A26]">Catat Pengeluaran</span>
+          <span className="text-xs sm:text-sm font-bold text-text-primary">Catat Pengeluaran</span>
         </button>
 
         <button
           onClick={() => openTransactionModal('income')}
-          className="flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl bg-white border border-[#E5DCD0] shadow-xs hover:border-[#4A6B53] transition-all group"
+          className="flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl bg-surface border border-border shadow-xs hover:border-secondary/40 hover:bg-surface-alt/40 transition-all group cursor-pointer"
         >
-          <div className="w-8 h-8 rounded-xl bg-[#4A6B53]/10 text-[#4A6B53] flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="w-8 h-8 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
             <ArrowDownLeft className="w-4 h-4 stroke-[2.5]" />
           </div>
-          <span className="text-xs sm:text-sm font-bold text-[#2D2A26]">Catat Pemasukan</span>
+          <span className="text-xs sm:text-sm font-bold text-text-primary">Catat Pemasukan</span>
         </button>
       </div>
 
@@ -156,14 +158,14 @@ export default function DashboardPage() {
           targetAmount={overallBudget.budget.targetAmount}
         />
       ) : (
-        <Card className="flex items-center justify-between p-4 bg-[#F2ECE1]/60 border-dashed border-[#E5DCD0]">
+        <Card className="flex items-center justify-between p-4 bg-surface-alt/50 border-dashed border-border">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#C86446]/10 text-[#C86446] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
               <PiggyBank className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-bold text-[#2D2A26]">Belum Pasang Target Anggaran</p>
-              <p className="text-[11px] text-[#68635B]">Kendalikan belanja Anda dengan memasang limit bulanan</p>
+              <p className="text-xs sm:text-sm font-bold text-text-primary">Belum Pasang Target Anggaran</p>
+              <p className="text-[11px] text-text-secondary">Kendalikan belanja Anda dengan memasang limit bulanan</p>
             </div>
           </div>
           <Link href="/budget">
@@ -178,12 +180,12 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <WalletIcon className="w-4 h-4 text-[#C86446]" />
-            <h3 className="text-sm font-bold text-[#2D2A26]">Dompet & Sumber Dana</h3>
+            <WalletIcon className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold text-text-primary">Dompet & Sumber Dana</h3>
           </div>
           <Link
             href="/wallets"
-            className="text-xs font-semibold text-[#C86446] hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
           >
             <span>Kelola</span>
             <ArrowRight className="w-3 h-3" />
@@ -197,9 +199,9 @@ export default function DashboardPage() {
 
           <button
             onClick={() => setIsWalletModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-3 rounded-2xl border border-dashed border-[#E5DCD0] bg-[#FAF7F2] hover:bg-[#F2ECE1] text-xs font-semibold text-[#68635B] shrink-0 transition-colors h-[58px]"
+            className="flex items-center gap-2 px-3.5 py-3 rounded-2xl border border-dashed border-border bg-surface hover:bg-surface-alt text-xs font-semibold text-text-secondary shrink-0 transition-colors h-[58px] cursor-pointer"
           >
-            <Plus className="w-4 h-4 text-[#C86446]" />
+            <Plus className="w-4 h-4 text-primary" />
             <span>Tambah</span>
           </button>
         </div>
@@ -220,11 +222,11 @@ export default function DashboardPage() {
       {/* 4. Transaksi Terbaru (5 items) */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#2D2A26]">Transaksi Terbaru</h3>
+          <h3 className="text-sm font-bold text-text-primary">Transaksi Terbaru</h3>
           {transactions.length > 0 && (
             <Link
               href="/transactions"
-              className="text-xs font-semibold text-[#C86446] hover:underline flex items-center gap-1"
+              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
             >
               <span>Lihat semua ({transactions.length})</span>
               <ArrowRight className="w-3 h-3" />

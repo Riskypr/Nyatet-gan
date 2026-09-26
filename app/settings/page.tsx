@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useWalletStore } from '@/lib/stores/walletStore';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
 import { useUIStore } from '@/lib/stores/uiStore';
+import { useThemeStore, ThemeMode } from '@/lib/stores/themeStore';
 import { backupService } from '@/lib/services/backupService';
 import { categoryService } from '@/lib/services/categoryService';
 import { Category, TransactionType } from '@/lib/types';
@@ -22,7 +23,13 @@ import {
   Plus,
   Trash2,
   FileCheck,
+  Palette,
+  Sun,
+  Moon,
+  Laptop,
+  Check,
 } from 'lucide-react';
+import { cn } from '@/lib/utils/cn';
 
 const CATEGORY_COLORS = [
   '#C86446', // Primary
@@ -39,6 +46,7 @@ export default function SettingsPage() {
   const { fetchWallets } = useWalletStore();
   const { fetchMonthlyData, currentMonth } = useTransactionStore();
   const { showToast } = useUIStore();
+  const { theme, setTheme, resolvedTheme } = useThemeStore();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [isExporting, setIsExporting] = useState(false);
@@ -151,17 +159,95 @@ export default function SettingsPage() {
     });
   };
 
+  const themeOptions: { value: ThemeMode; title: string; desc: string; icon: typeof Sun }[] = [
+    {
+      value: 'light',
+      title: 'Mode Terang',
+      desc: 'Palet earth tone hangat, cerah, dan menenangkan.',
+      icon: Sun,
+    },
+    {
+      value: 'dark',
+      title: 'Mode Gelap',
+      desc: 'Obsidian & espresso lembut yang nyaman di mata.',
+      icon: Moon,
+    },
+    {
+      value: 'system',
+      title: 'Ikuti Sistem',
+      desc: 'Otomatis berganti menyesuaikan preferensi OS perangkat.',
+      icon: Laptop,
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto">
-      {/* 1. Card Backup & Restore Data */}
+      {/* 1. Pengaturan Tema Tampilan */}
       <Card className="p-5 flex flex-col gap-4">
-        <div className="flex items-center gap-3 border-b border-[#E5DCD0]/70 pb-3">
-          <div className="w-10 h-10 rounded-xl bg-[#C86446]/15 text-[#C86446] flex items-center justify-center">
+        <div className="flex items-center gap-3 border-b border-border/70 pb-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shadow-xs">
+            <Palette className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-text-primary">Tema & Tampilan</h3>
+            <p className="text-xs text-text-secondary">
+              Pilih mode tampilan favorit Anda atau sesuaikan dengan tema sistem.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {themeOptions.map((opt) => {
+            const Icon = opt.icon;
+            const isSelected = theme === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setTheme(opt.value)}
+                className={cn(
+                  'relative p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all cursor-pointer select-none',
+                  isSelected
+                    ? 'border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs'
+                    : 'border-border bg-surface hover:bg-surface-alt'
+                )}
+              >
+                <div className="flex items-center justify-between">
+                  <div
+                    className={cn(
+                      'w-9 h-9 rounded-xl flex items-center justify-center transition-colors',
+                      isSelected ? 'bg-primary text-white shadow-xs' : 'bg-surface-alt text-text-secondary'
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  {isSelected && (
+                    <span className="flex items-center gap-1 text-[11px] font-bold text-primary px-2 py-0.5 rounded-full bg-primary/15">
+                      <Check className="w-3 h-3 stroke-[3]" />
+                      Aktif
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-bold text-text-primary">{opt.title}</h4>
+                  <p className="text-[11px] text-text-secondary mt-1 leading-relaxed">{opt.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* 2. Card Backup & Restore Data */}
+      <Card className="p-5 flex flex-col gap-4">
+        <div className="flex items-center gap-3 border-b border-border/70 pb-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shadow-xs">
             <FileCheck className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#2D2A26]">Backup & Pemulihan Data</h3>
-            <p className="text-xs text-[#68635B]">
+            <h3 className="text-sm font-bold text-text-primary">Backup & Pemulihan Data</h3>
+            <p className="text-xs text-text-secondary">
               Ekspor seluruh data keuangan Anda ke file JSON atau pulihkan dari cadangan sebelumnya.
             </p>
           </div>
@@ -169,13 +255,13 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Export */}
-          <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E5DCD0] flex flex-col justify-between gap-3">
+          <div className="p-4 rounded-xl bg-surface-alt border border-border flex flex-col justify-between gap-3">
             <div>
-              <h4 className="text-xs font-bold text-[#2D2A26] flex items-center gap-1.5">
-                <Download className="w-4 h-4 text-[#C86446]" />
+              <h4 className="text-xs font-bold text-text-primary flex items-center gap-1.5">
+                <Download className="w-4 h-4 text-primary" />
                 <span>Export Data (JSON)</span>
               </h4>
-              <p className="text-[11px] text-[#68635B] mt-1">
+              <p className="text-[11px] text-text-secondary mt-1">
                 Unduh salinan data dompet, transaksi, kategori, dan target anggaran Anda ke perangkat.
               </p>
             </div>
@@ -184,7 +270,7 @@ export default function SettingsPage() {
               size="sm"
               onClick={handleExport}
               isLoading={isExporting}
-              className="w-full gap-2"
+              className="w-full gap-2 shadow-xs"
             >
               <Download className="w-4 h-4" />
               <span>Export Sekarang</span>
@@ -192,13 +278,13 @@ export default function SettingsPage() {
           </div>
 
           {/* Import */}
-          <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#E5DCD0] flex flex-col justify-between gap-3">
+          <div className="p-4 rounded-xl bg-surface-alt border border-border flex flex-col justify-between gap-3">
             <div>
-              <h4 className="text-xs font-bold text-[#2D2A26] flex items-center gap-1.5">
-                <Upload className="w-4 h-4 text-[#4A6B53]" />
+              <h4 className="text-xs font-bold text-text-primary flex items-center gap-1.5">
+                <Upload className="w-4 h-4 text-secondary" />
                 <span>Import Data (Restore)</span>
               </h4>
-              <p className="text-[11px] text-[#68635B] mt-1">
+              <p className="text-[11px] text-text-secondary mt-1">
                 Pulihkan file JSON cadangan yang sebelumnya diekspor dari aplikasi Nyatet Gan.
               </p>
             </div>
@@ -223,16 +309,16 @@ export default function SettingsPage() {
         </div>
       </Card>
 
-      {/* 2. Manajemen Kategori */}
+      {/* 3. Manajemen Kategori */}
       <Card className="p-5 flex flex-col gap-4">
-        <div className="flex items-center justify-between border-b border-[#E5DCD0]/70 pb-3">
+        <div className="flex items-center justify-between border-b border-border/70 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#4A6B53]/15 text-[#4A6B53] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center shadow-xs">
               <Tag className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#2D2A26]">Kategori Transaksi</h3>
-              <p className="text-xs text-[#68635B]">
+              <h3 className="text-sm font-bold text-text-primary">Kategori Transaksi</h3>
+              <p className="text-xs text-text-secondary">
                 Kelola kategori bawaan dan tambahkan kategori kustom Anda.
               </p>
             </div>
@@ -253,13 +339,13 @@ export default function SettingsPage() {
           {categories.map((c) => (
             <div
               key={c.id}
-              className="flex items-center justify-between p-2.5 rounded-xl border border-[#E5DCD0]/70 bg-white"
+              className="flex items-center justify-between p-2.5 rounded-xl border border-border/70 bg-surface shadow-xs"
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <CategoryIcon name={c.icon} color={c.color} size="sm" />
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold text-[#2D2A26] truncate">{c.name}</p>
-                  <span className="text-[10px] text-[#68635B]">
+                  <p className="text-xs font-semibold text-text-primary truncate">{c.name}</p>
+                  <span className="text-[10px] text-text-secondary">
                     {c.type === 'expense' ? 'Pengeluaran' : 'Pemasukan'}
                   </span>
                 </div>
@@ -271,7 +357,7 @@ export default function SettingsPage() {
                 ) : (
                   <button
                     onClick={() => handleDeleteCategory(c)}
-                    className="p-1 rounded-lg text-[#B0473C] hover:bg-[#FAF7F2]"
+                    className="p-1.5 rounded-lg text-danger hover:bg-surface-alt transition-colors"
                     title="Hapus Kategori"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -283,11 +369,11 @@ export default function SettingsPage() {
         </div>
       </Card>
 
-      {/* 3. Privacy & Offline Info */}
-      <Card className="p-4 bg-[#F2ECE1]/60 border-[#E5DCD0] flex items-start gap-3">
-        <ShieldCheck className="w-5 h-5 text-[#4A6B53] shrink-0 mt-0.5" />
-        <div className="text-xs text-[#68635B] leading-relaxed">
-          <strong className="text-[#2D2A26]">Privasi 100% Terjaga:</strong> Seluruh data disimpan di
+      {/* 4. Privacy & Offline Info */}
+      <Card className="p-4 bg-surface-alt/70 border-border flex items-start gap-3">
+        <ShieldCheck className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
+        <div className="text-xs text-text-secondary leading-relaxed">
+          <strong className="text-text-primary">Privasi 100% Terjaga:</strong> Seluruh data disimpan di
           penyimpanan lokal browser (IndexedDB). Tidak ada data transaksi yang dikirim ke server luar.
           Pastikan untuk mengekspor backup berkala sebelum membersihkan riwayat browser atau mengganti perangkat.
         </div>
@@ -301,22 +387,24 @@ export default function SettingsPage() {
         description="Buat pos kategori baru sesuai kebutuhan pencatatan Anda"
       >
         <form onSubmit={handleAddCategory} className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 p-1 bg-[#F2ECE1] rounded-xl gap-1">
+          <div className="grid grid-cols-2 p-1 bg-surface-alt rounded-xl gap-1">
             <button
               type="button"
               onClick={() => setCatType('expense')}
-              className={`py-2 rounded-lg font-semibold text-xs ${
-                catType === 'expense' ? 'bg-white text-[#B0473C] shadow-xs' : 'text-[#68635B]'
-              }`}
+              className={cn(
+                'py-2 rounded-lg font-semibold text-xs transition-all',
+                catType === 'expense' ? 'bg-surface text-danger shadow-xs' : 'text-text-secondary'
+              )}
             >
               Pengeluaran
             </button>
             <button
               type="button"
               onClick={() => setCatType('income')}
-              className={`py-2 rounded-lg font-semibold text-xs ${
-                catType === 'income' ? 'bg-white text-[#4A6B53] shadow-xs' : 'text-[#68635B]'
-              }`}
+              className={cn(
+                'py-2 rounded-lg font-semibold text-xs transition-all',
+                catType === 'income' ? 'bg-surface text-secondary shadow-xs' : 'text-text-secondary'
+              )}
             >
               Pemasukan
             </button>
@@ -335,16 +423,17 @@ export default function SettingsPage() {
           />
 
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-[#2D2A26]">Pilih Warna Kategori</label>
+            <label className="text-xs font-semibold text-text-primary">Pilih Warna Kategori</label>
             <div className="flex gap-2 flex-wrap">
               {CATEGORY_COLORS.map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => setCatColor(c)}
-                  className={`w-7 h-7 rounded-full transition-all ${
-                    catColor === c ? 'ring-2 ring-offset-2 ring-[#C86446] scale-110' : ''
-                  }`}
+                  className={cn(
+                    'w-7 h-7 rounded-full transition-all',
+                    catColor === c ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''
+                  )}
                   style={{ backgroundColor: c }}
                 />
               ))}

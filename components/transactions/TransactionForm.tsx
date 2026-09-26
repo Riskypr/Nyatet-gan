@@ -135,7 +135,7 @@ export function TransactionForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {/* Type Toggle Tabs: Pengeluaran vs Pemasukan */}
-      <div className="grid grid-cols-2 p-1 bg-[#F2ECE1] rounded-2xl gap-1">
+      <div className="grid grid-cols-2 p-1 bg-surface-alt rounded-2xl gap-1">
         <button
           type="button"
           onClick={() => {
@@ -145,8 +145,8 @@ export function TransactionForm({
           className={cn(
             'flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150',
             type === 'expense'
-              ? 'bg-white text-[#B0473C] shadow-xs'
-              : 'text-[#68635B] hover:text-[#2D2A26]'
+              ? 'bg-surface text-danger shadow-xs'
+              : 'text-text-secondary hover:text-text-primary'
           )}
         >
           <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
@@ -162,8 +162,8 @@ export function TransactionForm({
           className={cn(
             'flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150',
             type === 'income'
-              ? 'bg-white text-[#4A6B53] shadow-xs'
-              : 'text-[#68635B] hover:text-[#2D2A26]'
+              ? 'bg-surface text-secondary shadow-xs'
+              : 'text-text-secondary hover:text-text-primary'
           )}
         >
           <ArrowDownLeft className="w-4 h-4 stroke-[2.5]" />
@@ -188,7 +188,7 @@ export function TransactionForm({
 
       {/* Kategori Selector Grid */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[#2D2A26] tracking-wide">
+        <label className="text-xs font-semibold text-text-primary tracking-wide">
           Pilih Kategori {type === 'expense' ? 'Pengeluaran' : 'Pemasukan'}
         </label>
         <div className="grid grid-cols-4 sm:grid-cols-4 gap-2 max-h-44 overflow-y-auto p-1">
@@ -205,24 +205,24 @@ export function TransactionForm({
                 className={cn(
                   'flex flex-col items-center justify-center p-2 rounded-2xl border text-center transition-all',
                   isSelected
-                    ? 'border-[#C86446] bg-[#C86446]/10 ring-2 ring-[#C86446]/20 shadow-xs'
-                    : 'border-[#E5DCD0] bg-white hover:bg-[#FAF7F2]'
+                    ? 'border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs'
+                    : 'border-border bg-surface hover:bg-surface-alt'
                 )}
               >
                 <CategoryIcon name={cat.icon} color={cat.color} size="sm" />
-                <span className="text-[11px] font-medium text-[#2D2A26] mt-1.5 line-clamp-1 w-full">
+                <span className="text-[11px] font-medium text-text-primary mt-1.5 line-clamp-1 w-full">
                   {cat.name}
                 </span>
               </button>
             );
           })}
         </div>
-        {errors.category && <p className="text-xs text-[#B0473C] font-medium">{errors.category}</p>}
+        {errors.category && <p className="text-xs text-danger font-medium">{errors.category}</p>}
       </div>
 
       {/* Dompet / Sumber Dana */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[#2D2A26] tracking-wide">
+        <label className="text-xs font-semibold text-text-primary tracking-wide">
           Sumber Dana / Dompet
         </label>
         <div className="flex gap-2 overflow-x-auto pb-1">
@@ -239,8 +239,8 @@ export function TransactionForm({
                 className={cn(
                   'flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium shrink-0 transition-all',
                   isSelected
-                    ? 'border-[#C86446] bg-[#C86446] text-white shadow-xs'
-                    : 'border-[#E5DCD0] bg-white text-[#2D2A26] hover:bg-[#FAF7F2]'
+                    ? 'border-primary bg-primary text-white shadow-xs'
+                    : 'border-border bg-surface text-text-primary hover:bg-surface-alt'
                 )}
               >
                 <div
@@ -252,7 +252,7 @@ export function TransactionForm({
             );
           })}
         </div>
-        {errors.wallet && <p className="text-xs text-[#B0473C] font-medium">{errors.wallet}</p>}
+        {errors.wallet && <p className="text-xs text-danger font-medium">{errors.wallet}</p>}
       </div>
 
       {/* Tanggal & Catatan */}

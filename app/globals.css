@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* Palette yang diminta pengguna */
+  /* Earth tone palette (Light) */
   --color-primary: #C86446;
   --color-primary-light: #E8A590;
   
@@ -28,27 +30,63 @@
   --color-text-muted: #9E968B;
 }
 
+.dark, [data-theme="dark"] {
+  /* Earth tone palette (Dark - Warm Obsidian & Espresso) */
+  --color-primary: #E07A5F;
+  --color-primary-light: #F2A28C;
+
+  --color-secondary: #5E8C6A;
+  --color-secondary-light: #92BFA0;
+
+  --color-tertiary: #C86446;
+
+  --color-neutral: #F5F2EB;
+
+  /* Alert */
+  --color-danger: #D95D50;
+  --color-warning: #E09E48;
+
+  /* Surfaces & Backgrounds */
+  --color-bg: #131211;
+  --color-surface: #1E1C1A;
+  --color-surface-alt: #282522;
+  --color-border: #35312C;
+  
+  /* Text */
+  --color-text-primary: #F5F2EB;
+  --color-text-secondary: #A8A298;
+  --color-text-muted: #736E66;
+}
+
 @theme {
-  --color-primary: #C86446;
-  --color-primary-light: #E8A590;
+  --color-primary: var(--color-primary);
+  --color-primary-light: var(--color-primary-light);
 
-  --color-secondary: #4A6B53;
-  --color-secondary-light: #9AB8A2;
+  --color-secondary: var(--color-secondary);
+  --color-secondary-light: var(--color-secondary-light);
 
-  --color-tertiary: #A84D32;
+  --color-tertiary: var(--color-tertiary);
 
-  --color-neutral: #2D2A26;
+  --color-neutral: var(--color-neutral);
 
-  --color-danger: #B0473C;
-  --color-warning: #C98A3A;
+  --color-danger: var(--color-danger);
+  --color-warning: var(--color-warning);
 
-  --color-bg: #FAF7F2;
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F2ECE1;
-  --color-border: #E5DCD0;
-  --color-text-primary: #2D2A26;
-  --color-text-secondary: #68635B;
-  --color-text-muted: #9E968B;
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-alt: var(--color-surface-alt);
+  --color-border: var(--color-border);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+}
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -56,6 +94,7 @@ body {
   color: var(--color-text-primary);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Custom scrollbars */
@@ -74,6 +113,13 @@ body {
   background: #C86446;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #35312C;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #E07A5F;
+}
+
 /* React-Toastify custom earthy theme */
 .Toastify__toast-theme--light {
   background: #FAF7F2 !important;
@@ -84,6 +130,23 @@ body {
   font-family: inherit !important;
   font-size: 13px !important;
   font-weight: 600 !important;
+}
+
+.Toastify__toast-theme--dark {
+  background: #1E1C1A !important;
+  color: #F5F2EB !important;
+  border: 1px solid #35312C !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.dark .Toastify__toast {
+  background: #1E1C1A !important;
+  color: #F5F2EB !important;
+  border: 1px solid #35312C !important;
 }
 
 .Toastify__progress-bar--success {
@@ -97,4 +160,17 @@ body {
 }
 .Toastify__progress-bar--warning {
   background: #C98A3A !important;
+}
+
+.dark .Toastify__progress-bar--success {
+  background: #5E8C6A !important;
+}
+.dark .Toastify__progress-bar--error {
+  background: #D95D50 !important;
+}
+.dark .Toastify__progress-bar--info {
+  background: #E07A5F !important;
+}
+.dark .Toastify__progress-bar--warning {
+  background: #E09E48 !important;
 }

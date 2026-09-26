@@ -11,19 +11,19 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading = false, disabled, children, ...props }, ref) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none select-none';
+      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer';
 
     const variants = {
       primary:
-        'bg-[#C86446] hover:bg-[#A84D32] text-white shadow-sm shadow-[#2D2A26]/15 focus:ring-[#C86446]',
+        'bg-primary hover:opacity-90 text-white shadow-xs shadow-primary/25 focus:ring-primary',
       secondary:
-        'bg-[#F2ECE1] hover:bg-[#E5DCD0] text-[#2D2A26] border border-[#E5DCD0] focus:ring-[#C86446]',
+        'bg-surface-alt hover:bg-border/50 text-text-primary border border-border focus:ring-primary',
       success:
-        'bg-[#4A6B53] hover:bg-[#38523F] text-white shadow-sm shadow-[#2D2A26]/15 focus:ring-[#4A6B53]',
+        'bg-secondary hover:opacity-90 text-white shadow-xs focus:ring-secondary',
       danger:
-        'bg-[#B0473C] hover:bg-[#8F3930] text-white shadow-sm shadow-[#2D2A26]/15 focus:ring-[#B0473C]',
+        'bg-danger hover:opacity-90 text-white shadow-xs focus:ring-danger',
       ghost:
-        'bg-transparent hover:bg-[#F2ECE1]/70 text-[#2D2A26] focus:ring-[#C86446]',
+        'bg-transparent hover:bg-surface-alt text-text-primary focus:ring-primary',
     };
 
     const sizes = {

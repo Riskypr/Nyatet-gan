@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { ExpenseByCategorySummary } from '@/lib/types';
 import { formatRupiah } from '@/lib/utils/currency';
@@ -16,15 +16,27 @@ const NEW_PALETTE_COLORS = [
   '#C86446', // Primary
   '#4A6B53', // Secondary
   '#A84D32', // Tertiary
-  '#2D2A26', // Neutral
   '#C98A3A', // Mustard
   '#3D7068', // Teal
   '#B0473C', // Clay red
-  '#68635B', // Muted brown
+  '#5E8C6A', // Sage
+  '#8C7A6B', // Muted brown
 ];
 
 export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkDark = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    checkDark();
+
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+    return () => observer.disconnect();
+  }, []);
 
   if (!data || data.length === 0 || totalExpense === 0) {
     return (
@@ -70,7 +82,7 @@ export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
                 <Cell
                   key={`cell-${index}`}
                   fill={entry.color}
-                  stroke="#FAF7F2"
+                  stroke={isDark ? '#1E1C1A' : '#FFFFFF'}
                   strokeWidth={2}
                   className="transition-all duration-200 hover:opacity-85"
                 />
@@ -79,12 +91,15 @@ export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
             <Tooltip
               formatter={(value: any) => [formatRupiah(Number(value) || 0), 'Pengeluaran']}
               contentStyle={{
-                backgroundColor: '#FAF7F2',
-                borderColor: '#E5DCD0',
+                backgroundColor: isDark ? '#1E1C1A' : '#FFFFFF',
+                borderColor: isDark ? '#35312C' : '#E5DCD0',
                 borderRadius: '16px',
-                color: '#2D2A26',
+                color: isDark ? '#F5F2EB' : '#2D2A26',
                 fontSize: '12px',
-                boxShadow: '0 4px 12px rgba(45, 42, 38, 0.08)',
+                boxShadow: isDark ? '0 8px 24px rgba(0, 0, 0, 0.4)' : '0 4px 16px rgba(45, 42, 38, 0.08)',
+              }}
+              itemStyle={{
+                color: isDark ? '#F5F2EB' : '#2D2A26',
               }}
             />
           </PieChart>
@@ -94,20 +109,20 @@ export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4">
           {activeItem ? (
             <>
-              <span className="text-[11px] font-semibold text-[#68635B] truncate max-w-[120px]">
+              <span className="text-[11px] font-semibold text-text-secondary truncate max-w-[120px]">
                 {activeItem.name}
               </span>
-              <span className="text-base font-bold text-[#2D2A26]">
+              <span className="text-base font-bold text-text-primary">
                 {activeItem.percentage}%
               </span>
-              <span className="text-[10px] text-[#9E968B]">
+              <span className="text-[10px] text-text-muted">
                 {formatRupiah(activeItem.value)}
               </span>
             </>
           ) : (
             <>
-              <span className="text-[11px] font-semibold text-[#68635B]">Total Keluar</span>
-              <span className="text-sm sm:text-base font-bold text-[#B0473C]">
+              <span className="text-[11px] font-semibold text-text-secondary">Total Keluar</span>
+              <span className="text-sm sm:text-base font-bold text-danger">
                 {formatRupiah(totalExpense)}
               </span>
             </>
@@ -117,7 +132,7 @@ export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
 
       {/* Breakdown List */}
       <div className="flex flex-col gap-2">
-        <h4 className="text-xs font-bold text-[#2D2A26] tracking-wide uppercase">
+        <h4 className="text-xs font-bold text-text-primary tracking-wide uppercase">
           Rincian Kategori
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -130,24 +145,24 @@ export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
                 onMouseLeave={() => setActiveIndex(null)}
                 className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
                   isHovered
-                    ? 'bg-[#FAF7F2] border-[#C86446]'
-                    : 'bg-white border-[#E5DCD0]/70 hover:bg-[#FAF7F2]/60'
+                    ? 'bg-primary/10 border-primary shadow-xs'
+                    : 'bg-surface border-border/80 hover:bg-surface-alt/70'
                 }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div
-                    className="w-3.5 h-3.5 rounded-full shrink-0"
+                    className="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs"
                     style={{ backgroundColor: item.color }}
                   />
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-[#2D2A26] truncate">{item.name}</p>
-                    <p className="text-[10px] text-[#68635B]">{item.count} transaksi</p>
+                    <p className="text-xs font-semibold text-text-primary truncate">{item.name}</p>
+                    <p className="text-[10px] text-text-secondary">{item.count} transaksi</p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <p className="text-xs font-bold text-[#2D2A26]">{formatRupiah(item.value)}</p>
-                  <p className="text-[10px] font-semibold text-[#C86446]">{item.percentage}%</p>
+                  <p className="text-xs font-bold text-text-primary">{formatRupiah(item.value)}</p>
+                  <p className="text-[10px] font-semibold text-primary">{item.percentage}%</p>
                 </div>
               </div>
             );

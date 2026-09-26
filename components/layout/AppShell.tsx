@@ -13,12 +13,14 @@ import { BottomSheet } from '@/components/ui/BottomSheet';
 import { TransactionForm } from '@/components/transactions/TransactionForm';
 import { transactionService } from '@/lib/services/transactionService';
 import { Transaction } from '@/lib/types';
+import { useThemeStore } from '@/lib/stores/themeStore';
 import { Loader2 } from 'lucide-react';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isDbReady, setIsDbReady] = useState(false);
   const { fetchWallets } = useWalletStore();
   const { fetchMonthlyData, currentMonth } = useTransactionStore();
+  const { initTheme } = useThemeStore();
   const {
     isTransactionModalOpen,
     transactionModalType,
@@ -28,8 +30,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
-  // Inisialisasi Database IndexedDB
+  // Inisialisasi Tema & Database IndexedDB
   useEffect(() => {
+    initTheme();
+
     async function init() {
       try {
         await seedInitialDataIfNeeded();
@@ -41,7 +45,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       }
     }
     init();
-  }, []);
+  }, [initTheme]);
 
   // Ambil data transaksi saat mode edit
   useEffect(() => {
@@ -56,12 +60,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   if (!isDbReady) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] flex flex-col items-center justify-center p-4">
-        <div className="w-12 h-12 rounded-2xl bg-[#C86446] text-white flex items-center justify-center text-xl shadow-md animate-bounce mb-3">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-4">
+        <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center text-xl shadow-md animate-bounce mb-3">
           <img src="/Logo.png" alt="Logo" className="w-10 h-10" />
         </div>
-        <div className="flex items-center gap-2 text-sm font-semibold text-[#2D2A26]">
-          <Loader2 className="w-4 h-4 animate-spin text-[#C86446]" />
+        <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
+          <Loader2 className="w-4 h-4 animate-spin text-primary" />
           <span>Memuat Nyatet Gan...</span>
         </div>
       </div>
@@ -69,7 +73,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#2D2A26] flex flex-col md:flex-row antialiased">
+    <div className="min-h-screen bg-bg text-text-primary flex flex-col md:flex-row antialiased">
       {/* React-Toastify Container */}
       <ToastContainer />
 

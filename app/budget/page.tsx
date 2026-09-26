@@ -97,10 +97,10 @@ export default function BudgetPage() {
       {/* Page Header Notice */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-base font-bold text-[#2D2A26]">
+          <h2 className="text-base font-bold text-text-primary">
             Target Anggaran Bulan {formatMonthYear(currentMonth)}
           </h2>
-          <p className="text-xs text-[#68635B]">
+          <p className="text-xs text-text-secondary">
             Batasi pengeluaran bulanan Anda agar keuangan tetap terkendali.
           </p>
         </div>
@@ -109,21 +109,21 @@ export default function BudgetPage() {
       {/* 1. Target Pengeluaran Keseluruhan (Total Budget) */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold text-[#68635B] uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">
             Target Keseluruhan Bulan Ini
           </h3>
           {overallBudget && (
             <div className="flex items-center gap-1">
               <button
                 onClick={() => handleOpenModal(null, overallBudget.budget.targetAmount)}
-                className="p-1 rounded-lg text-[#68635B] hover:bg-[#F2ECE1] transition-colors"
+                className="p-1 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors"
                 title="Ubah Target"
               >
                 <Pencil className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => handleDeleteBudget(overallBudget.budget.id)}
-                className="p-1 rounded-lg text-[#B0473C] hover:bg-[#F2ECE1] transition-colors"
+                className="p-1 rounded-lg text-danger hover:bg-surface-alt transition-colors"
                 title="Hapus Target"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -139,10 +139,10 @@ export default function BudgetPage() {
             onClick={() => handleOpenModal(null, overallBudget.budget.targetAmount)}
           />
         ) : (
-          <div className="p-5 bg-white rounded-2xl border border-dashed border-[#E5DCD0] flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div className="p-5 bg-surface rounded-2xl border border-dashed border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
             <div>
-              <h4 className="text-sm font-bold text-[#2D2A26]">Belum Ada Target Keseluruhan</h4>
-              <p className="text-xs text-[#68635B]">
+              <h4 className="text-sm font-bold text-text-primary">Belum Ada Target Keseluruhan</h4>
+              <p className="text-xs text-text-secondary">
                 Tetapkan batas maksimal pengeluaran Anda di bulan {formatMonthYear(currentMonth)}.
               </p>
             </div>
@@ -150,7 +150,7 @@ export default function BudgetPage() {
               variant="primary"
               size="sm"
               onClick={() => handleOpenModal(null, 0)}
-              className="gap-2 shrink-0"
+              className="gap-2 shrink-0 shadow-xs"
             >
               <Plus className="w-4 h-4" />
               <span>Pasang Target Total</span>
@@ -162,7 +162,7 @@ export default function BudgetPage() {
       {/* 2. Target Per Kategori */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold text-[#68635B] uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">
             Target Per Kategori
           </h3>
           <Button
@@ -188,13 +188,13 @@ export default function BudgetPage() {
                 <div className="absolute top-3 right-3 flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleOpenModal(cp.budget.categoryId, cp.budget.targetAmount)}
-                    className="p-1 rounded-lg text-[#68635B] hover:bg-[#FAF7F2]"
+                    className="p-1 rounded-lg text-text-secondary hover:bg-surface-alt"
                   >
                     <Pencil className="w-3 h-3" />
                   </button>
                   <button
                     onClick={() => handleDeleteBudget(cp.budget.id)}
-                    className="p-1 rounded-lg text-[#B0473C] hover:bg-[#FAF7F2]"
+                    className="p-1 rounded-lg text-danger hover:bg-surface-alt"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -203,10 +203,10 @@ export default function BudgetPage() {
             ))}
           </div>
         ) : (
-          <div className="p-6 bg-white rounded-2xl border border-dashed border-[#E5DCD0] text-center">
-            <Target className="w-8 h-8 text-[#C86446] mx-auto mb-2 opacity-60" />
-            <p className="text-xs font-semibold text-[#2D2A26]">Belum ada target per kategori</p>
-            <p className="text-[11px] text-[#68635B] mt-1 max-w-sm mx-auto">
+          <div className="p-6 bg-surface rounded-2xl border border-dashed border-border text-center">
+            <Target className="w-8 h-8 text-primary mx-auto mb-2 opacity-60" />
+            <p className="text-xs font-semibold text-text-primary">Belum ada target per kategori</p>
+            <p className="text-[11px] text-text-secondary mt-1 max-w-sm mx-auto">
               Anda dapat memasang target khusus untuk pos tertentu seperti Makan & Minum, Belanja, atau Hiburan.
             </p>
           </div>
@@ -223,13 +223,13 @@ export default function BudgetPage() {
         <form onSubmit={handleSaveBudget} className="flex flex-col gap-4">
           {/* Pilihan kategori bila bukan total */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-[#2D2A26]">Tipe Target</label>
+            <label className="text-xs font-semibold text-text-primary">Tipe Target</label>
             <select
               value={selectedCategoryId || '__total__'}
               onChange={(e) =>
                 setSelectedCategoryId(e.target.value === '__total__' ? null : e.target.value)
               }
-              className="h-11 px-3.5 rounded-xl border border-[#E5DCD0] bg-white text-sm font-medium text-[#2D2A26] focus:outline-none focus:ring-2 focus:ring-[#C86446]/30"
+              className="h-11 px-3.5 rounded-xl border border-border bg-surface text-sm font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
             >
               <option value="__total__">🌟 Target Keseluruhan Bulanan (Total)</option>
               {expenseCategories.map((c) => (

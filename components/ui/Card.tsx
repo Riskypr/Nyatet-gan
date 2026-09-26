@@ -8,11 +8,11 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Card({ className, variant = 'elevated', children, ...props }: CardProps) {
   const variants = {
     elevated:
-      'bg-white border border-[#E5DCD0]/80 shadow-sm shadow-[#2D2A26]/8',
+      'bg-surface border border-border/80 shadow-xs shadow-black/5 dark:shadow-black/25',
     flat:
-      'bg-[#F2ECE1]/70 border border-transparent',
+      'bg-surface-alt/80 border border-transparent',
     outline:
-      'bg-transparent border border-[#E5DCD0]',
+      'bg-transparent border border-border',
   };
 
   return (

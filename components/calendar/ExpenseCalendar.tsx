@@ -110,17 +110,16 @@ export function ExpenseCalendar({
     };
   }, [transactions, currentMonth]);
 
-  // Generate calendar days grid (Monday start)
+  // Generate grid days for current month view
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(currentMonthDate);
-    const monthEnd = endOfMonth(currentMonthDate);
-    const start = startOfWeek(monthStart, { weekStartsOn: 1 });
-    const end = endOfWeek(monthEnd, { weekStartsOn: 1 });
+    const monthEnd = endOfMonth(monthStart);
+    const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Senin
+    const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
-    return eachDayOfInterval({ start, end });
+    return eachDayOfInterval({ start: startDate, end: endDate });
   }, [currentMonthDate]);
 
-  // Handle month navigation
   const handlePrevMonth = () => {
     if (onMonthChange) {
       const prev = subMonths(currentMonthDate, 1);
@@ -148,16 +147,16 @@ export function ExpenseCalendar({
   const isSelectedDateToday = selectedDate === todayStr;
 
   return (
-    <Card className="p-4 sm:p-5 flex flex-col gap-4 border-[#E5DCD0]/80 shadow-xs">
+    <Card className="p-4 sm:p-5 flex flex-col gap-4 border-border/80 shadow-xs">
       {/* Header Kalender */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E5DCD0]/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#C86446]/10 text-[#C86446] flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0 shadow-xs">
             <CalendarIcon className="w-4 h-4 stroke-[2.5]" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#2D2A26]">Kalender Pengeluaran</h3>
-            <p className="text-[11px] text-[#68635B]">
+            <h3 className="text-sm font-bold text-text-primary">Kalender Pengeluaran</h3>
+            <p className="text-[11px] text-text-secondary">
               Pantau ritme dan puncak belanja harian Anda
             </p>
           </div>
@@ -166,27 +165,27 @@ export function ExpenseCalendar({
         {/* Month selector & highest spending badge */}
         <div className="flex items-center justify-between sm:justify-end gap-2">
           {maxExpenseAmount > 0 && (
-            <div className="hidden xs:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#B0473C]/10 text-[#B0473C] text-[11px] font-semibold border border-[#B0473C]/20">
-              <Flame className="w-3.5 h-3.5 fill-[#B0473C]" />
+            <div className="hidden xs:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-danger/15 text-danger text-[11px] font-semibold border border-danger/25">
+              <Flame className="w-3.5 h-3.5 fill-danger" />
               <span>Puncak: {formatRupiah(maxExpenseAmount)}</span>
             </div>
           )}
 
-          <div className="flex items-center gap-1 bg-[#FAF7F2] border border-[#E5DCD0] rounded-xl px-1.5 py-0.5">
+          <div className="flex items-center gap-1 bg-surface-alt border border-border rounded-xl px-1.5 py-0.5">
             <button
               onClick={handlePrevMonth}
               aria-label="Bulan sebelumnya"
-              className="p-1 rounded-lg text-[#68635B] hover:bg-[#E5DCD0]/60 transition-colors"
+              className="p-1 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-            <span className="text-xs font-bold text-[#2D2A26] px-1.5 min-w-[100px] text-center">
+            <span className="text-xs font-bold text-text-primary px-1.5 min-w-[100px] text-center">
               {format(currentMonthDate, 'MMMM yyyy', { locale: id })}
             </span>
             <button
               onClick={handleNextMonth}
               aria-label="Bulan berikutnya"
-              className="p-1 rounded-lg text-[#68635B] hover:bg-[#E5DCD0]/60 transition-colors"
+              className="p-1 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors"
             >
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -201,7 +200,7 @@ export function ExpenseCalendar({
             key={day}
             className={cn(
               'text-[11px] font-semibold py-1',
-              idx >= 5 ? 'text-[#B0473C]' : 'text-[#68635B]'
+              idx >= 5 ? 'text-danger' : 'text-text-secondary'
             )}
           >
             {day}
@@ -228,17 +227,17 @@ export function ExpenseCalendar({
               className={cn(
                 'relative flex flex-col items-center justify-between p-1.5 sm:p-2 rounded-2xl min-h-[52px] sm:min-h-[58px] transition-all duration-150 cursor-pointer select-none text-left',
                 // Non-current month styling
-                !isCurrentMonthDay && 'opacity-25 pointer-events-none bg-transparent',
+                !isCurrentMonthDay && 'opacity-20 pointer-events-none bg-transparent',
                 // Default current month cell
-                isCurrentMonthDay && !isPeakExpense && !isTodayDay && 'bg-[#FAF7F2] hover:bg-[#F2ECE1] border border-[#E5DCD0]/60 hover:border-[#C86446]/50',
+                isCurrentMonthDay && !isPeakExpense && !isTodayDay && 'bg-surface-alt/60 hover:bg-surface-alt border border-border/80 hover:border-primary/50',
                 // Hari Ini (Terracotta accent)
-                isCurrentMonthDay && isTodayDay && !isPeakExpense && 'bg-[#C86446]/10 border-2 border-[#C86446] shadow-xs hover:bg-[#C86446]/15',
+                isCurrentMonthDay && isTodayDay && !isPeakExpense && 'bg-primary/15 border-2 border-primary shadow-xs hover:bg-primary/20',
                 // Pengeluaran Terbanyak (Bold Crimson / Maroon styling)
-                isCurrentMonthDay && isPeakExpense && !isTodayDay && 'bg-[#B0473C] text-white border-2 border-[#94382E] shadow-sm shadow-[#B0473C]/25 hover:brightness-105',
+                isCurrentMonthDay && isPeakExpense && !isTodayDay && 'bg-danger text-white border-2 border-danger/80 shadow-sm shadow-danger/25 hover:brightness-105',
                 // Both Hari Ini & Pengeluaran Terbanyak
-                isCurrentMonthDay && isPeakExpense && isTodayDay && 'bg-[#B0473C] text-white border-2 border-[#C86446] ring-2 ring-[#C86446] shadow-sm shadow-[#B0473C]/30',
+                isCurrentMonthDay && isPeakExpense && isTodayDay && 'bg-danger text-white border-2 border-primary ring-2 ring-primary shadow-sm shadow-danger/30',
                 // Selected border highlight
-                isSelected && 'ring-2 ring-[#2D2A26]'
+                isSelected && 'ring-2 ring-text-primary'
               )}
             >
               {/* Day header: number + badges */}
@@ -246,7 +245,7 @@ export function ExpenseCalendar({
                 <span
                   className={cn(
                     'text-xs font-bold leading-none',
-                    isPeakExpense ? 'text-white' : isTodayDay ? 'text-[#C86446]' : 'text-[#2D2A26]'
+                    isPeakExpense ? 'text-white' : isTodayDay ? 'text-primary' : 'text-text-primary'
                   )}
                 >
                   {format(day, 'd')}
@@ -258,13 +257,13 @@ export function ExpenseCalendar({
                     <Flame
                       className={cn(
                         'w-3 h-3',
-                        isPeakExpense ? 'text-[#FFD700] fill-[#FFD700]' : 'text-[#B0473C]'
+                        isPeakExpense ? 'text-[#FFD700] fill-[#FFD700]' : 'text-danger'
                       )}
                       aria-label="Pengeluaran Terbanyak"
                     />
                   )}
                   {isTodayDay && !isPeakExpense && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C86446]" title="Hari ini" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" title="Hari ini" />
                   )}
                 </div>
               </div>
@@ -273,11 +272,10 @@ export function ExpenseCalendar({
               <div className="w-full mt-auto flex flex-col items-center justify-end">
                 {hasExpense && isCurrentMonthDay ? (
                   <div className="w-full text-center">
-                    {/* Compact display on small/large screens */}
                     <span
                       className={cn(
                         'block text-[9px] sm:text-[10px] font-extrabold truncate leading-tight',
-                        isPeakExpense ? 'text-white/95' : 'text-[#B0473C]'
+                        isPeakExpense ? 'text-white/95' : 'text-danger'
                       )}
                     >
                       {totalExpense >= 1000000
@@ -288,7 +286,7 @@ export function ExpenseCalendar({
                     </span>
                   </div>
                 ) : isCurrentMonthDay ? (
-                  <span className="text-[9px] text-[#68635B]/40 leading-none pb-0.5">-</span>
+                  <span className="text-[9px] text-text-muted leading-none pb-0.5">-</span>
                 ) : null}
               </div>
             </button>
@@ -297,30 +295,30 @@ export function ExpenseCalendar({
       </div>
 
       {/* Legenda Keterangan Warna */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E5DCD0]/60 text-[11px] text-[#68635B]">
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/70 text-[11px] text-text-secondary">
         <div className="flex flex-wrap items-center gap-3">
           {/* Hari Ini */}
           <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 rounded-md bg-[#C86446]/10 border-2 border-[#C86446]" />
+            <div className="w-3.5 h-3.5 rounded-md bg-primary/15 border-2 border-primary" />
             <span>Hari Ini</span>
           </div>
 
           {/* Pengeluaran Terbanyak */}
           <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 rounded-md bg-[#B0473C] flex items-center justify-center text-white">
+            <div className="w-3.5 h-3.5 rounded-md bg-danger flex items-center justify-center text-white">
               <Flame className="w-2.5 h-2.5 fill-[#FFD700] text-[#FFD700]" />
             </div>
-            <span className="font-semibold text-[#B0473C]">Pengeluaran Terbanyak</span>
+            <span className="font-semibold text-danger">Pengeluaran Terbanyak</span>
           </div>
 
           {/* Hari dengan Belanja */}
           <div className="flex items-center gap-1.5">
-            <span className="font-bold text-[#B0473C] text-[10px]">15k</span>
+            <span className="font-bold text-danger text-[10px]">15k</span>
             <span>Ada Pengeluaran</span>
           </div>
         </div>
 
-        <span className="text-[10px] text-[#68635B]/70 italic hidden xs:inline">
+        <span className="text-[10px] text-text-muted italic hidden xs:inline">
           * Klik tanggal untuk melihat rincian
         </span>
       </div>
@@ -344,32 +342,32 @@ export function ExpenseCalendar({
             className={cn(
               'p-4 rounded-2xl border flex items-center justify-between transition-all',
               isSelectedDatePeak
-                ? 'bg-linear-to-r from-[#B0473C]/10 via-[#B0473C]/5 to-transparent border-[#B0473C]/30'
-                : 'bg-[#FAF7F2] border-[#E5DCD0]'
+                ? 'bg-gradient-to-r from-danger/15 via-danger/5 to-transparent border-danger/30'
+                : 'bg-surface-alt border-border'
             )}
           >
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-[#68635B]">Total Belanja Hari Ini</span>
+                <span className="text-xs font-semibold text-text-secondary">Total Belanja Hari Ini</span>
                 {isSelectedDatePeak && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#B0473C] text-white text-[10px] font-bold shadow-xs">
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-danger text-white text-[10px] font-bold shadow-xs">
                     <Flame className="w-3 h-3 fill-[#FFD700] text-[#FFD700]" />
                     Puncak Bulan Ini
                   </span>
                 )}
                 {isSelectedDateToday && !isSelectedDatePeak && (
-                  <span className="px-2 py-0.5 rounded-full bg-[#C86446] text-white text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold">
                     Hari Ini
                   </span>
                 )}
               </div>
-              <h3 className="text-2xl font-extrabold text-[#2D2A26]">
+              <h3 className="text-2xl font-extrabold text-text-primary">
                 {formatRupiah(selectedDateTotal)}
               </h3>
             </div>
 
             <div className="text-right">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-white border border-[#E5DCD0] text-[#2D2A26]">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-surface border border-border text-text-primary shadow-xs">
                 {selectedDateExpenses.length} transaksi
               </span>
             </div>
@@ -378,7 +376,7 @@ export function ExpenseCalendar({
           {/* List Item Pengeluaran */}
           {selectedDateExpenses.length > 0 ? (
             <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between text-xs font-bold text-[#68635B] px-1">
+              <div className="flex items-center justify-between text-xs font-bold text-text-secondary px-1">
                 <span>Daftar Pengeluaran</span>
                 <span>Nominal</span>
               </div>
@@ -399,12 +397,12 @@ export function ExpenseCalendar({
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center p-6 text-center bg-white rounded-2xl border border-dashed border-[#E5DCD0]">
-              <div className="w-10 h-10 rounded-full bg-[#FAF7F2] flex items-center justify-center text-[#68635B] mb-2">
+            <div className="flex flex-col items-center justify-center p-6 text-center bg-surface rounded-2xl border border-dashed border-border">
+              <div className="w-10 h-10 rounded-full bg-surface-alt flex items-center justify-center text-text-secondary mb-2">
                 <Info className="w-5 h-5" />
               </div>
-              <p className="text-sm font-bold text-[#2D2A26]">Tidak Ada Pengeluaran</p>
-              <p className="text-xs text-[#68635B] mt-0.5 max-w-xs">
+              <p className="text-sm font-bold text-text-primary">Tidak Ada Pengeluaran</p>
+              <p className="text-xs text-text-secondary mt-0.5 max-w-xs">
                 Tidak ada catatan pengeluaran pada tanggal ini.
               </p>
               {onAddTransaction && (
@@ -435,7 +433,7 @@ export function ExpenseCalendar({
                 onAddTransaction('expense');
               }}
             >
-              <Plus className="w-4 h-4 text-[#C86446]" />
+              <Plus className="w-4 h-4 text-primary" />
               <span>Tambah Pengeluaran</span>
             </Button>
           )}

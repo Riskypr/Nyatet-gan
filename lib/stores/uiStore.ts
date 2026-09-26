@@ -35,6 +35,7 @@ export const useUIStore = create<UIState>((set) => ({
   },
 
   showToast: (message: string, type = 'success', options?: ToastOptions) => {
+    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
     const defaultOptions: ToastOptions = {
       position: 'top-center',
       autoClose: 3000,
@@ -42,7 +43,7 @@ export const useUIStore = create<UIState>((set) => ({
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
-      theme: 'light',
+      theme: isDark ? 'dark' : 'light',
       ...options,
     };
 

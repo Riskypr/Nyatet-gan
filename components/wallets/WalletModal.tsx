@@ -115,7 +115,7 @@ export function WalletModal({ isOpen, onClose, wallet }: WalletModalProps) {
 
         {/* Pilihan Warna Earth Tone Baru */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-[#2D2A26]">Pilih Warna Identitas</label>
+          <label className="text-xs font-semibold text-text-primary">Pilih Warna Identitas</label>
           <div className="flex gap-2.5 flex-wrap">
             {COLOR_OPTIONS.map((c) => {
               const isSelected = color === c;
@@ -126,7 +126,7 @@ export function WalletModal({ isOpen, onClose, wallet }: WalletModalProps) {
                   onClick={() => setColor(c)}
                   className={cn(
                     'w-8 h-8 rounded-full transition-transform',
-                    isSelected && 'ring-3 ring-offset-2 ring-[#C86446] scale-110'
+                    isSelected && 'ring-3 ring-offset-2 ring-primary ring-offset-surface scale-110'
                   )}
                   style={{ backgroundColor: c }}
                   aria-label={`Pilih warna ${c}`}

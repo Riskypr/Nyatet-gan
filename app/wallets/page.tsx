@@ -59,19 +59,19 @@ export default function WalletsPage() {
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto">
       {/* Header Overview Card */}
-      <Card className="p-5 bg-linear-to-r from-[#F2ECE1] to-white border-[#E5DCD0]">
+      <Card className="p-5 bg-gradient-to-r from-surface-alt via-surface to-surface border-border shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-[#C86446] text-white flex items-center justify-center shadow-sm shadow-[#C86446]/30">
+            <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shadow-sm shadow-primary/30">
               <WalletIcon className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold text-[#68635B]">Total Saldo Seluruh Dompet</p>
+                <p className="text-xs font-semibold text-text-secondary">Total Saldo Seluruh Dompet</p>
                 <button
                   type="button"
                   onClick={toggleBalanceHidden}
-                  className="p-1 rounded-lg text-[#68635B] hover:text-[#2D2A26] hover:bg-[#E5DCD0]/50 transition-colors cursor-pointer"
+                  className="p-1 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors cursor-pointer"
                   title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
                   aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
                 >
@@ -82,7 +82,7 @@ export default function WalletsPage() {
                   )}
                 </button>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2D2A26]" suppressHydrationWarning>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-text-primary" suppressHydrationWarning>
                 {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(totalBalance)}
               </h2>
             </div>
@@ -102,8 +102,8 @@ export default function WalletsPage() {
       </Card>
 
       {/* Info notice about safe archive */}
-      <div className="flex items-center gap-2 p-3 rounded-xl bg-[#FAF7F2] border border-[#E5DCD0] text-xs text-[#68635B]">
-        <Info className="w-4 h-4 text-[#C86446] shrink-0" />
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-surface-alt border border-border text-xs text-text-secondary">
+        <Info className="w-4 h-4 text-primary shrink-0" />
         <span>
           Dompet yang sudah memiliki riwayat transaksi akan diarsipkan otomatis saat dihapus untuk menjaga riwayat keuangan tetap utuh.
         </span>
@@ -111,7 +111,7 @@ export default function WalletsPage() {
 
       {/* Grid of Wallets */}
       <div className="flex flex-col gap-3">
-        <h3 className="text-sm font-bold text-[#2D2A26]">Daftar Sumber Dana ({wallets.length})</h3>
+        <h3 className="text-sm font-bold text-text-primary">Daftar Sumber Dana ({wallets.length})</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           {wallets.map((w) => (
             <WalletCard
