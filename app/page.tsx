@@ -176,12 +176,19 @@ export default function DashboardPage() {
         </Card>
       )}
 
-      {/* 3. Daftar Dompet (Horizontal Scroll) */}
+      {/* 3. Dompet dan sumber dana (Horizontal Carousel) */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <WalletIcon className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold text-text-primary">Dompet & Sumber Dana</h3>
+          <div>
+            <div className="flex items-center gap-2">
+              <WalletIcon className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold text-text-primary">Dompet dan sumber dana</h3>
+            </div>
+            <p className="text-[11px] text-text-muted mt-0.5 ml-6">
+              {wallets.length > 0
+                ? `${wallets.length} Sumber dana terdaftar`
+                : 'Belum ada sumber dana'}
+            </p>
           </div>
           <Link
             href="/wallets"
@@ -192,17 +199,24 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-3 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+        {/* Smooth snap-scroll carousel — shows ~1.5-2 cards on mobile */}
+        <div className="flex items-stretch gap-3.5 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory scroll-smooth scrollbar-none"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
           {wallets.map((w) => (
-            <WalletCard key={w.id} wallet={w} isCompact />
+            <div key={w.id} className="snap-start">
+              <WalletCard wallet={w} isCompact />
+            </div>
           ))}
 
           <button
             onClick={() => setIsWalletModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-3 rounded-2xl border border-dashed border-border bg-surface hover:bg-surface-alt text-xs font-semibold text-text-secondary shrink-0 transition-colors h-[58px] cursor-pointer"
+            className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface/50 hover:bg-surface-alt/60 text-text-secondary shrink-0 transition-all hover:border-primary/40 cursor-pointer min-w-[120px] h-[130px] select-none"
           >
-            <Plus className="w-4 h-4 text-primary" />
-            <span>Tambah</span>
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <Plus className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-semibold">Tambah</span>
           </button>
         </div>
       </div>

@@ -7,6 +7,23 @@ import { formatRupiah } from '@/lib/utils/currency';
 import { useWalletStore } from '@/lib/stores/walletStore';
 import { Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import {
+  Wallet as WalletIcon,
+  CreditCard,
+  Smartphone,
+  Banknote,
+  Briefcase,
+  LucideIcon,
+} from 'lucide-react';
+
+/** Map wallet icon names to a decorative watermark icon */
+const watermarkIconMap: Record<string, LucideIcon> = {
+  Wallet: WalletIcon,
+  CreditCard: CreditCard,
+  Smartphone: Smartphone,
+  Banknote: Banknote,
+  Briefcase: Briefcase,
+};
 
 export interface WalletCardProps {
   wallet: Wallet;
@@ -19,17 +36,43 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
   const isBalanceHidden = useWalletStore((s) => s.isBalanceHidden);
 
   if (isCompact) {
+    const WatermarkIcon = watermarkIconMap[wallet.icon || 'Wallet'] || WalletIcon;
+
     return (
-      <div className="flex items-center gap-3 p-3 bg-surface rounded-2xl border border-border shadow-xs shrink-0 min-w-[155px] transition-colors">
-        <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 text-xs font-bold shadow-xs"
-          style={{ backgroundColor: wallet.color }}
-        >
-          {wallet.name.charAt(0).toUpperCase()}
+      <div
+        className="relative flex flex-col justify-between rounded-2xl p-4 min-w-[200px] w-[200px] h-[130px] shrink-0 overflow-hidden shadow-sm transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] select-none"
+        style={{
+          background: `linear-gradient(145deg, ${wallet.color}, ${wallet.color}CC)`,
+        }}
+      >
+        {/* Decorative watermark icon — top-right, blended softly */}
+        <div className="absolute -top-2 -right-2 pointer-events-none opacity-[0.12]">
+          <WatermarkIcon className="w-24 h-24" style={{ color: '#fff' }} strokeWidth={1} />
         </div>
-        <div className="min-w-0">
-          <p className="text-xs font-medium text-text-secondary truncate">{wallet.name}</p>
-          <p className="text-xs font-bold text-text-primary truncate tracking-wide" suppressHydrationWarning>
+
+        {/* Top-left: Category icon */}
+        <div className="relative z-10">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center backdrop-blur-sm"
+            style={{ backgroundColor: 'rgba(255,255,255,0.22)' }}
+          >
+            <CategoryIcon name={wallet.icon || 'Wallet'} color="#ffffff" size="sm" className="!bg-transparent !p-0 !w-auto !h-auto" />
+          </div>
+        </div>
+
+        {/* Bottom-left: Name + Balance */}
+        <div className="relative z-10 mt-auto min-w-0">
+          <p
+            className="text-[11px] font-medium truncate leading-tight"
+            style={{ color: 'rgba(255,255,255,0.78)' }}
+          >
+            {wallet.name}
+          </p>
+          <p
+            className="text-base font-extrabold tracking-tight truncate mt-0.5"
+            style={{ color: '#ffffff' }}
+            suppressHydrationWarning
+          >
             {isBalanceHidden ? '••••••••' : formatRupiah(wallet.currentBalance)}
           </p>
         </div>

@@ -120,6 +120,15 @@ body {
   background: #E07A5F;
 }
 
+/* Hide scrollbar for carousel / horizontal scroll areas */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* React-Toastify custom earthy theme */
 .Toastify__toast-theme--light {
   background: #FAF7F2 !important;
