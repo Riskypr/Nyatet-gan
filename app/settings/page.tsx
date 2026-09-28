@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { useWalletStore } from '@/lib/stores/walletStore';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
 import { useUIStore } from '@/lib/stores/uiStore';
@@ -28,6 +29,9 @@ import {
   Moon,
   Laptop,
   Check,
+  Target,
+  Wallet as WalletIcon,
+  ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
@@ -182,6 +186,41 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto">
+      {/* 0. Navigasi Cepat Kelola Keuangan */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Link
+          href="/budget"
+          className="p-4 rounded-2xl bg-surface border border-border shadow-xs hover:border-primary/40 hover:bg-surface-alt/40 transition-all flex items-center justify-between group cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+              <Target className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-text-primary">Kelola Target Anggaran</h4>
+              <p className="text-[11px] text-text-secondary">Atur batas belanja bulanan & per kategori</p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-text-secondary group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+        </Link>
+
+        <Link
+          href="/wallets"
+          className="p-4 rounded-2xl bg-surface border border-border shadow-xs hover:border-secondary/40 hover:bg-surface-alt/40 transition-all flex items-center justify-between group cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-105 transition-transform">
+              <WalletIcon className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-text-primary">Kelola Dompet & Sumber Dana</h4>
+              <p className="text-[11px] text-text-secondary">Tambah, ubah rekening bank & e-wallet</p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-text-secondary group-hover:text-secondary group-hover:translate-x-0.5 transition-all" />
+        </Link>
+      </div>
+
       {/* 1. Pengaturan Tema Tampilan */}
       <Card className="p-5 flex flex-col gap-4">
         <div className="flex items-center gap-3 border-b border-border/70 pb-3">
