@@ -16,7 +16,7 @@ export function BottomNav() {
     { label: 'Transaksi', href: '/transactions', icon: ReceiptText },
     // FAB tengah
     { label: 'Catat', href: '#', icon: Plus, isFab: true },
-    { label: 'Anggaran', href: '/budget', icon: Target },
+    // { label: 'Anggaran', href: '/budget', icon: Target },
     { label: 'Laporan', href: '/reports', icon: PieChart },
     { label: 'Pengaturan', href: '/settings', icon: Settings },
   ];
