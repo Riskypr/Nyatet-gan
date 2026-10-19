@@ -12,6 +12,7 @@ export interface BudgetProgressBarProps {
   showDetails?: boolean;
   className?: string;
   onClick?: () => void;
+  actions?: React.ReactNode;
 }
 
 export function BudgetProgressBar({
@@ -21,6 +22,7 @@ export function BudgetProgressBar({
   showDetails = true,
   className,
   onClick,
+  actions,
 }: BudgetProgressBarProps) {
   const percentage = targetAmount > 0 ? Math.round((spentAmount / targetAmount) * 100) : 0;
   const clampedPercentage = Math.min(percentage, 100);
@@ -48,14 +50,22 @@ export function BudgetProgressBar({
         className
       )}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs sm:text-sm font-bold text-text-primary">{title}</span>
-          {isOver && <AlertTriangle className="w-4 h-4 text-danger shrink-0" />}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs sm:text-sm font-bold text-text-primary truncate">{title}</span>
+            {isOver && <AlertTriangle className="w-4 h-4 text-danger shrink-0" />}
+          </div>
+          <span className="text-[11px] text-text-secondary">
+            Total Target: <strong className="text-text-primary font-semibold">{formatRupiah(targetAmount)}</strong>
+          </span>
         </div>
-        <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full', badgeColor)}>
-          {percentage}% terpakai
-        </span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full', badgeColor)}>
+            {percentage}% terpakai
+          </span>
+          {actions}
+        </div>
       </div>
 
       {/* Progress Bar Container */}

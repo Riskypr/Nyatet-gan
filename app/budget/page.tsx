@@ -179,27 +179,36 @@ export default function BudgetPage() {
         {categoryBudgets.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {categoryBudgets.map((cp) => (
-              <div key={cp.budget.id} className="relative group">
-                <BudgetProgressBar
-                  title={cp.category?.name || 'Kategori'}
-                  spentAmount={cp.spentAmount}
-                  targetAmount={cp.budget.targetAmount}
-                />
-                <div className="absolute top-3 right-3 flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => handleOpenModal(cp.budget.categoryId, cp.budget.targetAmount)}
-                    className="p-1 rounded-lg text-text-secondary hover:bg-surface-alt"
-                  >
-                    <Pencil className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteBudget(cp.budget.id)}
-                    className="p-1 rounded-lg text-danger hover:bg-surface-alt"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
+              <BudgetProgressBar
+                key={cp.budget.id}
+                title={cp.category?.name || 'Kategori'}
+                spentAmount={cp.spentAmount}
+                targetAmount={cp.budget.targetAmount}
+                actions={
+                  <div className="flex items-center gap-0.5">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenModal(cp.budget.categoryId, cp.budget.targetAmount);
+                      }}
+                      className="p-1 rounded-lg text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors"
+                      title="Ubah Target"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteBudget(cp.budget.id);
+                      }}
+                      className="p-1 rounded-lg text-danger hover:bg-danger/10 transition-colors"
+                      title="Hapus Target"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                }
+              />
             ))}
           </div>
         ) : (

@@ -76,6 +76,16 @@ export function ExpenseCalendar({
     const totalMap = new Map<string, number>();
 
     transactions.forEach((tx) => {
+      // Abaikan transaksi pemindahan dana/kas (transfer antar rekening/kas/dompet)
+      const isInternalTransfer = Boolean(tx.transferPairId && tx.toWalletId);
+      const cat = categories.get(tx.categoryId);
+      const isTransferCategory = cat?.name === 'Transfer Keluar' || cat?.name === 'Transfer Masuk';
+      const isTransferType = (tx.type as string) === 'transfer';
+
+      if (isInternalTransfer || isTransferCategory || isTransferType) {
+        return;
+      }
+
       if (tx.type === 'expense') {
         const list = expensesMap.get(tx.date) || [];
         list.push(tx);
@@ -108,7 +118,7 @@ export function ExpenseCalendar({
       maxExpenseAmount: maxAmount,
       maxExpenseDates: maxDates,
     };
-  }, [transactions, currentMonth]);
+  }, [transactions, currentMonth, categories]);
 
   // Generate grid days for current month view
   const calendarDays = useMemo(() => {

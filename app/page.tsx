@@ -225,19 +225,26 @@ export default function DashboardPage() {
                   {categoryBudgets.map((cp) => (
                     <Link key={cp.budget.id} href="/budget" className="block group">
                       <div className="p-3.5 bg-surface rounded-2xl border border-border shadow-xs flex flex-col gap-2.5 transition-all group-hover:border-primary/40 group-hover:bg-surface-alt/20 cursor-pointer">
-                        <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2 min-w-0">
                             <CategoryIcon
                               name={cp.category?.icon || 'Tag'}
                               color={cp.category?.color || '#C86446'}
                               size="sm"
                             />
-                            <span className="text-xs sm:text-sm font-bold text-text-primary truncate">
-                              {cp.category?.name || 'Kategori'}
-                            </span>
-                            {cp.isOverBudget && (
-                              <AlertTriangle className="w-3.5 h-3.5 text-danger shrink-0" />
-                            )}
+                            <div className="flex flex-col min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs sm:text-sm font-bold text-text-primary truncate">
+                                  {cp.category?.name || 'Kategori'}
+                                </span>
+                                {cp.isOverBudget && (
+                                  <AlertTriangle className="w-3.5 h-3.5 text-danger shrink-0" />
+                                )}
+                              </div>
+                              <span className="text-[11px] text-text-secondary">
+                                Total Target: <strong className="text-text-primary font-semibold">{formatRupiah(cp.budget.targetAmount)}</strong>
+                              </span>
+                            </div>
                           </div>
                           <span
                             className={cn(
