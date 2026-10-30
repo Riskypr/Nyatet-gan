@@ -85,18 +85,18 @@ export default function ReportsPage() {
 
       {/* Tab Switcher — Pengeluaran / Pemasukan */}
       <Card className="p-5 flex flex-col gap-4">
-        <div className="flex items-center justify-between border-b border-border/70 pb-3">
-          <div className="flex items-center gap-1 bg-surface-alt border border-border rounded-xl p-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/70 pb-3">
+          <div className="w-full sm:w-auto grid grid-cols-2 sm:flex sm:items-center gap-1 bg-surface-alt border border-border rounded-xl p-1">
             <button
               onClick={() => setActiveTab('expense')}
               className={cn(
-                'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                'w-full sm:w-auto px-3.5 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center',
                 activeTab === 'expense'
                   ? 'bg-danger text-white shadow-sm'
                   : 'text-text-secondary hover:text-text-primary hover:bg-surface'
               )}
             >
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center justify-center gap-1.5">
                 <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
                 Pengeluaran
               </span>
@@ -104,13 +104,13 @@ export default function ReportsPage() {
             <button
               onClick={() => setActiveTab('income')}
               className={cn(
-                'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                'w-full sm:w-auto px-3.5 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center',
                 activeTab === 'income'
                   ? 'bg-secondary text-white shadow-sm'
                   : 'text-text-secondary hover:text-text-primary hover:bg-surface'
               )}
             >
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center justify-center gap-1.5">
                 <ArrowDownLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                 Pemasukan
               </span>
