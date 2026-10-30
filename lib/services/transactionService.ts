@@ -216,4 +216,46 @@ export const transactionService = {
     // Urutkan dari pengeluaran terbesar
     return summaries.sort((a, b) => b.totalAmount - a.totalAmount);
   },
+
+  async getIncomeByCategory(monthKey: string): Promise<ExpenseByCategorySummary[]> {
+    const txs = await this.getByMonth(monthKey);
+    // Transfer pokok tidak masuk komposisi pemasukan; biaya admin tetap masuk.
+    const incomeTxs = txs.filter(
+      (tx) => tx.type === 'income' && !(tx.transferPairId && tx.toWalletId)
+    );
+
+    const totalIncome = incomeTxs.reduce((sum, tx) => sum + tx.amount, 0);
+
+    const categoryMap = new Map<string, { amount: number; count: number }>();
+
+    for (const tx of incomeTxs) {
+      const existing = categoryMap.get(tx.categoryId) || { amount: 0, count: 0 };
+      existing.amount += tx.amount;
+      existing.count += 1;
+      categoryMap.set(tx.categoryId, existing);
+    }
+
+    const categories = await categoryService.getAll('income');
+    const catLookup = new Map(categories.map((c) => [c.id, c]));
+
+    const summaries: ExpenseByCategorySummary[] = [];
+
+    categoryMap.forEach((val, catId) => {
+      const cat = catLookup.get(catId);
+      const percentage = totalIncome > 0 ? Math.round((val.amount / totalIncome) * 100) : 0;
+
+      summaries.push({
+        categoryId: catId,
+        categoryName: cat?.name || 'Kategori Lain',
+        categoryIcon: cat?.icon || 'Tag',
+        color: cat?.color || '#057642',
+        totalAmount: val.amount,
+        percentage,
+        count: val.count,
+      });
+    });
+
+    // Urutkan dari pemasukan terbesar
+    return summaries.sort((a, b) => b.totalAmount - a.totalAmount);
+  },
 };

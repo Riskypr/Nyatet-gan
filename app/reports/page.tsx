@@ -1,15 +1,20 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
 import { ExpensePieChart } from '@/components/charts/ExpensePieChart';
+import { IncomePieChart } from '@/components/charts/IncomePieChart';
 import { Card } from '@/components/ui/Card';
 import { formatRupiah } from '@/lib/utils/currency';
 import { formatMonthYear } from '@/lib/utils/date';
 import { ArrowDownLeft, ArrowUpRight, PiggyBank } from 'lucide-react';
+import { cn } from '@/lib/utils/cn';
+
+type ReportTab = 'expense' | 'income';
 
 export default function ReportsPage() {
-  const { currentMonth, monthlySummary, expenseByCategory } = useTransactionStore();
+  const { currentMonth, monthlySummary, expenseByCategory, incomeByCategory } = useTransactionStore();
+  const [activeTab, setActiveTab] = useState<ReportTab>('expense');
 
   const totalExpense = monthlySummary?.totalExpense || 0;
   const totalIncome = monthlySummary?.totalIncome || 0;
@@ -78,20 +83,69 @@ export default function ReportsPage() {
         </Card>
       </div>
 
-      {/* Pie Chart Section */}
+      {/* Tab Switcher — Pengeluaran / Pemasukan */}
       <Card className="p-5 flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-border/70 pb-3">
-          <div>
+          <div className="flex items-center gap-1 bg-surface-alt border border-border rounded-xl p-1">
+            <button
+              onClick={() => setActiveTab('expense')}
+              className={cn(
+                'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                activeTab === 'expense'
+                  ? 'bg-danger text-white shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-surface'
+              )}
+            >
+              <span className="flex items-center gap-1.5">
+                <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                Pengeluaran
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('income')}
+              className={cn(
+                'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                activeTab === 'income'
+                  ? 'bg-secondary text-white shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-surface'
+              )}
+            >
+              <span className="flex items-center gap-1.5">
+                <ArrowDownLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+                Pemasukan
+              </span>
+            </button>
+          </div>
+
+          <div className="text-right hidden sm:block">
+            <p className="text-[11px] text-text-secondary">
+              {activeTab === 'expense' ? 'Total Pengeluaran' : 'Total Pemasukan'}
+            </p>
+            <p className={cn('text-sm font-bold', activeTab === 'expense' ? 'text-danger' : 'text-secondary')}>
+              {formatRupiah(activeTab === 'expense' ? totalExpense : totalIncome)}
+            </p>
+          </div>
+        </div>
+
+        {/* Chart Section */}
+        <div>
+          <div className="mb-3">
             <h3 className="text-sm font-bold text-text-primary">
-              Komposisi Pengeluaran per Kategori
+              {activeTab === 'expense'
+                ? 'Komposisi Pengeluaran per Kategori'
+                : 'Komposisi Pemasukan per Kategori'}
             </h3>
             <p className="text-xs text-text-secondary">
               Sentuh atau arahkan kursor ke slice grafik untuk melihat persentase
             </p>
           </div>
-        </div>
 
-        <ExpensePieChart data={expenseByCategory} totalExpense={totalExpense} />
+          {activeTab === 'expense' ? (
+            <ExpensePieChart data={expenseByCategory} totalExpense={totalExpense} />
+          ) : (
+            <IncomePieChart data={incomeByCategory} totalIncome={totalIncome} />
+          )}
+        </div>
       </Card>
     </div>
   );

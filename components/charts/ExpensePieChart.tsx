@@ -13,14 +13,14 @@ export interface ExpensePieChartProps {
 }
 
 const NEW_PALETTE_COLORS = [
-  '#C86446', // Primary
-  '#4A6B53', // Secondary
-  '#A84D32', // Tertiary
-  '#C98A3A', // Mustard
-  '#3D7068', // Teal
-  '#B0473C', // Clay red
+  '#0A66C2', // LinkedIn Blue
+  '#057642', // LinkedIn Green
+  '#0073B1', // Professional Blue
+  '#E7A33E', // Warm Gold
+  '#2D6A6A', // Teal
+  '#CC1016', // Alert Red
   '#5E8C6A', // Sage
-  '#8C7A6B', // Muted brown
+  '#56687A', // Slate
 ];
 
 export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
@@ -82,7 +82,7 @@ export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
                 <Cell
                   key={`cell-${index}`}
                   fill={entry.color}
-                  stroke={isDark ? '#1E1C1A' : '#FFFFFF'}
+                  stroke={isDark ? '#262B30' : '#FFFFFF'}
                   strokeWidth={2}
                   className="transition-all duration-200 hover:opacity-85"
                 />
@@ -91,15 +91,15 @@ export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
             <Tooltip
               formatter={(value: any) => [formatRupiah(Number(value) || 0), 'Pengeluaran']}
               contentStyle={{
-                backgroundColor: isDark ? '#1E1C1A' : '#FFFFFF',
-                borderColor: isDark ? '#35312C' : '#E5DCD0',
+                backgroundColor: isDark ? '#262B30' : '#FFFFFF',
+                borderColor: isDark ? '#3D4449' : '#D4D7DC',
                 borderRadius: '16px',
-                color: isDark ? '#F5F2EB' : '#2D2A26',
+                color: isDark ? '#E8E8E8' : '#191919',
                 fontSize: '12px',
-                boxShadow: isDark ? '0 8px 24px rgba(0, 0, 0, 0.4)' : '0 4px 16px rgba(45, 42, 38, 0.08)',
+                boxShadow: isDark ? '0 8px 24px rgba(0, 0, 0, 0.4)' : '0 4px 16px rgba(0, 0, 0, 0.08)',
               }}
               itemStyle={{
-                color: isDark ? '#F5F2EB' : '#2D2A26',
+                color: isDark ? '#E8E8E8' : '#191919',
               }}
             />
           </PieChart>

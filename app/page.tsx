@@ -67,9 +67,9 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto">
       {/* 1. Card Saldo Total (Hero Card) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#943F28] via-[#C86446] to-[#7D341F] p-6 text-white shadow-xl shadow-primary/20 transition-all">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0A66C2] via-[#0073B1] to-[#004182] p-6 text-white shadow-xl shadow-primary/20 transition-all">
         {/* Modern glowing blurred meshes */}
-        <div className="absolute right-0 top-0 translate-x-6 -translate-y-6 w-48 h-48 rounded-full bg-white/15 blur-2xl pointer-events-none" />
+        <div className="absolute right-0 top-0 translate-x-6 -translate-y-6 w-48 h-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
         <div className="absolute left-0 bottom-0 -translate-x-6 translate-y-6 w-36 h-36 rounded-full bg-black/15 blur-xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col gap-5">
@@ -93,7 +93,7 @@ export default function DashboardPage() {
               </button>
             </div>
             <span className="flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-white font-medium">
-              <Sparkles className="w-3 h-3 text-[#E8A590]" />
+              <Sparkles className="w-3 h-3 text-[#70B5F9]" />
               Aktif
             </span>
           </div>
@@ -107,7 +107,7 @@ export default function DashboardPage() {
           {/* Sub-card: Pemasukan vs Pengeluaran Bulan Ini */}
           <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/20">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-[#9AB8A2] shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-[#7FC15E] shadow-xs">
                 <ArrowDownLeft className="w-4 h-4 stroke-[3]" />
               </div>
               <div className="min-w-0">
@@ -119,7 +119,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-[#E8A590] shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-[#F87171] shadow-xs">
                 <ArrowUpRight className="w-4 h-4 stroke-[3]" />
               </div>
               <div className="min-w-0">
@@ -131,29 +131,6 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Quick Action Buttons */}
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          onClick={() => openTransactionModal('expense')}
-          className="flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl bg-surface border border-border shadow-xs hover:border-danger/40 hover:bg-surface-alt/40 transition-all group cursor-pointer"
-        >
-          <div className="w-8 h-8 rounded-xl bg-danger/10 text-danger flex items-center justify-center group-hover:scale-110 transition-transform">
-            <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
-          </div>
-          <span className="text-xs sm:text-sm font-bold text-text-primary">Catat Pengeluaran</span>
-        </button>
-
-        <button
-          onClick={() => openTransactionModal('income')}
-          className="flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl bg-surface border border-border shadow-xs hover:border-secondary/40 hover:bg-surface-alt/40 transition-all group cursor-pointer"
-        >
-          <div className="w-8 h-8 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
-            <ArrowDownLeft className="w-4 h-4 stroke-[2.5]" />
-          </div>
-          <span className="text-xs sm:text-sm font-bold text-text-primary">Catat Pemasukan</span>
-        </button>
       </div>
 
       {/* 2. Target Anggaran (Progress Target Bulanan & Kategori) */}
@@ -229,7 +206,7 @@ export default function DashboardPage() {
                           <div className="flex items-center gap-2 min-w-0">
                             <CategoryIcon
                               name={cp.category?.icon || 'Tag'}
-                              color={cp.category?.color || '#C86446'}
+                              color={cp.category?.color || '#0A66C2'}
                               size="sm"
                             />
                             <div className="flex flex-col min-w-0">
@@ -346,7 +323,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Kalender Pengeluaran Interaktif */}
+      {/* Kalender Transaksi Interaktif */}
       <ExpenseCalendar
         transactions={transactions}
         categories={categories}
@@ -395,6 +372,15 @@ export default function DashboardPage() {
           />
         )}
       </div>
+
+      {/* Floating Action Button — Desktop Only (mobile has BottomNav FAB) */}
+      <button
+        onClick={() => openTransactionModal('expense')}
+        className="hidden md:flex fixed bottom-8 right-8 z-50 w-14 h-14 rounded-2xl bg-primary text-white items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 hover:shadow-xl hover:shadow-primary/40 active:scale-95 transition-all cursor-pointer group"
+        aria-label="Catat Transaksi Baru"
+      >
+        <Plus className="w-6 h-6 stroke-[2.5] group-hover:rotate-90 transition-transform duration-200" />
+      </button>
 
       {/* Modal Tambah Dompet Cepat */}
       <WalletModal

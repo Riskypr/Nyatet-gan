@@ -3,59 +3,59 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Earth tone palette (Light) */
-  --color-primary: #C86446;
-  --color-primary-light: #E8A590;
+  /* LinkedIn-inspired palette (Light) */
+  --color-primary: #0A66C2;
+  --color-primary-light: #70B5F9;
   
-  --color-secondary: #4A6B53;
-  --color-secondary-light: #9AB8A2;
+  --color-secondary: #057642;
+  --color-secondary-light: #7FC15E;
 
-  --color-tertiary: #A84D32;
+  --color-tertiary: #0073B1;
 
-  --color-neutral: #2D2A26;
+  --color-neutral: #191919;
 
   /* Alert */
-  --color-danger: #B0473C;
-  --color-warning: #C98A3A;
+  --color-danger: #CC1016;
+  --color-warning: #E7A33E;
 
   /* Surfaces & Backgrounds */
-  --color-bg: #FAF7F2;
+  --color-bg: #F4F2EE;
   --color-surface: #FFFFFF;
-  --color-surface-alt: #F2ECE1;
-  --color-border: #E5DCD0;
+  --color-surface-alt: #EDF3F8;
+  --color-border: #D4D7DC;
   
   /* Text */
-  --color-text-primary: #2D2A26;
-  --color-text-secondary: #68635B;
-  --color-text-muted: #9E968B;
+  --color-text-primary: #191919;
+  --color-text-secondary: #56687A;
+  --color-text-muted: #8C8C8C;
 }
 
 .dark, [data-theme="dark"] {
-  /* Earth tone palette (Dark - Warm Obsidian & Espresso) */
-  --color-primary: #E07A5F;
-  --color-primary-light: #F2A28C;
+  /* LinkedIn-inspired palette (Dark) */
+  --color-primary: #70B5F9;
+  --color-primary-light: #A0D0FF;
 
-  --color-secondary: #5E8C6A;
-  --color-secondary-light: #92BFA0;
+  --color-secondary: #7FC15E;
+  --color-secondary-light: #A8D88F;
 
-  --color-tertiary: #C86446;
+  --color-tertiary: #3FA0E0;
 
-  --color-neutral: #F5F2EB;
+  --color-neutral: #E8E8E8;
 
   /* Alert */
-  --color-danger: #D95D50;
-  --color-warning: #E09E48;
+  --color-danger: #F25C54;
+  --color-warning: #F0B254;
 
   /* Surfaces & Backgrounds */
-  --color-bg: #131211;
-  --color-surface: #1E1C1A;
-  --color-surface-alt: #282522;
-  --color-border: #35312C;
+  --color-bg: #1B1F23;
+  --color-surface: #262B30;
+  --color-surface-alt: #2E3439;
+  --color-border: #3D4449;
   
   /* Text */
-  --color-text-primary: #F5F2EB;
-  --color-text-secondary: #A8A298;
-  --color-text-muted: #736E66;
+  --color-text-primary: #E8E8E8;
+  --color-text-secondary: #A4ACB4;
+  --color-text-muted: #707880;
 }
 
 @theme {
@@ -106,18 +106,18 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E5DCD0;
+  background: #D4D7DC;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C86446;
+  background: #0A66C2;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #35312C;
+  background: #3D4449;
 }
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #E07A5F;
+  background: #70B5F9;
 }
 
 /* Hide scrollbar for carousel / horizontal scroll areas */
@@ -129,22 +129,22 @@ body {
   scrollbar-width: none;
 }
 
-/* React-Toastify custom earthy theme */
+/* React-Toastify custom LinkedIn theme */
 .Toastify__toast-theme--light {
-  background: #FAF7F2 !important;
-  color: #2D2A26 !important;
-  border: 1px solid #E5DCD0 !important;
+  background: #FFFFFF !important;
+  color: #191919 !important;
+  border: 1px solid #D4D7DC !important;
   border-radius: 16px !important;
-  box-shadow: 0 8px 24px rgba(45, 42, 38, 0.12) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10) !important;
   font-family: inherit !important;
   font-size: 13px !important;
   font-weight: 600 !important;
 }
 
 .Toastify__toast-theme--dark {
-  background: #1E1C1A !important;
-  color: #F5F2EB !important;
-  border: 1px solid #35312C !important;
+  background: #262B30 !important;
+  color: #E8E8E8 !important;
+  border: 1px solid #3D4449 !important;
   border-radius: 16px !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
   font-family: inherit !important;
@@ -153,33 +153,33 @@ body {
 }
 
 .dark .Toastify__toast {
-  background: #1E1C1A !important;
-  color: #F5F2EB !important;
-  border: 1px solid #35312C !important;
+  background: #262B30 !important;
+  color: #E8E8E8 !important;
+  border: 1px solid #3D4449 !important;
 }
 
 .Toastify__progress-bar--success {
-  background: #4A6B53 !important;
+  background: #057642 !important;
 }
 .Toastify__progress-bar--error {
-  background: #B0473C !important;
+  background: #CC1016 !important;
 }
 .Toastify__progress-bar--info {
-  background: #C86446 !important;
+  background: #0A66C2 !important;
 }
 .Toastify__progress-bar--warning {
-  background: #C98A3A !important;
+  background: #E7A33E !important;
 }
 
 .dark .Toastify__progress-bar--success {
-  background: #5E8C6A !important;
+  background: #7FC15E !important;
 }
 .dark .Toastify__progress-bar--error {
-  background: #D95D50 !important;
+  background: #F25C54 !important;
 }
 .dark .Toastify__progress-bar--info {
-  background: #E07A5F !important;
+  background: #70B5F9 !important;
 }
 .dark .Toastify__progress-bar--warning {
-  background: #E09E48 !important;
+  background: #F0B254 !important;
 }

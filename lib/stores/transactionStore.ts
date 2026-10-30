@@ -9,6 +9,7 @@ interface TransactionState {
   transactions: Transaction[];
   monthlySummary: MonthlySummary | null;
   expenseByCategory: ExpenseByCategorySummary[];
+  incomeByCategory: ExpenseByCategorySummary[];
   isLoading: boolean;
 
   setCurrentMonth: (month: string) => void;
@@ -23,6 +24,7 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
   transactions: [],
   monthlySummary: null,
   expenseByCategory: [],
+  incomeByCategory: [],
   isLoading: false,
 
   setCurrentMonth: (month: string) => {
@@ -34,10 +36,11 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
     const m = monthToFetch || get().currentMonth;
     set({ isLoading: true });
     try {
-      const [transactions, monthlySummary, expenseByCategory] = await Promise.all([
+      const [transactions, monthlySummary, expenseByCategory, incomeByCategory] = await Promise.all([
         transactionService.getByMonth(m),
         transactionService.getMonthlySummary(m),
         transactionService.getExpenseByCategory(m),
+        transactionService.getIncomeByCategory(m),
       ]);
 
       set({
@@ -45,6 +48,7 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
         transactions,
         monthlySummary,
         expenseByCategory,
+        incomeByCategory,
         isLoading: false,
       });
     } catch (err) {
