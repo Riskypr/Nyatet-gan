@@ -50,7 +50,7 @@ export default function SettingsPage() {
   const { fetchWallets } = useWalletStore();
   const { fetchMonthlyData, currentMonth } = useTransactionStore();
   const { showToast } = useUIStore();
-  const { theme, setTheme, resolvedTheme } = useThemeStore();
+  const { theme, setTheme } = useThemeStore();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [isExporting, setIsExporting] = useState(false);

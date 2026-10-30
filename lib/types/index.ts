@@ -56,7 +56,7 @@ export interface Budget {
 
 export interface Setting {
   key: string;
-  value: any;
+  value: unknown;
 }
 
 export interface BackupMeta {

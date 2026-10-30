@@ -1,5 +1,5 @@
 import { db } from '../db/dexie';
-import { TransferPayload, Transaction, Wallet } from '../types';
+import { TransferPayload, Transaction } from '../types';
 import { walletService } from './walletService';
 import { categoryService } from './categoryService';
 

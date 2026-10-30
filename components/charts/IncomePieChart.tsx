@@ -89,7 +89,7 @@ export function IncomePieChart({ data, totalIncome }: IncomePieChartProps) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: any) => [formatRupiah(Number(value) || 0), 'Pemasukan']}
+              formatter={(value: unknown) => [formatRupiah(Number(value) || 0), 'Pemasukan']}
               contentStyle={{
                 backgroundColor: isDark ? '#262B30' : '#FFFFFF',
                 borderColor: isDark ? '#3D4449' : '#D4D7DC',

@@ -99,7 +99,7 @@ export const transactionService = {
   },
 
   async filter(options: TransactionFilterOptions): Promise<Transaction[]> {
-    let collection = db.transactions.toCollection();
+    const collection = db.transactions.toCollection();
 
     let results = await collection.reverse().sortBy('date');
 

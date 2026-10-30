@@ -89,7 +89,7 @@ export function ExpensePieChart({ data, totalExpense }: ExpensePieChartProps) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: any) => [formatRupiah(Number(value) || 0), 'Pengeluaran']}
+              formatter={(value: unknown) => [formatRupiah(Number(value) || 0), 'Pengeluaran']}
               contentStyle={{
                 backgroundColor: isDark ? '#262B30' : '#FFFFFF',
                 borderColor: isDark ? '#3D4449' : '#D4D7DC',

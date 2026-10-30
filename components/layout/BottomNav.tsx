@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ReceiptText, Plus, Target, PieChart, Settings } from 'lucide-react';
+import { LayoutDashboard, ReceiptText, Plus, PieChart, Settings } from 'lucide-react';
 import { useUIStore } from '@/lib/stores/uiStore';
 import { cn } from '@/lib/utils/cn';
 

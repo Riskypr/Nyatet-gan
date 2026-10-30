@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { TransactionType, Category, Wallet, Transaction } from '@/lib/types';
+import { TransactionType, Category, Transaction } from '@/lib/types';
 import { categoryService } from '@/lib/services/categoryService';
 import { useWalletStore } from '@/lib/stores/walletStore';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
