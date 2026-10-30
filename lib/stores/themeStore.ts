@@ -31,6 +31,12 @@ function applyThemeToDOM(resolved: ResolvedTheme) {
     root.setAttribute('data-theme', 'light');
     root.style.colorScheme = 'light';
   }
+
+  // Update mobile status bar / browser header color
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) {
+    meta.setAttribute('content', resolved === 'dark' ? '#1B1F23' : '#0A66C2');
+  }
 }
 
 export const useThemeStore = create<ThemeState>((set, get) => ({

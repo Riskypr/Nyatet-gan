@@ -17,14 +17,14 @@ export interface WalletModalProps {
 }
 
 const COLOR_OPTIONS = [
-  '#C86446', // Primary: Terracotta Rust
-  '#4A6B53', // Secondary: Sage / Forest Green
-  '#A84D32', // Tertiary: Deep Burnt Sienna
-  '#2D2A26', // Neutral: Charcoal Brown
-  '#C98A3A', // Mustard
-  '#3D7068', // Deep Teal
-  '#405865', // Slate
-  '#B0473C', // Clay Red
+  '#0A66C2', // LinkedIn Blue
+  '#057642', // LinkedIn Green
+  '#0073B1', // Deep Blue
+  '#70B5F9', // Sky Blue
+  '#E7A33E', // Amber / Gold
+  '#2D6A6A', // Teal
+  '#56687A', // Slate
+  '#CC1016', // Red
 ];
 
 export function WalletModal({ isOpen, onClose, wallet }: WalletModalProps) {

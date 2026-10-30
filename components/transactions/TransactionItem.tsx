@@ -31,7 +31,7 @@ export function TransactionItem({
       <div className="flex items-center gap-3 min-w-0">
         <CategoryIcon
           name={category?.icon || (isIncome ? 'Coins' : 'Tag')}
-          color={category?.color || (isIncome ? '#4A6B53' : '#C86446')}
+          color={category?.color || (isIncome ? '#057642' : '#0A66C2')}
           size="md"
         />
         <div className="min-w-0">

@@ -13,7 +13,7 @@ const fontSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: 'Nyatet Gan — Catat Keuangan Pribadi',
-  description: 'Aplikasi pencatatan keuangan pribadi offline-first & mobile-first dengan tema warna earth tone yang menenangkan.',
+  description: 'Aplikasi pencatatan keuangan pribadi offline-first & mobile-first.',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
@@ -23,7 +23,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#C86446',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#0A66C2' },
+    { media: '(prefers-color-scheme: dark)', color: '#1B1F23' },
+  ],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -35,6 +38,11 @@ const themeScript = `
   try {
     var stored = localStorage.getItem('nyatet-theme') || 'system';
     var isDark = stored === 'dark' || (stored === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var color = isDark ? '#1B1F23' : '#0A66C2';
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', color);
+    }
     if (isDark) {
       document.documentElement.classList.add('dark');
       document.documentElement.setAttribute('data-theme', 'dark');

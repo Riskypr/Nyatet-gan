@@ -50,7 +50,7 @@ export interface CategoryIconProps {
   className?: string;
 }
 
-export function CategoryIcon({ name, color = '#C86446', size = 'md', className }: CategoryIconProps) {
+export function CategoryIcon({ name, color = '#0A66C2', size = 'md', className }: CategoryIconProps) {
   const IconComponent = iconMap[name] || Tag;
 
   const sizeStyles = {

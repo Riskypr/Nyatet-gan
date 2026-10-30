@@ -36,14 +36,14 @@ import {
 import { cn } from '@/lib/utils/cn';
 
 const CATEGORY_COLORS = [
-  '#C86446', // Primary
-  '#4A6B53', // Secondary
-  '#A84D32', // Tertiary
-  '#2D2A26', // Neutral
-  '#C98A3A', // Mustard
-  '#3D7068', // Teal
-  '#405865', // Slate
-  '#B0473C', // Clay Red
+  '#0A66C2', // LinkedIn Blue
+  '#057642', // LinkedIn Green
+  '#0073B1', // Deep Blue
+  '#70B5F9', // Sky Blue
+  '#E7A33E', // Amber / Gold
+  '#2D6A6A', // Teal
+  '#56687A', // Slate
+  '#CC1016', // Red
 ];
 
 export default function SettingsPage() {
