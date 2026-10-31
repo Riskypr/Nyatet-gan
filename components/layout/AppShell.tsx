@@ -15,6 +15,8 @@ import { transactionService } from '@/lib/services/transactionService';
 import { Transaction } from '@/lib/types';
 import { useThemeStore } from '@/lib/stores/themeStore';
 import { Loader2 } from 'lucide-react';
+import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
+import { OfflineBanner } from '@/components/pwa/OfflineBanner';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isDbReady, setIsDbReady] = useState(false);
@@ -45,7 +47,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       }
     }
     init();
-  }, [initTheme]);
+  }, [initTheme, fetchWallets, fetchMonthlyData, currentMonth]);
 
   // Ambil data transaksi saat mode edit
   useEffect(() => {
@@ -74,6 +76,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-bg text-text-primary flex flex-col md:flex-row antialiased">
+      {/* PWA Service Worker Registration */}
+      <ServiceWorkerRegister />
+
       {/* React-Toastify Container */}
       <ToastContainer />
 
@@ -83,6 +88,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-6">
         <Header />
+        <OfflineBanner />
         <main className="flex-1 p-4 sm:p-6 max-w-5xl w-full mx-auto">{children}</main>
       </div>
 

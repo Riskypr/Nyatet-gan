@@ -14,7 +14,12 @@ const fontSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: 'Nyatet Gan — Catat Keuangan Pribadi',
   description: 'Aplikasi pencatatan keuangan pribadi offline-first & mobile-first.',
+  applicationName: 'Nyatet Gan',
   manifest: '/manifest.webmanifest',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/Logo.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
