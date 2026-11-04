@@ -63,8 +63,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (!isDbReady) {
     return (
       <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-4">
-        <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center text-xl shadow-md animate-bounce mb-3">
-          <img src="/Logo.png" alt="Logo" className="w-10 h-10" />
+        <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg animate-bounce mb-4">
+          <img src="/Logo.png" alt="Logo" className="w-full h-full object-contain" />
         </div>
         <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
           <Loader2 className="w-4 h-4 animate-spin text-primary" />
@@ -80,7 +80,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ServiceWorkerRegister />
 
       {/* React-Toastify Container */}
-      <ToastContainer />
+      <ToastContainer
+        position="top-center"
+        toastClassName="!rounded-2xl !font-sans"
+      />
 
       {/* Desktop Sidebar */}
       <Sidebar />

@@ -130,6 +130,32 @@ body {
 }
 
 /* React-Toastify custom LinkedIn theme */
+.Toastify__toast-container {
+  width: clamp(280px, 90vw, 400px) !important;
+  padding: 0 !important;
+}
+
+.Toastify__toast-container--top-center {
+  top: 1rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+.Toastify__toast {
+  margin-bottom: 0.5rem !important;
+  min-height: unset !important;
+  padding: 12px 14px !important;
+}
+
+@media (max-width: 480px) {
+  .Toastify__toast-container {
+    width: calc(100vw - 2rem) !important;
+  }
+  .Toastify__toast {
+    padding: 14px 16px !important;
+  }
+}
+
 .Toastify__toast-theme--light {
   background: #FFFFFF !important;
   color: #191919 !important;

@@ -24,19 +24,19 @@ export function confirmWithToast({
 
   toast(
     ({ closeToast }) => (
-      <div className="flex flex-col gap-2.5 p-1 select-none">
+      <div className="flex flex-col gap-3 p-1 select-none">
         <div className="flex flex-col">
-          <span className="text-xs font-bold text-text-primary">{title}</span>
-          <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">{message}</p>
+          <span className="text-sm sm:text-xs font-bold text-text-primary">{title}</span>
+          <p className="text-sm sm:text-xs text-text-secondary mt-1 leading-relaxed">{message}</p>
         </div>
-        <div className="flex items-center justify-end gap-2 pt-1 border-t border-border/70">
+        <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-border/70">
           <button
             type="button"
             onClick={() => {
               closeToast();
               if (onCancel) onCancel();
             }}
-            className="px-3 py-1.5 text-xs font-semibold rounded-xl border border-border bg-surface text-text-secondary hover:bg-surface-alt transition-colors"
+            className="px-4 py-2.5 sm:px-3 sm:py-1.5 text-sm sm:text-xs font-semibold rounded-xl border border-border bg-surface text-text-secondary hover:bg-surface-alt transition-colors min-h-[40px] sm:min-h-0 touch-manipulation"
           >
             {cancelLabel}
           </button>
@@ -46,7 +46,7 @@ export function confirmWithToast({
               closeToast();
               onConfirm();
             }}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-xl text-white shadow-xs transition-colors ${
+            className={`px-4 py-2.5 sm:px-3 sm:py-1.5 text-sm sm:text-xs font-semibold rounded-xl text-white shadow-xs transition-colors min-h-[40px] sm:min-h-0 touch-manipulation ${
               isDestructive
                 ? 'bg-danger hover:opacity-90'
                 : 'bg-primary hover:opacity-90'
