@@ -1,5 +1,5 @@
 // Service Worker for Nyatet Gan (Offline-First PWA)
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.0.3';
 const STATIC_CACHE_NAME = `nyatet-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `nyatet-runtime-${CACHE_VERSION}`;
 

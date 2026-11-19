@@ -45,18 +45,18 @@ export function BudgetProgressBar({
     <div
       onClick={onClick}
       className={cn(
-        'p-4 bg-surface rounded-2xl border border-border shadow-xs flex flex-col gap-2.5 transition-all',
+        'p-4 bg-surface rounded-2xl border border-border shadow-xs flex flex-col gap-3 transition-all',
         onClick && 'cursor-pointer hover:border-primary/40 hover:bg-surface-alt/40',
         className
       )}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex flex-col gap-0.5 min-w-0">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-0.5 min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <span className="text-xs sm:text-sm font-bold text-text-primary truncate">{title}</span>
             {isOver && <AlertTriangle className="w-4 h-4 text-danger shrink-0" />}
           </div>
-          <span className="text-[11px] text-text-secondary">
+          <span className="text-[11px] text-text-secondary truncate">
             Total Target: <strong className="text-text-primary font-semibold">{formatRupiah(targetAmount)}</strong>
           </span>
         </div>
@@ -68,20 +68,20 @@ export function BudgetProgressBar({
         </div>
       </div>
 
-      {/* Progress Bar Container */}
+      {/* Progress Bar Container with fill animation */}
       <div className="w-full h-3 rounded-full bg-surface-alt overflow-hidden p-0.5">
         <div
-          className={cn('h-full rounded-full transition-all duration-500 ease-out', progressColor)}
+          className={cn('h-full rounded-full transition-all duration-700 ease-out animate-progress-fill', progressColor)}
           style={{ width: `${clampedPercentage}%` }}
         />
       </div>
 
       {showDetails && (
-        <div className="flex items-center justify-between text-xs text-text-secondary pt-0.5">
-          <span>
+        <div className="flex items-center justify-between text-xs text-text-secondary pt-0.5 gap-2">
+          <span className="truncate flex-1">
             Terpakai: <strong className="text-text-primary">{formatRupiah(spentAmount)}</strong>
           </span>
-          <span>
+          <span className="shrink-0 text-right">
             {isOver ? (
               <span className="text-danger font-semibold">
                 Lebih {formatRupiah(Math.abs(remaining))}
