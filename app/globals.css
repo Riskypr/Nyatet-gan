@@ -28,6 +28,9 @@
   --color-text-primary: #191919;
   --color-text-secondary: #56687A;
   --color-text-muted: #8C8C8C;
+
+  /* Hero card */
+  --hero-card-bg: #0A66C2;
 }
 
 .dark, [data-theme="dark"] {
@@ -56,9 +59,12 @@
   --color-text-primary: #E8E8E8;
   --color-text-secondary: #A4ACB4;
   --color-text-muted: #707880;
+
+  /* Hero card — tetap biru gelap di dark mode */
+  --hero-card-bg: #0A4F9A;
 }
 
-@theme {
+@theme inline {
   --color-primary: var(--color-primary);
   --color-primary-light: var(--color-primary-light);
 

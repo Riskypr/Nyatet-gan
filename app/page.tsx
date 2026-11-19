@@ -75,7 +75,8 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
       {/* 1. Card Saldo Total (Hero Card) */}
       <div
-        className="relative overflow-hidden rounded-3xl p-4 sm:p-6 text-white shadow-md bg-primary transition-colors duration-200"
+        className="relative overflow-hidden rounded-3xl p-4 sm:p-6 text-white shadow-md transition-colors duration-200"
+        style={{ backgroundColor: 'var(--hero-card-bg, #0A66C2)' }}
       >
         <div className="relative z-10 flex flex-col gap-5">
           <div className="flex items-center justify-between">
@@ -175,9 +176,107 @@ export default function DashboardPage() {
               </Button>
             </Link>
           </Card>
-        ) : showAllBudgets && budgetCount > 1 ? (
-          <div key="budget-expanded" className="motion-enter flex flex-col gap-3">
-            {/* Target Keseluruhan (Total) jika ada */}
+        ) : null}
+
+        {/* Collapsed view — 1 card + stacked shadow */}
+        {budgetCount > 0 && !showAllBudgets && (
+          <div className="motion-enter flex flex-col items-center gap-1">
+            <div
+              className="relative isolate w-full"
+              style={{ paddingBottom: budgetCount > 1 ? '1rem' : '0' }}
+            >
+              {/* Stacked card shadows — hanya jika ada lebih dari 1 target */}
+              {budgetCount > 1 && (
+                <>
+                  <div
+                    className="absolute z-0 rounded-2xl border border-border bg-surface-alt"
+                    style={{ inset: '0.75rem 0.75rem 0 0.75rem', top: '0.75rem' }}
+                  />
+                  <div
+                    className="absolute z-0 rounded-2xl border border-border bg-surface"
+                    style={{ inset: '0.375rem 0.375rem 0 0.375rem', top: '0.375rem' }}
+                  />
+                </>
+              )}
+              {firstBudget && (
+                <Link
+                  href="/budget"
+                  className="relative z-10 block rounded-2xl border border-border bg-surface p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/40"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-text-primary">{firstBudgetTitle}</p>
+                      <p className="mt-1 text-[11px] text-text-secondary">
+                        Total Target:{' '}
+                        <strong className="font-semibold text-text-primary">
+                          {formatRupiah(firstBudget.budget.targetAmount)}
+                        </strong>
+                      </p>
+                    </div>
+                    <span
+                      className={cn(
+                        'shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold',
+                        firstBudget.percentage >= 90
+                          ? 'text-danger bg-danger/15'
+                          : firstBudget.percentage >= 70
+                          ? 'text-warning bg-warning/15'
+                          : 'text-secondary bg-secondary/15'
+                      )}
+                    >
+                      {firstBudget.percentage}%
+                    </span>
+                  </div>
+
+                  <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-alt">
+                    <div
+                      className={cn(
+                        'h-full rounded-full transition-all duration-500 ease-out',
+                        firstBudget.percentage >= 90
+                          ? 'bg-danger'
+                          : firstBudget.percentage >= 70
+                          ? 'bg-warning'
+                          : 'bg-secondary'
+                      )}
+                      style={{ width: `${Math.min(firstBudget.percentage, 100)}%` }}
+                    />
+                  </div>
+
+                  <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-text-secondary">
+                    <span className="truncate">
+                      Terpakai:{' '}
+                      <strong className="text-text-primary">{formatRupiah(firstBudget.spentAmount)}</strong>
+                    </span>
+                    <span
+                      className={cn(
+                        'shrink-0 font-semibold',
+                        firstBudget.isOverBudget ? 'text-danger' : 'text-secondary'
+                      )}
+                    >
+                      {firstBudget.isOverBudget
+                        ? `Lebih ${formatRupiah(Math.abs(firstBudget.remainingAmount))}`
+                        : `Sisa ${formatRupiah(firstBudget.remainingAmount)}`}
+                    </span>
+                  </div>
+                </Link>
+              )}
+            </div>
+
+            {budgetCount > 1 && (
+              <button
+                type="button"
+                onClick={() => setShowAllBudgets(true)}
+                className="inline-flex min-h-10 items-center gap-2 px-4 rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors"
+              >
+                Lihat semua ({budgetCount})
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Expanded view — semua target */}
+        {budgetCount > 0 && showAllBudgets && (
+          <div className="motion-enter flex flex-col gap-3">
             {overallBudget && (
               <Link href="/budget" className="block group">
                 <BudgetProgressBar
@@ -189,20 +288,17 @@ export default function DashboardPage() {
               </Link>
             )}
 
-            {/* Target Per Kategori jika ada */}
             {categoryBudgets.length > 0 && (
               <div className="flex flex-col gap-2">
                 {overallBudget && (
-                  <div className="flex items-center justify-between pt-1">
-                    <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider">
-                      Target Per Kategori ({categoryBudgets.length})
-                    </h4>
-                  </div>
+                  <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider pt-1">
+                    Target Per Kategori ({categoryBudgets.length})
+                  </h4>
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {categoryBudgets.map((cp) => (
                     <Link key={cp.budget.id} href="/budget" className="block group">
-                      <div className="p-3.5 bg-surface rounded-2xl border border-border shadow-xs flex flex-col gap-2.5 transition-all group-hover:border-primary/40 group-hover:bg-surface-alt/20 cursor-pointer">
+                      <div className="p-3.5 bg-surface rounded-2xl border border-border shadow-xs flex flex-col gap-2.5 transition-all group-hover:border-primary/40 group-hover:bg-surface-alt/20">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2 min-w-0">
                             <CategoryIcon
@@ -220,7 +316,10 @@ export default function DashboardPage() {
                                 )}
                               </div>
                               <span className="text-[11px] text-text-secondary">
-                                Total Target: <strong className="text-text-primary font-semibold">{formatRupiah(cp.budget.targetAmount)}</strong>
+                                Target:{' '}
+                                <strong className="text-text-primary font-semibold">
+                                  {formatRupiah(cp.budget.targetAmount)}
+                                </strong>
                               </span>
                             </div>
                           </div>
@@ -252,9 +351,10 @@ export default function DashboardPage() {
                           />
                         </div>
 
-                        <div className="flex items-center justify-between text-[11px] text-text-secondary pt-0.5">
+                        <div className="flex items-center justify-between text-[11px] text-text-secondary">
                           <span className="truncate">
-                            Terpakai: <strong className="text-text-primary">{formatRupiah(cp.spentAmount)}</strong>
+                            Terpakai:{' '}
+                            <strong className="text-text-primary">{formatRupiah(cp.spentAmount)}</strong>
                           </span>
                           <span className="shrink-0">
                             {cp.isOverBudget ? (
@@ -262,8 +362,8 @@ export default function DashboardPage() {
                                 Lebih {formatRupiah(Math.abs(cp.remainingAmount))}
                               </span>
                             ) : (
-                              <span>
-                                Sisa: <strong className="text-secondary">{formatRupiah(cp.remainingAmount)}</strong>
+                              <span className="text-secondary font-semibold">
+                                Sisa {formatRupiah(cp.remainingAmount)}
                               </span>
                             )}
                           </span>
@@ -283,71 +383,6 @@ export default function DashboardPage() {
               <ChevronUp className="w-4 h-4" />
               Sembunyikan
             </button>
-          </div>
-        ) : (
-          <div key="budget-collapsed" className="motion-enter flex flex-col items-center gap-1">
-            <div className="relative isolate w-full" style={{ paddingBottom: budgetCount > 1 ? '1.25rem' : '0' }}>
-              {budgetCount > 1 && (
-                <>
-                  <div className="absolute z-0 left-3 right-3 top-3 h-full rounded-2xl border border-border bg-surface-alt" />
-                  <div className="absolute z-0 left-1.5 right-1.5 top-1.5 h-full rounded-2xl border border-border bg-surface" />
-                </>
-              )}
-              {firstBudget && (
-                <Link href="/budget" className="relative z-10 block rounded-2xl border border-border bg-surface p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/40">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-bold text-text-primary">{firstBudgetTitle}</p>
-                      <p className="mt-1 text-[11px] text-text-secondary">
-                        Total Target: <strong className="font-semibold text-text-primary">{formatRupiah(firstBudget.budget.targetAmount)}</strong>
-                      </p>
-                    </div>
-                    <span
-                      className={cn(
-                        'shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold',
-                        firstBudget.percentage >= 90
-                          ? 'text-danger bg-danger/15'
-                          : firstBudget.percentage >= 70
-                          ? 'text-warning bg-warning/15'
-                          : 'text-secondary bg-secondary/15'
-                      )}
-                    >
-                      {firstBudget.percentage}%
-                    </span>
-                  </div>
-
-                  <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-alt">
-                    <div
-                      className={cn(
-                        'h-full rounded-full transition-all duration-500 ease-out',
-                        firstBudget.percentage >= 90 ? 'bg-danger' : firstBudget.percentage >= 70 ? 'bg-warning' : 'bg-secondary'
-                      )}
-                      style={{ width: `${Math.min(firstBudget.percentage, 100)}%` }}
-                    />
-                  </div>
-
-                  <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-text-secondary">
-                    <span className="truncate">Terpakai: <strong className="text-text-primary">{formatRupiah(firstBudget.spentAmount)}</strong></span>
-                    <span className={cn('shrink-0 font-semibold', firstBudget.isOverBudget ? 'text-danger' : 'text-secondary')}>
-                      {firstBudget.isOverBudget
-                        ? `Lebih ${formatRupiah(Math.abs(firstBudget.remainingAmount))}`
-                        : `Sisa ${formatRupiah(firstBudget.remainingAmount)}`}
-                    </span>
-                  </div>
-                </Link>
-              )}
-            </div>
-
-            {budgetCount > 1 && (
-              <button
-                type="button"
-                onClick={() => setShowAllBudgets(true)}
-                className="inline-flex min-h-10 items-center gap-2 px-4 rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors"
-              >
-                Lihat semua ({budgetCount})
-                <ChevronDown className="w-4 h-4" />
-              </button>
-            )}
           </div>
         )}
       </div>
