@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
 import { useUIStore } from '@/lib/stores/uiStore';
 import { budgetService } from '@/lib/services/budgetService';
@@ -29,7 +29,7 @@ export default function BudgetPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load budgets and categories
-  const loadBudgetData = async () => {
+  const loadBudgetData = useCallback(async () => {
     try {
       const [progress, cats] = await Promise.all([
         budgetService.getBudgetProgress(currentMonth),
@@ -41,11 +41,11 @@ export default function BudgetPage() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [currentMonth]);
 
   useEffect(() => {
     loadBudgetData();
-  }, [currentMonth, transactions]);
+  }, [loadBudgetData, transactions]);
 
   const handleOpenModal = (categoryId: string | null = null, currentTarget = 0) => {
     setSelectedCategoryId(categoryId);
@@ -66,8 +66,9 @@ export default function BudgetPage() {
       showToast('Target anggaran berhasil disimpan!', 'success');
       setIsModalOpen(false);
       await loadBudgetData();
-    } catch (err: any) {
-      showToast(err.message || 'Gagal menyimpan target.', 'error');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Gagal menyimpan target.';
+      showToast(msg, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -85,8 +86,9 @@ export default function BudgetPage() {
           await budgetService.deleteBudget(id);
           showToast('Target anggaran dihapus.', 'success');
           await loadBudgetData();
-        } catch (err: any) {
-          showToast(err.message || 'Gagal menghapus target.', 'error');
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Gagal menghapus target.';
+          showToast(msg, 'error');
         }
       },
     });

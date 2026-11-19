@@ -49,8 +49,9 @@ export default function WalletsPage() {
           } else {
             showToast(`Dompet "${w.name}" berhasil dihapus.`, 'success');
           }
-        } catch (err: any) {
-          showToast(err.message || 'Gagal menghapus dompet.', 'error');
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Gagal menghapus dompet.';
+          showToast(msg, 'error');
         }
       },
     });

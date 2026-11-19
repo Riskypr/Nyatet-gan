@@ -78,8 +78,9 @@ export function WalletModal({ isOpen, onClose, wallet }: WalletModalProps) {
         showToast('Dompet baru berhasil ditambahkan!', 'success');
       }
       onClose();
-    } catch (err: any) {
-      showToast(err.message || 'Gagal menyimpan dompet.', 'error');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Gagal menyimpan dompet.';
+      showToast(msg, 'error');
     } finally {
       setIsSubmitting(false);
     }

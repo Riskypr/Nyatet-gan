@@ -34,7 +34,7 @@ export function NumberInput({
   useEffect(() => {
     if (value > 0) {
       setDisplayValue(formatThousands(value));
-    } else if (value === 0 && displayValue !== '') {
+    } else {
       setDisplayValue('');
     }
   }, [value]);

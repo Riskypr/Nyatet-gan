@@ -33,6 +33,9 @@ const TransactionSchema = z.object({
   amount: z.number().positive(),
   date: z.string(),
   note: z.string().optional(),
+  // Metadata ini membuat pasangan transfer tetap utuh setelah backup lama dipulihkan.
+  transferPairId: z.string().optional(),
+  toWalletId: z.string().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -106,7 +109,7 @@ export const backupService = {
   },
 
   async importAll(jsonString: string): Promise<{ success: boolean; message: string; txCount: number }> {
-    let parsedJson: any;
+    let parsedJson: unknown;
     try {
       parsedJson = JSON.parse(jsonString);
     } catch {

@@ -72,8 +72,18 @@ export const transactionService = {
     const existing = await db.transactions.get(id);
     if (!existing) return;
 
-    await db.transactions.delete(id);
-    await walletService.recalculateBalance(existing.walletId);
+    const relatedTransactions = existing.transferPairId
+      ? await db.transactions.where('transferPairId').equals(existing.transferPairId).toArray()
+      : [existing];
+    const affectedWalletIds = new Set(relatedTransactions.map((tx) => tx.walletId));
+
+    await db.transaction('rw', db.transactions, async () => {
+      await db.transactions.bulkDelete(relatedTransactions.map((tx) => tx.id));
+    });
+
+    await Promise.all(
+      Array.from(affectedWalletIds, (walletId) => walletService.recalculateBalance(walletId))
+    );
   },
 
   async getRecent(limit = 5): Promise<Transaction[]> {

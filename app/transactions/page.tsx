@@ -141,7 +141,7 @@ export default function TransactionsPage() {
                       transaction={tx}
                       category={categoryMap.get(tx.categoryId)}
                       wallet={walletMap.get(tx.walletId)}
-                      onEdit={(item) => openTransactionModal(item.type, item.id)}
+                      onEdit={tx.transferPairId ? undefined : (item) => openTransactionModal(item.type, item.id)}
                       onDelete={handleDelete}
                     />
                   ))}

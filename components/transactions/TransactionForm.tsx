@@ -124,9 +124,10 @@ export function TransactionForm({
         );
       }
       onSuccess();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      showToast(err.message || 'Gagal menyimpan transaksi.', 'error');
+      const msg = err instanceof Error ? err.message : 'Gagal menyimpan transaksi.';
+      showToast(msg, 'error');
     } finally {
       setIsSubmitting(false);
     }

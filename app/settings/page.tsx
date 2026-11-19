@@ -81,8 +81,9 @@ export default function SettingsPage() {
       const jsonStr = await backupService.exportAll();
       backupService.downloadBackupFile(jsonStr);
       showToast('File backup berhasil diunduh!', 'success');
-    } catch (err: any) {
-      showToast(err.message || 'Gagal mengekspor data.', 'error');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Gagal mengekspor data.';
+      showToast(msg, 'error');
     } finally {
       setIsExporting(false);
     }
@@ -106,8 +107,9 @@ export default function SettingsPage() {
           const result = await backupService.importAll(content);
           await Promise.all([fetchWallets(), fetchMonthlyData(currentMonth), loadCategories()]);
           showToast(`Data berhasil dipulihkan! (${result.txCount} transaksi)`, 'success');
-        } catch (err: any) {
-          showToast(err.message || 'Gagal memulihkan backup.', 'error');
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Gagal memulihkan backup.';
+          showToast(msg, 'error');
         } finally {
           setIsImporting(false);
           if (fileInputRef.current) fileInputRef.current.value = '';
@@ -139,8 +141,9 @@ export default function SettingsPage() {
       setCatName('');
       setCatError('');
       await loadCategories();
-    } catch (err: any) {
-      showToast(err.message || 'Gagal menambah kategori.', 'error');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Gagal menambah kategori.';
+      showToast(msg, 'error');
     }
   };
 
@@ -156,8 +159,9 @@ export default function SettingsPage() {
           await categoryService.delete(cat.id);
           showToast('Kategori berhasil dihapus.', 'success');
           await loadCategories();
-        } catch (err: any) {
-          showToast(err.message || 'Gagal menghapus kategori.', 'error');
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Gagal menghapus kategori.';
+          showToast(msg, 'error');
         }
       },
     });

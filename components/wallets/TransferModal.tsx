@@ -49,8 +49,9 @@ export function TransferModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
       await Promise.all([fetchMonthlyData(currentMonth), useWalletStore.getState().fetchWallets()]);
       showToast('Dana berhasil dipindahkan antar dompet!', 'success');
       onClose();
-    } catch (err: any) {
-      showToast(err.message || 'Gagal memindahkan dana.', 'error');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Gagal memindahkan dana.';
+      showToast(msg, 'error');
     } finally {
       setIsSubmitting(false);
     }
