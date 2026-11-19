@@ -7,7 +7,8 @@ import {
   ArrowUpRight,
   Plus,
   ArrowRight,
-  Sparkles,
+  ChevronDown,
+  ChevronUp,
   Wallet as WalletIcon,
   PiggyBank,
   Eye,
@@ -42,6 +43,7 @@ export default function DashboardPage() {
   const [overallBudget, setOverallBudget] = useState<BudgetProgress | null>(null);
   const [categoryBudgets, setCategoryBudgets] = useState<BudgetProgress[]>([]);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [showAllBudgets, setShowAllBudgets] = useState(false);
 
   // Load category lookup map and budget progress for the current month
   useEffect(() => {
@@ -63,15 +65,18 @@ export default function DashboardPage() {
 
   const walletMap = new Map(wallets.map((w) => [w.id, w]));
   const recentTransactions = transactions.slice(0, 5);
+  const budgetCount = (overallBudget ? 1 : 0) + categoryBudgets.length;
+  const firstBudget = overallBudget || categoryBudgets[0];
+  const firstBudgetTitle = overallBudget
+    ? 'Target Keseluruhan Bulan Ini'
+    : categoryBudgets[0]?.category?.name || 'Target Kategori';
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl mx-auto">
+    <div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
       {/* 1. Card Saldo Total (Hero Card) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0A66C2] via-[#0073B1] to-[#004182] p-6 text-white shadow-xl shadow-primary/20 transition-all">
-        {/* Modern glowing blurred meshes */}
-        <div className="absolute right-0 top-0 translate-x-6 -translate-y-6 w-48 h-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-        <div className="absolute left-0 bottom-0 -translate-x-6 translate-y-6 w-36 h-36 rounded-full bg-black/15 blur-xl pointer-events-none" />
-
+      <div
+        className="relative overflow-hidden rounded-3xl p-4 sm:p-6 text-white shadow-md bg-primary transition-colors duration-200"
+      >
         <div className="relative z-10 flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -92,14 +97,10 @@ export default function DashboardPage() {
                 )}
               </button>
             </div>
-            <span className="flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-white font-medium">
-              <Sparkles className="w-3 h-3 text-[#70B5F9]" />
-              Aktif
-            </span>
           </div>
 
           <div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight" suppressHydrationWarning>
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight transition-all duration-200" suppressHydrationWarning>
               {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(totalBalance)}
             </h2>
           </div>
@@ -157,7 +158,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Jika belum ada target sama sekali */}
-        {!overallBudget && categoryBudgets.length === 0 ? (
+        {budgetCount === 0 ? (
           <Card className="flex items-center justify-between p-4 bg-surface-alt/50 border-dashed border-border">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -174,8 +175,8 @@ export default function DashboardPage() {
               </Button>
             </Link>
           </Card>
-        ) : (
-          <div className="flex flex-col gap-3">
+        ) : showAllBudgets && budgetCount > 1 ? (
+          <div key="budget-expanded" className="motion-enter flex flex-col gap-3">
             {/* Target Keseluruhan (Total) jika ada */}
             {overallBudget && (
               <Link href="/budget" className="block group">
@@ -237,8 +238,7 @@ export default function DashboardPage() {
                           </span>
                         </div>
 
-                        {/* Progress Bar Container */}
-                        <div className="w-full h-2.5 rounded-full bg-surface-alt overflow-hidden p-0.5">
+                        <div className="w-full h-2.5 rounded-full bg-surface-alt overflow-hidden">
                           <div
                             className={cn(
                               'h-full rounded-full transition-all duration-500 ease-out',
@@ -273,6 +273,80 @@ export default function DashboardPage() {
                   ))}
                 </div>
               </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setShowAllBudgets(false)}
+              className="self-center inline-flex min-h-10 items-center gap-2 px-4 rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors"
+            >
+              <ChevronUp className="w-4 h-4" />
+              Sembunyikan
+            </button>
+          </div>
+        ) : (
+          <div key="budget-collapsed" className="motion-enter flex flex-col items-center gap-1">
+            <div className="relative isolate w-full" style={{ paddingBottom: budgetCount > 1 ? '1.25rem' : '0' }}>
+              {budgetCount > 1 && (
+                <>
+                  <div className="absolute z-0 left-3 right-3 top-3 h-full rounded-2xl border border-border bg-surface-alt" />
+                  <div className="absolute z-0 left-1.5 right-1.5 top-1.5 h-full rounded-2xl border border-border bg-surface" />
+                </>
+              )}
+              {firstBudget && (
+                <Link href="/budget" className="relative z-10 block rounded-2xl border border-border bg-surface p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/40">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-text-primary">{firstBudgetTitle}</p>
+                      <p className="mt-1 text-[11px] text-text-secondary">
+                        Total Target: <strong className="font-semibold text-text-primary">{formatRupiah(firstBudget.budget.targetAmount)}</strong>
+                      </p>
+                    </div>
+                    <span
+                      className={cn(
+                        'shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold',
+                        firstBudget.percentage >= 90
+                          ? 'text-danger bg-danger/15'
+                          : firstBudget.percentage >= 70
+                          ? 'text-warning bg-warning/15'
+                          : 'text-secondary bg-secondary/15'
+                      )}
+                    >
+                      {firstBudget.percentage}%
+                    </span>
+                  </div>
+
+                  <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-alt">
+                    <div
+                      className={cn(
+                        'h-full rounded-full transition-all duration-500 ease-out',
+                        firstBudget.percentage >= 90 ? 'bg-danger' : firstBudget.percentage >= 70 ? 'bg-warning' : 'bg-secondary'
+                      )}
+                      style={{ width: `${Math.min(firstBudget.percentage, 100)}%` }}
+                    />
+                  </div>
+
+                  <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-text-secondary">
+                    <span className="truncate">Terpakai: <strong className="text-text-primary">{formatRupiah(firstBudget.spentAmount)}</strong></span>
+                    <span className={cn('shrink-0 font-semibold', firstBudget.isOverBudget ? 'text-danger' : 'text-secondary')}>
+                      {firstBudget.isOverBudget
+                        ? `Lebih ${formatRupiah(Math.abs(firstBudget.remainingAmount))}`
+                        : `Sisa ${formatRupiah(firstBudget.remainingAmount)}`}
+                    </span>
+                  </div>
+                </Link>
+              )}
+            </div>
+
+            {budgetCount > 1 && (
+              <button
+                type="button"
+                onClick={() => setShowAllBudgets(true)}
+                className="inline-flex min-h-10 items-center gap-2 px-4 rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors"
+              >
+                Lihat semua ({budgetCount})
+                <ChevronDown className="w-4 h-4" />
+              </button>
             )}
           </div>
         )}

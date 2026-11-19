@@ -58,9 +58,9 @@ export function BottomNav() {
                   isActive ? 'bg-primary/10' : 'group-hover:bg-surface-alt'
                 )}
               >
-                <Icon className={cn('w-4.5 h-4.5 sm:w-5 sm:h-5', isActive && 'stroke-[2.5]')} />
+                <Icon className={cn('w-5 h-5', isActive && 'stroke-[2.5]')} />
               </div>
-              <span className={cn('text-[9.5px] sm:text-[10px] mt-0.5 font-medium truncate max-w-full text-center', isActive && 'font-bold text-primary')}>
+              <span className={cn('text-[10px] mt-0.5 font-medium truncate max-w-full text-center', isActive && 'font-bold text-primary')}>
                 {item.label}
               </span>
             </Link>

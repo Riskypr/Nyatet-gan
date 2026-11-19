@@ -80,7 +80,7 @@ export function TransactionItem({
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-alt transition-colors"
+              className="h-10 w-10 flex items-center justify-center rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-alt transition-colors"
               aria-label="Opsi transaksi"
             >
               <MoreVertical className="w-4 h-4" />

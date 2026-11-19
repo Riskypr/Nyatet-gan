@@ -20,6 +20,8 @@ import {
   ArrowDownLeft,
   Plus,
   Info,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { Transaction, Category, Wallet } from '@/lib/types';
 import { formatRupiah } from '@/lib/utils/currency';
@@ -54,6 +56,7 @@ export function ExpenseCalendar({
 }: ExpenseCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(true);
 
   // Parse current month as Date
   const currentMonthDate = useMemo(() => {
@@ -144,29 +147,49 @@ export function ExpenseCalendar({
   const isSelectedDateToday = selectedDate === todayStr;
 
   return (
-    <Card className="p-4 sm:p-5 flex flex-col gap-4 border-border/80 shadow-xs">
+    <Card className="p-3 sm:p-5 flex flex-col gap-3 sm:gap-4 border-border/80 shadow-xs">
       {/* Header Kalender — without month selector (already in Header) */}
-      <div className="flex items-center justify-between pb-3 border-b border-border/70">
-        <div className="flex items-center gap-2.5">
+      <div className="flex items-center justify-between gap-2 pb-3 border-b border-border/70">
+        <div className="flex items-center gap-2 min-w-0">
           <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0 shadow-xs">
             <CalendarIcon className="w-4 h-4 stroke-[2.5]" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h3 className="text-sm font-bold text-text-primary">Kalender Transaksi</h3>
-            <p className="text-[11px] text-text-secondary">
+            <p className="hidden sm:block text-[11px] text-text-secondary">
               Pantau ritme pemasukan dan belanja harian Anda
             </p>
           </div>
         </div>
 
-        {maxExpenseAmount > 0 && (
-          <div className="hidden xs:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-danger/15 text-danger text-[11px] font-semibold border border-danger/25">
-            <Flame className="w-3.5 h-3.5 fill-danger" />
-            <span>Puncak: {formatRupiah(maxExpenseAmount)}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {maxExpenseAmount > 0 && (
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-danger/15 text-danger text-[11px] font-semibold border border-danger/25">
+              <Flame className="w-3.5 h-3.5 fill-danger" />
+              <span>Puncak: {formatRupiah(maxExpenseAmount)}</span>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => setIsCalendarVisible((visible) => !visible)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+            aria-label={isCalendarVisible ? 'Sembunyikan kalender' : 'Tampilkan kalender'}
+            aria-expanded={isCalendarVisible}
+            title={isCalendarVisible ? 'Sembunyikan kalender' : 'Tampilkan kalender'}
+          >
+            {isCalendarVisible ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
+      <div
+        className={cn(
+          'grid transition-[grid-template-rows,opacity] duration-300 ease-out',
+          isCalendarVisible ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+        )}
+        aria-hidden={!isCalendarVisible}
+      >
+        <div className="min-h-0 overflow-hidden flex flex-col gap-3 sm:gap-4" inert={!isCalendarVisible}>
       {/* Weekday headers */}
       <div className="grid grid-cols-7 gap-1 text-center">
         {WEEKDAY_NAMES.map((day, idx) => (
@@ -208,7 +231,7 @@ export function ExpenseCalendar({
               type="button"
               onClick={() => handleDayClick(day)}
               className={cn(
-                'relative flex flex-col items-center justify-between p-1.5 sm:p-2 rounded-2xl min-h-[52px] sm:min-h-[58px] transition-all duration-150 cursor-pointer select-none text-left',
+                'relative flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl sm:rounded-2xl min-h-[56px] sm:min-h-[58px] transition-all duration-150 cursor-pointer select-none text-left',
                 // Non-current month styling
                 !isCurrentMonthDay && 'opacity-20 pointer-events-none bg-transparent',
                 // Default current month cell
@@ -319,6 +342,8 @@ export function ExpenseCalendar({
           * Klik tanggal untuk melihat rincian
         </span>
       </div>
+        </div>
+      </div>
 
       {/* BottomSheet Rincian Transaksi Tanggal Terpilih */}
       <BottomSheet
@@ -339,7 +364,7 @@ export function ExpenseCalendar({
             className={cn(
               'p-4 rounded-2xl border flex flex-col gap-2 transition-all',
               isSelectedDatePeak
-                ? 'bg-gradient-to-r from-danger/15 via-danger/5 to-transparent border-danger/30'
+                ? 'bg-danger/10 border-danger/30'
                 : 'bg-surface-alt border-border'
             )}
           >

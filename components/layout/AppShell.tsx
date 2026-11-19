@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { seedInitialDataIfNeeded } from '@/lib/db/seed';
 import { useWalletStore } from '@/lib/stores/walletStore';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
@@ -19,6 +20,7 @@ import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import { OfflineBanner } from '@/components/pwa/OfflineBanner';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [isDbReady, setIsDbReady] = useState(false);
   const { fetchWallets } = useWalletStore();
   const { fetchMonthlyData, currentMonth } = useTransactionStore();
@@ -92,7 +94,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-6">
         <Header />
         <OfflineBanner />
-        <main className="flex-1 p-4 sm:p-6 max-w-5xl w-full mx-auto">{children}</main>
+        <main key={pathname} className="motion-enter flex-1 p-4 sm:p-6 max-w-5xl w-full mx-auto">{children}</main>
       </div>
 
       {/* Mobile Bottom Navigation */}

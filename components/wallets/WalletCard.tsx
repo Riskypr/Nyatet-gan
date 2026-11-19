@@ -42,7 +42,7 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
       <div
         className="relative flex flex-col justify-between rounded-2xl p-4 min-w-[200px] w-[200px] h-[130px] shrink-0 overflow-hidden shadow-sm transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] select-none"
         style={{
-          background: `linear-gradient(145deg, ${wallet.color}, ${wallet.color}CC)`,
+          backgroundColor: wallet.color,
         }}
       >
         {/* Decorative watermark icon — top-right, blended softly */}
@@ -98,7 +98,7 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
             {onEdit && (
               <button
                 onClick={() => onEdit(wallet)}
-                className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors"
+                className="h-10 w-10 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors"
                 aria-label="Ubah Dompet"
               >
                 <Pencil className="w-3.5 h-3.5" />
@@ -107,7 +107,7 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
             {onDelete && (
               <button
                 onClick={() => onDelete(wallet)}
-                className="p-1.5 rounded-lg text-danger hover:bg-surface-alt transition-colors"
+                className="h-10 w-10 flex items-center justify-center rounded-lg text-danger hover:bg-surface-alt transition-colors"
                 aria-label="Hapus atau Arsip Dompet"
               >
                 <Trash2 className="w-3.5 h-3.5" />

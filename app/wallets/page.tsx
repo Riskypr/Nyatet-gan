@@ -59,7 +59,7 @@ export default function WalletsPage() {
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto">
       {/* Header Overview Card */}
-      <Card className="p-5 bg-gradient-to-r from-surface-alt via-surface to-surface border-border shadow-xs">
+      <Card className="p-5 bg-surface-alt/60 border-border shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shadow-sm shadow-primary/30">

@@ -59,7 +59,7 @@ export function Header() {
           <div className="flex items-center gap-1 bg-surface border border-border rounded-xl px-1.5 sm:px-2 py-1 shadow-xs">
             <button
               onClick={handlePrevMonth}
-              className="p-1 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors"
+              className="h-9 w-9 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors"
               aria-label="Bulan Sebelumnya"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -72,7 +72,7 @@ export function Header() {
             </div>
             <button
               onClick={handleNextMonth}
-              className="p-1 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors"
+              className="h-9 w-9 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors"
               aria-label="Bulan Berikutnya"
             >
               <ChevronRight className="w-4 h-4" />

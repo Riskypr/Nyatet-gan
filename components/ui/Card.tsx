@@ -17,7 +17,7 @@ export function Card({ className, variant = 'elevated', children, ...props }: Ca
 
   return (
     <div
-      className={cn('rounded-2xl p-4 transition-all duration-150', variants[variant], className)}
+      className={cn('rounded-2xl p-4 transition-all duration-200 ease-out', variants[variant], className)}
       {...props}
     >
       {children}
