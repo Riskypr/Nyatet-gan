@@ -9,6 +9,8 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Wallet as WalletIcon,
   PiggyBank,
   Eye,
@@ -44,6 +46,7 @@ export default function DashboardPage() {
   const [categoryBudgets, setCategoryBudgets] = useState<BudgetProgress[]>([]);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [showAllBudgets, setShowAllBudgets] = useState(false);
+  const [activeBudgetIndex, setActiveBudgetIndex] = useState(0);
 
   // Load category lookup map and budget progress for the current month
   useEffect(() => {
@@ -65,8 +68,18 @@ export default function DashboardPage() {
 
   const walletMap = new Map(wallets.map((w) => [w.id, w]));
   const recentTransactions = transactions.slice(0, 5);
-  const budgetCount = (overallBudget ? 1 : 0) + categoryBudgets.length;
-  const displayedCategoryBudgets = showAllBudgets ? categoryBudgets : categoryBudgets.slice(0, 4);
+  const allBudgets = [...(overallBudget ? [overallBudget] : []), ...categoryBudgets];
+  const budgetCount = allBudgets.length;
+  const safeIndex = Math.min(activeBudgetIndex, Math.max(0, budgetCount - 1));
+  const currentBudget = allBudgets[safeIndex];
+  const isOverall = currentBudget && currentBudget === overallBudget;
+  const currentTitle = currentBudget
+    ? isOverall
+      ? 'Target Keseluruhan Bulan Ini'
+      : currentBudget.category?.name || 'Target Kategori'
+    : '';
+  const currentIcon = isOverall ? 'Target' : currentBudget?.category?.icon || 'Tag';
+  const currentColor = isOverall ? '#0A66C2' : currentBudget?.category?.color || '#0A66C2';
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
@@ -178,9 +191,161 @@ export default function DashboardPage() {
           </Card>
         )}
 
-        {/* Jika ada target aktif */}
-        {budgetCount > 0 && (
+        {/* Tampilan Tumpukan Kartu (Stacked Deck - sesuai desain referensi) */}
+        {budgetCount > 0 && !showAllBudgets && currentBudget && (
           <div className="flex flex-col gap-3">
+            {/* Wrapper tumpukan kartu bertingkat */}
+            <div className="relative isolate pt-1 pb-4">
+              {/* Layer 2: Paling bawah (hanya jika ada >= 3 target) */}
+              {budgetCount >= 3 && (
+                <div
+                  className="absolute -bottom-3 left-6 right-6 h-8 rounded-2xl bg-surface-alt/80 border border-border/80 shadow-2xs pointer-events-none transition-all duration-300"
+                  aria-hidden="true"
+                />
+              )}
+
+              {/* Layer 1: Tengah (hanya jika ada >= 2 target) */}
+              {budgetCount >= 2 && (
+                <div
+                  className="absolute -bottom-1.5 left-3 right-3 h-8 rounded-2xl bg-surface-alt border border-border shadow-2xs pointer-events-none transition-all duration-300"
+                  aria-hidden="true"
+                />
+              )}
+
+              {/* Kartu Utama (Active Front Card) */}
+              <div className="relative z-10 bg-surface rounded-2xl sm:rounded-3xl border border-border shadow-xs p-4 sm:p-5 flex flex-col gap-3 transition-all hover:border-primary/40 hover:shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <CategoryIcon
+                      name={currentIcon}
+                      color={currentColor}
+                      size="md"
+                    />
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm sm:text-base font-bold text-text-primary truncate">
+                          {currentTitle}
+                        </span>
+                        {currentBudget.isOverBudget && (
+                          <AlertTriangle className="w-4 h-4 text-danger shrink-0" />
+                        )}
+                      </div>
+                      <span className="text-xs text-text-secondary truncate mt-0.5">
+                        Total Target:{' '}
+                        <strong className="text-text-primary font-semibold">
+                          {formatRupiah(currentBudget.budget.targetAmount)}
+                        </strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span
+                      className={cn(
+                        'text-xs font-bold px-2.5 py-1 rounded-full shrink-0',
+                        currentBudget.percentage >= 90
+                          ? 'text-danger bg-danger/15'
+                          : currentBudget.percentage >= 70
+                          ? 'text-warning bg-warning/15'
+                          : 'text-secondary bg-secondary/15'
+                      )}
+                    >
+                      {currentBudget.percentage}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Progress Bar Container */}
+                <div className="w-full h-3 rounded-full bg-surface-alt overflow-hidden p-0.5">
+                  <div
+                    key={`bar-${safeIndex}`}
+                    className={cn(
+                      'h-full rounded-full transition-all duration-700 ease-out animate-progress-fill',
+                      currentBudget.percentage >= 90
+                        ? 'bg-danger'
+                        : currentBudget.percentage >= 70
+                        ? 'bg-warning'
+                        : 'bg-secondary'
+                    )}
+                    style={{ width: `${Math.min(currentBudget.percentage, 100)}%` }}
+                  />
+                </div>
+
+                {/* Footer Informasi Terpakai & Sisa / Lebih */}
+                <div className="flex items-center justify-between text-xs text-text-secondary gap-2 pt-0.5">
+                  <span className="truncate flex-1">
+                    Terpakai:{' '}
+                    <strong className="text-text-primary font-semibold">
+                      {formatRupiah(currentBudget.spentAmount)}
+                    </strong>
+                  </span>
+                  <span className="shrink-0 text-right">
+                    {currentBudget.isOverBudget ? (
+                      <span className="text-danger font-semibold">
+                        Lebih {formatRupiah(Math.abs(currentBudget.remainingAmount))}
+                      </span>
+                    ) : (
+                      <span className="text-secondary font-semibold">
+                        Sisa {formatRupiah(currentBudget.remainingAmount)}
+                      </span>
+                    )}
+                  </span>
+                </div>
+
+                {/* Navigasi Ganti Kartu dalam Tumpukan */}
+                {budgetCount > 1 && (
+                  <div className="flex items-center justify-between pt-2.5 border-t border-border/70 text-xs text-text-secondary">
+                    <span className="font-semibold text-[11px] text-text-primary">
+                      Target {safeIndex + 1} dari {budgetCount}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveBudgetIndex((prev) => (prev > 0 ? prev - 1 : allBudgets.length - 1));
+                        }}
+                        className="h-7 w-7 flex items-center justify-center rounded-lg border border-border bg-surface hover:bg-surface-alt text-text-primary transition-colors cursor-pointer"
+                        title="Target Sebelumnya"
+                        aria-label="Target Sebelumnya"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveBudgetIndex((prev) => (prev < allBudgets.length - 1 ? prev + 1 : 0));
+                        }}
+                        className="h-7 w-7 flex items-center justify-center rounded-lg border border-border bg-surface hover:bg-surface-alt text-text-primary transition-colors cursor-pointer"
+                        title="Target Berikutnya"
+                        aria-label="Target Berikutnya"
+                      >
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Tombol Lihat Semua Tumpukan */}
+            {budgetCount > 1 && (
+              <button
+                type="button"
+                onClick={() => setShowAllBudgets(true)}
+                className="self-center inline-flex min-h-10 items-center gap-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors cursor-pointer"
+              >
+                <span>Lihat semua target ({budgetCount})</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Tampilan Buka Semua Target (Expanded View) */}
+        {budgetCount > 0 && showAllBudgets && (
+          <div className="motion-enter flex flex-col gap-3">
             {/* Target Keseluruhan (Total) jika ada */}
             {overallBudget && (
               <Link href="/budget" className="block group">
@@ -193,7 +358,7 @@ export default function DashboardPage() {
               </Link>
             )}
 
-            {/* Target Per Kategori jika ada */}
+            {/* Target Per Kategori dalam grid 2 kolom */}
             {categoryBudgets.length > 0 && (
               <div className="flex flex-col gap-2">
                 {overallBudget && (
@@ -202,7 +367,7 @@ export default function DashboardPage() {
                   </h4>
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {displayedCategoryBudgets.map((cp) => (
+                  {categoryBudgets.map((cp) => (
                     <Link key={cp.budget.id} href="/budget" className="block group">
                       <div className="p-4 bg-surface rounded-2xl border border-border shadow-xs flex flex-col gap-3 transition-all group-hover:border-primary/40 group-hover:bg-surface-alt/20 hover:shadow-sm">
                         <div className="flex items-start justify-between gap-2.5">
@@ -278,28 +443,17 @@ export default function DashboardPage() {
                     </Link>
                   ))}
                 </div>
-
-                {categoryBudgets.length > 4 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllBudgets(!showAllBudgets)}
-                    className="self-center inline-flex min-h-10 items-center gap-2 px-4 mt-1 rounded-xl text-xs sm:text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors cursor-pointer"
-                  >
-                    {showAllBudgets ? (
-                      <>
-                        <ChevronUp className="w-4 h-4" />
-                        <span>Sembunyikan</span>
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="w-4 h-4" />
-                        <span>Lihat semua ({categoryBudgets.length} kategori)</span>
-                      </>
-                    )}
-                  </button>
-                )}
               </div>
             )}
+
+            <button
+              type="button"
+              onClick={() => setShowAllBudgets(false)}
+              className="self-center inline-flex min-h-10 items-center gap-2 px-4 mt-1 rounded-xl text-xs sm:text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors cursor-pointer"
+            >
+              <ChevronUp className="w-4 h-4" />
+              <span>Tumpuk kembali</span>
+            </button>
           </div>
         )}
       </div>
