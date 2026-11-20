@@ -95,26 +95,26 @@ export default function DashboardPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-white/90">
                 Total Saldo Semua Dompet
               </span>
-              <button
-                type="button"
-                onClick={toggleBalanceHidden}
-                className="p-1 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
-                title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
-                aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
-              >
-                {isBalanceHidden ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>
             </div>
           </div>
 
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight transition-all duration-200" suppressHydrationWarning>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <h2 className="min-w-0 truncate text-2xl sm:text-4xl font-extrabold tracking-tight transition-all duration-200" suppressHydrationWarning>
               {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(totalBalance)}
             </h2>
+            <button
+              type="button"
+              onClick={toggleBalanceHidden}
+              className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer shrink-0"
+              title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+              aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+            >
+              {isBalanceHidden ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
           </div>
 
           {/* Sub-card: Pemasukan vs Pengeluaran Bulan Ini */}
@@ -197,7 +197,7 @@ export default function DashboardPage() {
               {/* Layer 2: Paling bawah (hanya jika ada >= 3 target) */}
               {budgetCount >= 3 && (
                 <div
-                  className="absolute -bottom-3 left-6 right-6 h-8 rounded-[1.75rem] bg-surface-alt/80 border border-border/80 shadow-sm pointer-events-none transition-all duration-300"
+                  className="absolute -bottom-3 left-6 right-6 h-8 rounded-2xl bg-surface-alt/80 border border-border/80 shadow-sm pointer-events-none transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
@@ -205,13 +205,13 @@ export default function DashboardPage() {
               {/* Layer 1: Tengah (hanya jika ada >= 2 target) */}
               {budgetCount >= 2 && (
                 <div
-                  className="absolute -bottom-1.5 left-3 right-3 h-8 rounded-[1.75rem] bg-surface-alt border border-border shadow-sm pointer-events-none transition-all duration-300"
+                  className="absolute -bottom-1.5 left-3 right-3 h-8 rounded-2xl bg-surface-alt border border-border shadow-sm pointer-events-none transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
 
               {/* Kartu Utama (Active Front Card) */}
-              <div className="relative z-10 bg-surface rounded-[1.75rem] border border-border shadow-sm px-5 py-5 sm:px-7 sm:py-6 flex flex-col gap-3 transition-all hover:border-primary/40 hover:shadow-md">
+              <div className="relative z-10 bg-surface rounded-2xl border border-border shadow-sm px-5 py-5 sm:px-7 sm:py-6 flex flex-col gap-3 transition-all hover:border-primary/40 hover:shadow-md">
                 <div className="flex items-end justify-between gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
@@ -285,12 +285,10 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowAllBudgets(true)}
-                className="self-center inline-flex min-h-12 items-center gap-2.5 px-5 rounded-full border border-border bg-surface text-sm font-semibold text-text-primary shadow-md hover:bg-surface-alt transition-colors cursor-pointer"
+                className="self-center inline-flex items-center gap-1.5 px-2 py-1 text-xs sm:text-sm font-semibold text-primary hover:underline transition-colors cursor-pointer"
               >
-                <span>Lihat semua</span>
-                <span className="w-5 h-5 rounded-full bg-text-primary text-surface flex items-center justify-center">
-                  <ChevronDown className="w-3.5 h-3.5" />
-                </span>
+                <span>Lihat semua target ({budgetCount})</span>
+                <ChevronDown className="w-4 h-4" />
               </button>
             )}
           </div>
