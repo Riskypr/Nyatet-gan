@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
@@ -32,9 +33,11 @@ export function BottomSheet({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  // Render outside the page tree so transformed/animated content wrappers do
+  // not become the containing block for this fixed overlay on mobile.
+  if (!isOpen || typeof document === 'undefined') return null;
 
-  return (
+  return createPortal((
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
       {/* Backdrop */}
       <div
@@ -77,5 +80,5 @@ export function BottomSheet({
         <div className="p-5 overflow-y-auto">{children}</div>
       </div>
     </div>
-  );
+  ), document.body);
 }

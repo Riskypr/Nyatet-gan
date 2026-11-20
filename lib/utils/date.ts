@@ -27,6 +27,18 @@ export function formatMonthYear(monthKey: string | Date): string {
   }
 }
 
+/** Format bulan dan tahun ringkas untuk ruang sempit: `Nov 2026`. */
+export function formatMonthYearShort(monthKey: string | Date): string {
+  try {
+    const d = typeof monthKey === 'string'
+      ? parseISO(monthKey.length === 7 ? `${monthKey}-01` : monthKey)
+      : monthKey;
+    return format(d, 'MMM yyyy', { locale: id });
+  } catch {
+    return String(monthKey);
+  }
+}
+
 /**
  * Mendapatkan format bulan saat ini: `YYYY-MM`
  */

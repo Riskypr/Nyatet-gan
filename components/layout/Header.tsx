@@ -4,7 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
-import { formatMonthYear, getPreviousMonth, getNextMonth } from '@/lib/utils/date';
+import { formatMonthYear, formatMonthYearShort, getPreviousMonth, getNextMonth } from '@/lib/utils/date';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export function Header() {
@@ -66,7 +66,10 @@ export function Header() {
             </button>
             <div className="flex items-center gap-1.5 px-1 sm:px-1.5 select-none">
               <Calendar className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs sm:text-sm font-semibold text-text-primary whitespace-nowrap">
+              <span className="text-xs sm:text-sm font-semibold text-text-primary whitespace-nowrap sm:hidden">
+                {formatMonthYearShort(currentMonth)}
+              </span>
+              <span className="text-xs sm:text-sm font-semibold text-text-primary whitespace-nowrap hidden sm:inline">
                 {formatMonthYear(currentMonth)}
               </span>
             </div>

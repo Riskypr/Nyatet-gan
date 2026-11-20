@@ -78,8 +78,6 @@ export default function DashboardPage() {
       ? 'Target Keseluruhan Bulan Ini'
       : currentBudget.category?.name || 'Target Kategori'
     : '';
-  const currentIcon = isOverall ? 'Target' : currentBudget?.category?.icon || 'Tag';
-  const currentColor = isOverall ? '#0A66C2' : currentBudget?.category?.color || '#0A66C2';
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
@@ -193,15 +191,13 @@ export default function DashboardPage() {
 
         {/* Tampilan Tumpukan Kartu (Stacked Deck - sesuai desain referensi) */}
         {budgetCount > 0 && !showAllBudgets && currentBudget && (
-          <div className="flex flex-col gap-3.5">
-            {/* Wrapper tumpukan kartu bertingkat dengan efek deck realistis */}
-            <div className="relative isolate pt-1 pb-6 group">
+          <div className="flex flex-col gap-6">
+            {/* Wrapper tumpukan kartu bertingkat */}
+            <div className="relative isolate pt-1 pb-1">
               {/* Layer 2: Paling bawah (hanya jika ada >= 3 target) */}
               {budgetCount >= 3 && (
                 <div
-                  onClick={() => setActiveBudgetIndex((prev) => (prev < allBudgets.length - 1 ? prev + 1 : 0))}
-                  className="absolute -bottom-4 sm:-bottom-5 left-6 sm:left-8 right-6 sm:right-8 h-10 rounded-2xl sm:rounded-3xl bg-surface-alt border border-border/70 shadow-2xs dark:bg-surface-alt/70 dark:border-border/50 group-hover:-bottom-5 sm:group-hover:-bottom-6.5 group-hover:shadow-xs transition-all duration-300 cursor-pointer"
-                  title="Klik untuk lihat target berikutnya"
+                  className="absolute -bottom-3 left-6 right-6 h-8 rounded-[1.75rem] bg-surface-alt/80 border border-border/80 shadow-sm pointer-events-none transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
@@ -209,128 +205,50 @@ export default function DashboardPage() {
               {/* Layer 1: Tengah (hanya jika ada >= 2 target) */}
               {budgetCount >= 2 && (
                 <div
-                  onClick={() => setActiveBudgetIndex((prev) => (prev < allBudgets.length - 1 ? prev + 1 : 0))}
-                  className="absolute -bottom-2 sm:-bottom-2.5 left-3 sm:left-4 right-3 sm:right-4 h-10 rounded-2xl sm:rounded-3xl bg-surface border border-border/80 shadow-xs dark:bg-surface-alt dark:border-border/70 group-hover:-bottom-2.5 sm:group-hover:-bottom-3.5 group-hover:shadow-sm transition-all duration-300 cursor-pointer"
-                  title="Klik untuk lihat target berikutnya"
+                  className="absolute -bottom-1.5 left-3 right-3 h-8 rounded-[1.75rem] bg-surface-alt border border-border shadow-sm pointer-events-none transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
 
               {/* Kartu Utama (Active Front Card) */}
-              <div className="relative z-10 bg-surface rounded-2xl sm:rounded-3xl border border-border shadow-xs p-4 sm:p-5 flex flex-col gap-3.5 transition-all group-hover:border-primary/40 group-hover:shadow-sm">
-                <div key={safeIndex} className="motion-enter flex flex-col gap-3.5">
-                  {/* Header: Icon, Judul, Target & Badge */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <CategoryIcon
-                        name={currentIcon}
-                        color={currentColor}
-                        size="md"
-                      />
-                      <div className="flex flex-col min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm sm:text-base font-bold text-text-primary truncate">
-                            {currentTitle}
-                          </span>
-                          {currentBudget.isOverBudget && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-danger/15 text-danger shrink-0">
-                              <AlertTriangle className="w-3 h-3" />
-                              Lebih
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-xs text-text-secondary truncate mt-0.5">
-                          Total Target:{' '}
-                          <strong className="text-text-primary font-semibold">
-                            {formatRupiah(currentBudget.budget.targetAmount)}
-                          </strong>
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span
-                        className={cn(
-                          'text-xs font-bold px-2.5 py-1 rounded-full shrink-0 shadow-2xs',
-                          currentBudget.percentage >= 90
-                            ? 'text-danger bg-danger/15'
-                            : currentBudget.percentage >= 70
-                            ? 'text-warning bg-warning/15'
-                            : 'text-secondary bg-secondary/15'
-                        )}
-                      >
-                        {currentBudget.percentage}%
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Progress Bar Container */}
-                  <div className="w-full h-3 rounded-full bg-surface-alt overflow-hidden p-0.5">
-                    <div
-                      key={`bar-${safeIndex}`}
-                      className={cn(
-                        'h-full rounded-full transition-all duration-700 ease-out animate-progress-fill',
-                        currentBudget.percentage >= 90
-                          ? 'bg-danger'
-                          : currentBudget.percentage >= 70
-                          ? 'bg-warning'
-                          : 'bg-secondary'
+              <div className="relative z-10 bg-surface rounded-[1.75rem] border border-border shadow-sm px-5 py-5 sm:px-7 sm:py-6 flex flex-col gap-3 transition-all hover:border-primary/40 hover:shadow-md">
+                <div className="flex items-end justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="text-base sm:text-lg font-bold text-text-primary leading-snug">
+                        {currentTitle}
+                      </h4>
+                      {currentBudget.isOverBudget && (
+                        <AlertTriangle className="w-4 h-4 text-danger shrink-0" />
                       )}
-                      style={{ width: `${Math.min(currentBudget.percentage, 100)}%` }}
-                    />
+                    </div>
+                    <p className="text-sm sm:text-base text-text-secondary mt-1">
+                      Terpakai <strong className="font-semibold text-text-primary">{formatRupiah(currentBudget.spentAmount)}</strong>
+                      <span className="hidden sm:inline"> dari </span>
+                      <span className="sm:hidden"> / </span>
+                      <strong className="font-semibold text-text-primary">{formatRupiah(currentBudget.budget.targetAmount)}</strong>
+                    </p>
                   </div>
-
-                  {/* Footer Informasi Terpakai & Sisa / Lebih */}
-                  <div className="flex items-center justify-between text-xs text-text-secondary gap-2 pt-0.5">
-                    <span className="truncate flex-1">
-                      Terpakai:{' '}
-                      <strong className="text-text-primary font-semibold">
-                        {formatRupiah(currentBudget.spentAmount)}
-                      </strong>
-                    </span>
-                    <span className="shrink-0 text-right">
-                      {currentBudget.isOverBudget ? (
-                        <span className="text-danger font-semibold">
-                          Lebih {formatRupiah(Math.abs(currentBudget.remainingAmount))}
-                        </span>
-                      ) : (
-                        <span className="text-secondary font-semibold">
-                          Sisa {formatRupiah(currentBudget.remainingAmount)}
-                        </span>
-                      )}
-                    </span>
-                  </div>
+                  <span
+                    className={cn(
+                      'text-sm font-bold shrink-0 pb-0.5',
+                      currentBudget.percentage >= 90
+                        ? 'text-danger'
+                        : currentBudget.percentage >= 70
+                        ? 'text-warning'
+                        : 'text-secondary'
+                    )}
+                  >
+                    {currentBudget.percentage}%
+                  </span>
                 </div>
 
-                {/* Navigasi Ganti Kartu dalam Tumpukan (Deck Controls) */}
+                {/* Navigasi Ganti Kartu dalam Tumpukan */}
                 {budgetCount > 1 && (
                   <div className="flex items-center justify-between pt-2.5 border-t border-border/70 text-xs text-text-secondary">
-                    {/* Pagination Dots Indicator */}
-                    <div className="flex items-center gap-1.5">
-                      {allBudgets.map((_, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setActiveBudgetIndex(i);
-                          }}
-                          className={cn(
-                            'transition-all duration-300 rounded-full cursor-pointer',
-                            i === safeIndex
-                              ? 'w-4 h-1.5 bg-primary'
-                              : 'w-1.5 h-1.5 bg-border hover:bg-text-secondary/50'
-                          )}
-                          title={`Target ${i + 1}`}
-                          aria-label={`Pilih Target ${i + 1}`}
-                        />
-                      ))}
-                      <span className="ml-1.5 font-semibold text-[11px] text-text-primary">
-                        {safeIndex + 1} / {budgetCount}
-                      </span>
-                    </div>
-
-                    {/* Tombol Sebelumnya & Berikutnya */}
+                    <span className="font-semibold text-[11px] text-text-primary">
+                      Target {safeIndex + 1} dari {budgetCount}
+                    </span>
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
@@ -367,10 +285,12 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowAllBudgets(true)}
-                className="self-center inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-text-secondary border border-border bg-surface hover:bg-surface-alt hover:text-text-primary shadow-2xs transition-all cursor-pointer"
+                className="self-center inline-flex min-h-12 items-center gap-2.5 px-5 rounded-full border border-border bg-surface text-sm font-semibold text-text-primary shadow-md hover:bg-surface-alt transition-colors cursor-pointer"
               >
-                <span>Lihat semua target ({budgetCount})</span>
-                <ChevronDown className="w-4 h-4" />
+                <span>Lihat semua</span>
+                <span className="w-5 h-5 rounded-full bg-text-primary text-surface flex items-center justify-center">
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </span>
               </button>
             )}
           </div>
