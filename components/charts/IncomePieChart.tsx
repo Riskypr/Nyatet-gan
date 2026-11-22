@@ -6,10 +6,13 @@ import { ExpenseByCategorySummary } from '@/lib/types';
 import { formatRupiah } from '@/lib/utils/currency';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PieChart as PieIcon } from 'lucide-react';
+import { cn } from '@/lib/utils/cn';
 
 export interface IncomePieChartProps {
   data: ExpenseByCategorySummary[];
   totalIncome: number;
+  selectedCategoryId?: string | null;
+  onSelectCategory?: (categoryId: string | null) => void;
 }
 
 const INCOME_PALETTE_COLORS = [
@@ -23,7 +26,12 @@ const INCOME_PALETTE_COLORS = [
   '#56687A', // Slate
 ];
 
-export function IncomePieChart({ data, totalIncome }: IncomePieChartProps) {
+export function IncomePieChart({
+  data,
+  totalIncome,
+  selectedCategoryId,
+  onSelectCategory,
+}: IncomePieChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isDark, setIsDark] = useState(false);
 
@@ -43,12 +51,13 @@ export function IncomePieChart({ data, totalIncome }: IncomePieChartProps) {
       <EmptyState
         icon={PieIcon}
         title="Belum Ada Pemasukan"
-        description="Catat pemasukan bulan ini untuk melihat grafik komposisi berdasarkan kategori."
+        description="Tidak ada data pemasukan pada periode atau filter yang dipilih."
       />
     );
   }
 
   const chartData = data.map((item, index) => ({
+    categoryId: item.categoryId,
     name: item.categoryName,
     value: item.totalAmount,
     color: item.color || INCOME_PALETTE_COLORS[index % INCOME_PALETTE_COLORS.length],
@@ -57,7 +66,10 @@ export function IncomePieChart({ data, totalIncome }: IncomePieChartProps) {
     count: item.count,
   }));
 
-  const activeItem = activeIndex !== null ? chartData[activeIndex] : null;
+  const selectedIndex = chartData.findIndex((c) => c.categoryId === selectedCategoryId);
+  const activeItem = activeIndex !== null
+    ? chartData[activeIndex]
+    : (selectedIndex !== -1 ? chartData[selectedIndex] : null);
 
   return (
     <div className="flex flex-col gap-5">
@@ -75,18 +87,30 @@ export function IncomePieChart({ data, totalIncome }: IncomePieChartProps) {
               dataKey="value"
               onMouseEnter={(_, index) => setActiveIndex(index)}
               onMouseLeave={() => setActiveIndex(null)}
-              onClick={(_, index) => setActiveIndex(index)}
+              onClick={(_, index) => {
+                const clicked = chartData[index];
+                if (onSelectCategory && clicked) {
+                  onSelectCategory(clicked.categoryId === selectedCategoryId ? null : clicked.categoryId);
+                }
+              }}
               cursor="pointer"
             >
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={entry.color}
-                  stroke={isDark ? '#262B30' : '#FFFFFF'}
-                  strokeWidth={2}
-                  className="transition-all duration-200 hover:opacity-85"
-                />
-              ))}
+              {chartData.map((entry, index) => {
+                const isSelected = entry.categoryId === selectedCategoryId;
+                const isDimmed = Boolean(selectedCategoryId && !isSelected);
+                return (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.color}
+                    stroke={isSelected ? (isDark ? '#FFFFFF' : '#057642') : (isDark ? '#262B30' : '#FFFFFF')}
+                    strokeWidth={isSelected ? 3 : 2}
+                    className={cn(
+                      'transition-all duration-200 cursor-pointer',
+                      isDimmed ? 'opacity-40 hover:opacity-80' : 'hover:opacity-90'
+                    )}
+                  />
+                );
+              })}
             </Pie>
             <Tooltip
               formatter={(value: unknown) => [formatRupiah(Number(value) || 0), 'Pemasukan']}
@@ -109,7 +133,7 @@ export function IncomePieChart({ data, totalIncome }: IncomePieChartProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4">
           {activeItem ? (
             <>
-              <span className="text-[11px] font-semibold text-text-secondary truncate max-w-[120px]">
+              <span className="text-[11px] font-semibold text-text-secondary truncate max-w-[130px]">
                 {activeItem.name}
               </span>
               <span className="text-base font-bold text-text-primary">
@@ -132,22 +156,36 @@ export function IncomePieChart({ data, totalIncome }: IncomePieChartProps) {
 
       {/* Breakdown List */}
       <div className="flex flex-col gap-2">
-        <h4 className="text-xs font-bold text-text-primary tracking-wide uppercase">
-          Rincian Kategori
-        </h4>
+        <div className="flex items-center justify-between">
+          <h4 className="text-xs font-bold text-text-primary tracking-wide uppercase">
+            Rincian Kategori
+          </h4>
+          <span className="text-[11px] text-text-muted">
+            Klik kategori untuk melihat daftar transaksi
+          </span>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {chartData.map((item, index) => {
             const isHovered = activeIndex === index;
+            const isSelected = item.categoryId === selectedCategoryId;
             return (
               <div
-                key={item.name}
+                key={item.categoryId || item.name}
                 onMouseEnter={() => setActiveIndex(index)}
                 onMouseLeave={() => setActiveIndex(null)}
-                className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
-                  isHovered
-                    ? 'bg-primary/10 border-primary shadow-xs'
+                onClick={() => {
+                  if (onSelectCategory) {
+                    onSelectCategory(isSelected ? null : item.categoryId);
+                  }
+                }}
+                className={cn(
+                  'flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border transition-all cursor-pointer select-none',
+                  isSelected
+                    ? 'bg-secondary/10 border-secondary shadow-xs ring-2 ring-secondary/25'
+                    : isHovered
+                    ? 'bg-surface-alt border-secondary/50 shadow-2xs'
                     : 'bg-surface border-border/80 hover:bg-surface-alt/70'
-                }`}
+                )}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div
@@ -155,7 +193,14 @@ export function IncomePieChart({ data, totalIncome }: IncomePieChartProps) {
                     style={{ backgroundColor: item.color }}
                   />
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-text-primary truncate">{item.name}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold text-text-primary truncate">{item.name}</p>
+                      {isSelected && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-secondary text-white shrink-0">
+                          Dipilih
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[10px] text-text-secondary">{item.count} transaksi</p>
                   </div>
                 </div>

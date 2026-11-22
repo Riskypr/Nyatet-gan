@@ -82,3 +82,78 @@ export function formatGroupDateHeader(dateStr: string): string {
     return dateStr;
   }
 }
+
+export interface WeekOption {
+  id: string; // 'all' | 'w1' | 'w2' | 'w3' | 'w4' | 'w5'
+  label: string; // 'Semua', 'Minggu 1', 'Minggu 2', ...
+  rangeLabel: string; // '1 - 7 Nov'
+  startDay: number;
+  endDay: number;
+  startDate: string; // 'YYYY-MM-01'
+  endDate: string; // 'YYYY-MM-07'
+}
+
+/**
+ * Menghasilkan daftar rentang minggu untuk bulan tertentu (YYYY-MM)
+ */
+export function getWeeksForMonth(monthKey: string): WeekOption[] {
+  try {
+    const [yearStr, monthStr] = monthKey.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const d = parseISO(`${monthKey}-01`);
+    const monthShort = format(d, 'MMM', { locale: id });
+
+    const weeks: WeekOption[] = [
+      {
+        id: 'all',
+        label: 'Semua',
+        rangeLabel: '1 Bulan Penuh',
+        startDay: 1,
+        endDay: daysInMonth,
+        startDate: `${monthKey}-01`,
+        endDate: `${monthKey}-${String(daysInMonth).padStart(2, '0')}`,
+      },
+    ];
+
+    const weekRanges = [
+      { start: 1, end: 7, label: 'Minggu 1' },
+      { start: 8, end: 14, label: 'Minggu 2' },
+      { start: 15, end: 21, label: 'Minggu 3' },
+      { start: 22, end: 28, label: 'Minggu 4' },
+    ];
+
+    if (daysInMonth > 28) {
+      weekRanges.push({ start: 29, end: daysInMonth, label: 'Minggu 5' });
+    }
+
+    weekRanges.forEach((w, idx) => {
+      const sDate = `${monthKey}-${String(w.start).padStart(2, '0')}`;
+      const eDate = `${monthKey}-${String(w.end).padStart(2, '0')}`;
+      weeks.push({
+        id: `w${idx + 1}`,
+        label: w.label,
+        rangeLabel: `${w.start} - ${w.end} ${monthShort}`,
+        startDay: w.start,
+        endDay: w.end,
+        startDate: sDate,
+        endDate: eDate,
+      });
+    });
+
+    return weeks;
+  } catch {
+    return [
+      {
+        id: 'all',
+        label: 'Semua',
+        rangeLabel: '1 Bulan Penuh',
+        startDay: 1,
+        endDay: 31,
+        startDate: `${monthKey}-01`,
+        endDate: `${monthKey}-31`,
+      },
+    ];
+  }
+}
