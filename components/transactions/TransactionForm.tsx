@@ -244,7 +244,7 @@ export function TransactionForm({
                   setErrors((prev) => ({ ...prev, wallet: '' }));
                 }}
                 className={cn(
-                  'flex items-center gap-2.5 pl-2 pr-4 py-1.5 rounded-full border shrink-0 transition-all cursor-pointer text-left',
+                  'flex items-center gap-2.5 pl-2.5 pr-4 py-2 rounded-2xl border shrink-0 transition-all cursor-pointer text-left',
                   isSelected
                     ? 'border-primary bg-primary text-white shadow-sm'
                     : 'border-border bg-surface-alt/70 text-text-primary hover:bg-surface-alt hover:border-primary/40'
@@ -252,7 +252,7 @@ export function TransactionForm({
               >
                 <div
                   className={cn(
-                    'w-8 h-8 rounded-full flex items-center justify-center shrink-0',
+                    'w-8 h-8 rounded-xl flex items-center justify-center shrink-0',
                     isSelected ? 'bg-white/20 text-white' : 'bg-surface border border-border/60'
                   )}
                 >
