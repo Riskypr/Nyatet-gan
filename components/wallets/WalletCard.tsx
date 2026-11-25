@@ -5,9 +5,9 @@ import { Wallet } from '@/lib/types';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 import { formatRupiah } from '@/lib/utils/currency';
 import { useWalletStore } from '@/lib/stores/walletStore';
-import { Pencil, Trash2 } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
 import {
+  Pencil,
+  Trash2,
   Wallet as WalletIcon,
   CreditCard,
   Smartphone,
@@ -15,6 +15,7 @@ import {
   Briefcase,
   LucideIcon,
 } from 'lucide-react';
+import { cn } from '@/lib/utils/cn';
 
 /** Map wallet icon names to a decorative watermark icon */
 const watermarkIconMap: Record<string, LucideIcon> = {
