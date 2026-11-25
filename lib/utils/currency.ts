@@ -30,3 +30,21 @@ export function parseRupiahInput(val: string): number {
   const parsed = parseInt(cleaned, 10);
   return isNaN(parsed) ? 0 : parsed;
 }
+
+/**
+ * Format angka ringkas untuk label grafik/donut (mis. `2,4 jt`, `450 rb`, `15.000`)
+ */
+export function formatCompactNumber(amount: number): string {
+  const abs = Math.abs(amount);
+  const sign = amount < 0 ? '-' : '';
+  if (abs >= 1_000_000_000) {
+    return `${sign}${(abs / 1_000_000_000).toFixed(1).replace(/\.0$/, '').replace('.', ',')} M`;
+  }
+  if (abs >= 1_000_000) {
+    return `${sign}${(abs / 1_000_000).toFixed(1).replace(/\.0$/, '').replace('.', ',')} jt`;
+  }
+  if (abs >= 1_000) {
+    return `${sign}${Math.round(abs / 1_000)} rb`;
+  }
+  return `${sign}${Math.round(abs)}`;
+}
