@@ -108,30 +108,6 @@ export function TransactionDetailModal({
             className="w-14 h-14 rounded-2xl mb-3 shadow-2xs"
           />
 
-          {/* Status Pill */}
-          <span
-            className={cn(
-              'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold mb-2',
-              isIncome
-                ? 'bg-secondary/15 text-secondary'
-                : isTransfer
-                ? 'bg-primary/15 text-primary'
-                : 'bg-danger/15 text-danger'
-            )}
-          >
-            <span
-              className={cn(
-                'w-1.5 h-1.5 rounded-full',
-                isIncome ? 'bg-secondary' : isTransfer ? 'bg-primary' : 'bg-danger'
-              )}
-            />
-            {isIncome
-              ? 'Pemasukan Berhasil'
-              : isTransfer
-              ? 'Transfer Berhasil'
-              : 'Pengeluaran Berhasil'}
-          </span>
-
           {/* Transaction Title */}
           <h3 className="text-base sm:text-lg font-bold text-text-primary max-w-[85%] truncate">
             {titleText}
