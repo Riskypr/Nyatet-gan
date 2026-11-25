@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TransactionType, Category, Transaction } from '@/lib/types';
 import { categoryService } from '@/lib/services/categoryService';
 import { useWalletStore } from '@/lib/stores/walletStore';
@@ -57,9 +57,13 @@ export function TransactionForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Sinkronisasi penuh state ketika editingTransaction berubah / selesai dimuat
+  // Ref untuk melacak ID transaksi yang telah disinkronkan agar tidak menimpa editan user
+  const syncedTxIdRef = useRef<string | null>(editingTransaction ? editingTransaction.id : null);
+
+  // Sinkronisasi data ketika editingTransaction pertama kali selesai dimuat
   useEffect(() => {
-    if (editingTransaction) {
+    if (editingTransaction && syncedTxIdRef.current !== editingTransaction.id) {
+      syncedTxIdRef.current = editingTransaction.id;
       setType(editingTransaction.type);
       setAmount(editingTransaction.amount);
       setCategoryId(editingTransaction.categoryId);
@@ -69,30 +73,39 @@ export function TransactionForm({
     }
   }, [editingTransaction]);
 
-  // Load categories when type changes
+  // Load categories saat type berubah
   useEffect(() => {
+    let isMounted = true;
     async function loadCats() {
       const cats = await categoryService.getAll(type);
+      if (!isMounted) return;
       setCategories(cats);
-      if (editingTransaction && editingTransaction.type === type) {
-        setCategoryId(editingTransaction.categoryId);
-      } else if (!editingTransaction || editingTransaction.type !== type) {
-        if (cats.length > 0) {
-          setCategoryId(cats[0].id);
+      setCategoryId((prev) => {
+        // Jika sedang edit transaksi dan tipe sama, prioritaskan kategori dari transaksi
+        if (editingTransaction && editingTransaction.type === type && editingTransaction.categoryId) {
+          if (!prev || prev === editingTransaction.categoryId) {
+            return editingTransaction.categoryId;
+          }
         }
-      }
+        // Jika kategori yang sedang dipilih ada dalam daftar baru, pertahankan pilihan user
+        if (prev && cats.some((c) => c.id === prev)) {
+          return prev;
+        }
+        return cats.length > 0 ? cats[0].id : '';
+      });
     }
     loadCats();
+    return () => {
+      isMounted = false;
+    };
   }, [type, editingTransaction]);
 
-  // Set default wallet if empty
+  // Set default wallet hanya jika walletId belum terpilih
   useEffect(() => {
-    if (editingTransaction) {
-      setWalletId(editingTransaction.walletId);
-    } else if (!walletId && wallets.length > 0) {
+    if (!walletId && wallets.length > 0) {
       setWalletId(wallets[0].id);
     }
-  }, [wallets, walletId, editingTransaction]);
+  }, [wallets, walletId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,7 +270,7 @@ export function TransactionForm({
                   setErrors((prev) => ({ ...prev, wallet: '' }));
                 }}
                 className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium shrink-0 transition-all',
+                  'flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium shrink-0 transition-all cursor-pointer',
                   isSelected
                     ? 'border-primary bg-primary text-white shadow-xs'
                     : 'border-border bg-surface text-text-primary hover:bg-surface-alt'
