@@ -13,6 +13,8 @@ export interface NumberInputProps {
   id?: string;
   prefix?: string;
   autoFocus?: boolean;
+  /** 'hero': tampilan nominal besar tanpa border (untuk form transaksi). Default: 'default' */
+  variant?: 'default' | 'hero';
 }
 
 export function NumberInput({
@@ -26,6 +28,7 @@ export function NumberInput({
   id,
   prefix = 'Rp',
   autoFocus = false,
+  variant = 'default',
 }: NumberInputProps) {
   const [displayValue, setDisplayValue] = useState<string>(
     value > 0 ? formatThousands(value) : ''
@@ -48,6 +51,47 @@ export function NumberInput({
 
   const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
 
+  /* ── HERO VARIANT ─────────────────────────────────────── */
+  if (variant === 'hero') {
+    return (
+      <div className={cn('w-full flex flex-col items-center gap-2 py-4', className)}>
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="text-[11px] font-bold tracking-widest uppercase text-primary cursor-pointer"
+          >
+            {label}
+          </label>
+        )}
+        <div className="flex items-baseline gap-1 w-full justify-center">
+          {prefix && (
+            <span className="text-3xl font-extrabold text-text-primary">{prefix}</span>
+          )}
+          <input
+            id={inputId}
+            type="text"
+            inputMode="numeric"
+            autoFocus={autoFocus}
+            value={displayValue}
+            onChange={handleChange}
+            placeholder="0"
+            className={cn(
+              'bg-transparent border-none outline-none text-4xl font-extrabold text-text-primary',
+              'text-center placeholder-text-muted/50 caret-primary',
+              'min-w-0 w-auto max-w-[220px]',
+            )}
+            style={{ width: `${Math.max(3, (displayValue || '0').length + 1)}ch` }}
+          />
+        </div>
+        {error && <p className="text-xs text-danger font-medium text-center">{error}</p>}
+        {helperText && !error && (
+          <p className="text-xs text-text-secondary text-center">{helperText}</p>
+        )}
+      </div>
+    );
+  }
+
+  /* ── DEFAULT VARIANT ──────────────────────────────────── */
   return (
     <div className="w-full flex flex-col gap-1.5">
       {label && (

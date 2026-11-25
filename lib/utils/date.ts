@@ -157,3 +157,26 @@ export function getWeeksForMonth(monthKey: string): WeekOption[] {
     ];
   }
 }
+
+/**
+ * Label sisa hari untuk periode bulan `YYYY-MM`
+ */
+export function getRemainingDaysLabel(monthKey: string): string {
+  try {
+    const [yearStr, monthStr] = monthKey.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const currentKey = getCurrentMonth();
+
+    if (monthKey === currentKey) {
+      const daysLeft = daysInMonth - new Date().getDate();
+      if (daysLeft <= 0) return 'Hari terakhir bulan ini';
+      return `Tersisa ${daysLeft} hari lagi`;
+    }
+    if (monthKey < currentKey) return 'Periode selesai';
+    return `${daysInMonth} hari periode`;
+  } catch {
+    return '';
+  }
+}

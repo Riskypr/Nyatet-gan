@@ -205,10 +205,11 @@ export function TransactionForm({
         </button>
       </div>
 
-      {/* Nominal Input (Besar) */}
-      <div>
+      {/* Nominal Input (Hero – tampilan besar tanpa border) */}
+      <div className="rounded-2xl bg-surface-alt/50 border border-border/40">
         <NumberInput
           label="Nominal Transaksi"
+          variant="hero"
           value={amount}
           onChange={(val) => {
             setAmount(val);
