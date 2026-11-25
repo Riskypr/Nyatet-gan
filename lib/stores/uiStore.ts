@@ -7,10 +7,11 @@ interface UIState {
   isTransactionModalOpen: boolean;
   transactionModalType: TransactionType;
   editingTransactionId: string | null;
+  editingTransactionData: Transaction | null;
   initialTransactionDate: string | null;
   openTransactionModal: (
     type?: TransactionType,
-    editingId?: string | null,
+    editingTarget?: string | Transaction | null,
     date?: string | null
   ) => void;
   closeTransactionModal: () => void;
@@ -29,14 +30,30 @@ export const useUIStore = create<UIState>((set) => ({
   isTransactionModalOpen: false,
   transactionModalType: 'expense',
   editingTransactionId: null,
+  editingTransactionData: null,
   initialTransactionDate: null,
 
-  openTransactionModal: (type = 'expense', editingId = null, date = null) => {
+  openTransactionModal: (type = 'expense', editingTarget = null, date = null) => {
+    let targetId: string | null = null;
+    let targetData: Transaction | null = null;
+    let resolvedType: TransactionType = type;
+
+    if (editingTarget) {
+      if (typeof editingTarget === 'string') {
+        targetId = editingTarget;
+      } else {
+        targetId = editingTarget.id;
+        targetData = editingTarget;
+        resolvedType = editingTarget.type;
+      }
+    }
+
     set({
       isTransactionModalOpen: true,
-      transactionModalType: type,
-      editingTransactionId: editingId,
-      initialTransactionDate: date,
+      transactionModalType: resolvedType,
+      editingTransactionId: targetId,
+      editingTransactionData: targetData,
+      initialTransactionDate: date || (targetData ? targetData.date : null),
     });
   },
 
@@ -44,6 +61,7 @@ export const useUIStore = create<UIState>((set) => ({
     set({
       isTransactionModalOpen: false,
       editingTransactionId: null,
+      editingTransactionData: null,
       initialTransactionDate: null,
     });
   },

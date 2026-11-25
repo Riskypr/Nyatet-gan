@@ -57,12 +57,26 @@ export function TransactionForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Sinkronisasi penuh state ketika editingTransaction berubah / selesai dimuat
+  useEffect(() => {
+    if (editingTransaction) {
+      setType(editingTransaction.type);
+      setAmount(editingTransaction.amount);
+      setCategoryId(editingTransaction.categoryId);
+      setWalletId(editingTransaction.walletId);
+      setDate(editingTransaction.date);
+      setNote(editingTransaction.note || '');
+    }
+  }, [editingTransaction]);
+
   // Load categories when type changes
   useEffect(() => {
     async function loadCats() {
       const cats = await categoryService.getAll(type);
       setCategories(cats);
-      if (!editingTransaction || editingTransaction.type !== type) {
+      if (editingTransaction && editingTransaction.type === type) {
+        setCategoryId(editingTransaction.categoryId);
+      } else if (!editingTransaction || editingTransaction.type !== type) {
         if (cats.length > 0) {
           setCategoryId(cats[0].id);
         }
@@ -73,10 +87,12 @@ export function TransactionForm({
 
   // Set default wallet if empty
   useEffect(() => {
-    if (!walletId && wallets.length > 0) {
+    if (editingTransaction) {
+      setWalletId(editingTransaction.walletId);
+    } else if (!walletId && wallets.length > 0) {
       setWalletId(wallets[0].id);
     }
-  }, [wallets, walletId]);
+  }, [wallets, walletId, editingTransaction]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

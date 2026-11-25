@@ -510,7 +510,7 @@ export default function DashboardPage() {
         wallets={walletMap}
         currentMonth={currentMonth}
         onMonthChange={(m) => setCurrentMonth(m)}
-        onEditTransaction={(tx) => openTransactionModal(tx.type, tx.id)}
+        onEditTransaction={(tx) => openTransactionModal(tx.type, tx)}
         onDeleteTransaction={(id) => deleteTransaction(id)}
         onAddTransaction={(type, date) => openTransactionModal(type, null, date)}
       />
@@ -538,7 +538,7 @@ export default function DashboardPage() {
                 transaction={tx}
                 category={categories.get(tx.categoryId)}
                 wallet={walletMap.get(tx.walletId)}
-                onEdit={() => openTransactionModal(tx.type, tx.id)}
+                onEdit={() => openTransactionModal(tx.type, tx)}
                 onDelete={(id) => deleteTransaction(id)}
               />
             ))}

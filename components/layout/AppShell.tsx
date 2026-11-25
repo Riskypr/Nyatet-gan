@@ -31,6 +31,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     isTransactionModalOpen,
     transactionModalType,
     editingTransactionId,
+    editingTransactionData,
     initialTransactionDate,
     openTransactionModal,
     closeTransactionModal,
@@ -80,14 +81,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   // Ambil data transaksi saat mode edit
   useEffect(() => {
-    if (editingTransactionId) {
+    if (editingTransactionData) {
+      setEditingTransaction(editingTransactionData);
+    } else if (editingTransactionId) {
       transactionService.getById(editingTransactionId).then((tx) => {
         setEditingTransaction(tx || null);
       });
     } else {
       setEditingTransaction(null);
     }
-  }, [editingTransactionId]);
+  }, [editingTransactionId, editingTransactionData]);
 
   if (!isDbReady) {
     return (
@@ -132,26 +135,37 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         isOpen={isTransactionModalOpen}
         onClose={closeTransactionModal}
         title={
-          editingTransaction
+          editingTransactionId
             ? 'Ubah Transaksi'
             : transactionModalType === 'expense'
               ? 'Catat Pengeluaran'
               : 'Catat Pemasukan'
         }
         description={
-          editingTransaction
+          editingTransactionId
             ? 'Perbarui detail transaksi yang dipilih'
             : 'Masukkan nominal dan detail transaksi Anda'
         }
       >
-        <TransactionForm
-          key={`${editingTransactionId || 'new'}-${initialTransactionDate || 'today'}-${transactionModalType}`}
-          initialType={transactionModalType}
-          initialDate={initialTransactionDate}
-          editingTransaction={editingTransaction}
-          onSuccess={closeTransactionModal}
-          onCancel={closeTransactionModal}
-        />
+        {editingTransactionId && !editingTransaction ? (
+          <div className="flex flex-col items-center justify-center p-8 gap-3 min-h-[180px]">
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            <span className="text-xs font-semibold text-text-secondary">Memuat data transaksi...</span>
+          </div>
+        ) : (
+          <TransactionForm
+            key={
+              editingTransaction
+                ? `edit-${editingTransaction.id}-${editingTransaction.updatedAt || ''}`
+                : `new-${initialTransactionDate || 'today'}-${transactionModalType}`
+            }
+            initialType={transactionModalType}
+            initialDate={initialTransactionDate}
+            editingTransaction={editingTransaction}
+            onSuccess={closeTransactionModal}
+            onCancel={closeTransactionModal}
+          />
+        )}
       </BottomSheet>
 
       {/* Global Transaction Detail Modal / Bottom Sheet */}
@@ -161,7 +175,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         onClose={closeTransactionDetail}
         onEdit={(tx) => {
           closeTransactionDetail();
-          openTransactionModal(tx.type, tx.id);
+          openTransactionModal(tx.type, tx);
         }}
         onDelete={handleDeleteTransaction}
       />
