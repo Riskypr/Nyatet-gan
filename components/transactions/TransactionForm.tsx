@@ -10,6 +10,7 @@ import { NumberInput } from '@/components/ui/NumberInput';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
+import { formatRupiah } from '@/lib/utils/currency';
 import { toISODateOnly } from '@/lib/utils/date';
 import { subDays } from 'date-fns';
 import { cn } from '@/lib/utils/cn';
@@ -219,6 +220,74 @@ export function TransactionForm({
         />
       </div>
 
+      {/* Dompet / Sumber Dana */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-text-secondary">
+            Pilih Sumber Dana
+          </label>
+          {walletId && (
+            <span className="text-[11px] font-semibold text-primary">
+              1 Terpilih
+            </span>
+          )}
+        </div>
+        <div className="flex gap-2.5 overflow-x-auto pb-1.5 scrollbar-none">
+          {wallets.map((w) => {
+            const isSelected = walletId === w.id;
+            return (
+              <button
+                key={w.id}
+                type="button"
+                onClick={() => {
+                  setWalletId(w.id);
+                  setErrors((prev) => ({ ...prev, wallet: '' }));
+                }}
+                className={cn(
+                  'flex items-center gap-2.5 pl-2 pr-4 py-1.5 rounded-full border shrink-0 transition-all cursor-pointer text-left',
+                  isSelected
+                    ? 'border-primary bg-primary text-white shadow-sm'
+                    : 'border-border bg-surface-alt/70 text-text-primary hover:bg-surface-alt hover:border-primary/40'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center shrink-0',
+                    isSelected ? 'bg-white/20 text-white' : 'bg-surface border border-border/60'
+                  )}
+                >
+                  <CategoryIcon
+                    name={w.icon || 'Wallet'}
+                    color={isSelected ? '#FFFFFF' : w.color}
+                    size="sm"
+                    className="!bg-transparent !p-0 !w-auto !h-auto"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <p
+                    className={cn(
+                      'text-xs font-bold leading-tight truncate max-w-[120px]',
+                      isSelected ? 'text-white' : 'text-text-primary'
+                    )}
+                  >
+                    {w.name}
+                  </p>
+                  <p
+                    className={cn(
+                      'text-[11px] font-semibold leading-tight truncate mt-0.5',
+                      isSelected ? 'text-white/85' : 'text-text-secondary'
+                    )}
+                  >
+                    {formatRupiah(w.currentBalance)}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        {errors.wallet && <p className="text-xs text-danger font-medium">{errors.wallet}</p>}
+      </div>
+
       {/* Kategori Selector Grid */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-semibold text-text-primary tracking-wide">
@@ -251,41 +320,6 @@ export function TransactionForm({
           })}
         </div>
         {errors.category && <p className="text-xs text-danger font-medium">{errors.category}</p>}
-      </div>
-
-      {/* Dompet / Sumber Dana */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-text-primary tracking-wide">
-          Sumber Dana / Dompet
-        </label>
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {wallets.map((w) => {
-            const isSelected = walletId === w.id;
-            return (
-              <button
-                key={w.id}
-                type="button"
-                onClick={() => {
-                  setWalletId(w.id);
-                  setErrors((prev) => ({ ...prev, wallet: '' }));
-                }}
-                className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium shrink-0 transition-all cursor-pointer',
-                  isSelected
-                    ? 'border-primary bg-primary text-white shadow-xs'
-                    : 'border-border bg-surface text-text-primary hover:bg-surface-alt'
-                )}
-              >
-                <div
-                  className="w-2.5 h-2.5 rounded-full shrink-0"
-                  style={{ backgroundColor: isSelected ? '#FFFFFF' : w.color }}
-                />
-                <span>{w.name}</span>
-              </button>
-            );
-          })}
-        </div>
-        {errors.wallet && <p className="text-xs text-danger font-medium">{errors.wallet}</p>}
       </div>
 
       {/* Tanggal & Catatan */}
