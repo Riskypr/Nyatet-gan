@@ -5,6 +5,7 @@ import { Transaction, Category, Wallet } from '@/lib/types';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 import { formatRupiah } from '@/lib/utils/currency';
 import { formatDateDisplay } from '@/lib/utils/date';
+import { useUIStore } from '@/lib/stores/uiStore';
 import { ArrowDownLeft, ArrowUpRight, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
@@ -14,6 +15,7 @@ export interface TransactionItemProps {
   wallet?: Wallet;
   onEdit?: (tx: Transaction) => void;
   onDelete?: (id: string) => void;
+  onClick?: (tx: Transaction) => void;
 }
 
 export function TransactionItem({
@@ -22,12 +24,25 @@ export function TransactionItem({
   wallet,
   onEdit,
   onDelete,
+  onClick,
 }: TransactionItemProps) {
   const [showMenu, setShowMenu] = React.useState(false);
+  const openTransactionDetail = useUIStore((s) => s.openTransactionDetail);
   const isIncome = transaction.type === 'income';
 
+  const handleItemClick = () => {
+    if (onClick) {
+      onClick(transaction);
+    } else {
+      openTransactionDetail(transaction);
+    }
+  };
+
   return (
-    <div className="relative group flex items-center justify-between p-3.5 bg-surface hover:bg-surface-alt/60 rounded-2xl border border-border/80 shadow-xs transition-all duration-150">
+    <div
+      onClick={handleItemClick}
+      className="relative group flex items-center justify-between p-3.5 bg-surface hover:bg-surface-alt/70 rounded-2xl border border-border/80 shadow-xs transition-all duration-150 cursor-pointer active:scale-[0.99] select-none"
+    >
       <div className="flex items-center gap-3 min-w-0">
         <CategoryIcon
           name={category?.icon || (isIncome ? 'Coins' : 'Tag')}
@@ -77,9 +92,13 @@ export function TransactionItem({
         </div>
 
         {(onEdit || onDelete) && (
-          <div className="relative">
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
             <button
-              onClick={() => setShowMenu(!showMenu)}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMenu(!showMenu);
+              }}
               className="h-10 w-10 flex items-center justify-center rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-alt transition-colors"
               aria-label="Opsi transaksi"
             >
@@ -90,12 +109,17 @@ export function TransactionItem({
               <>
                 <div
                   className="fixed inset-0 z-20"
-                  onClick={() => setShowMenu(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowMenu(false);
+                  }}
                 />
                 <div className="absolute right-0 top-full mt-1 z-30 w-32 bg-surface rounded-xl shadow-xl border border-border py-1 text-xs animate-in fade-in duration-100">
                   {onEdit && (
                     <button
-                      onClick={() => {
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setShowMenu(false);
                         onEdit(transaction);
                       }}
@@ -107,7 +131,9 @@ export function TransactionItem({
                   )}
                   {onDelete && (
                     <button
-                      onClick={() => {
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setShowMenu(false);
                         onDelete(transaction.id);
                       }}

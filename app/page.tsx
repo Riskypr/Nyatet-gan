@@ -78,6 +78,8 @@ export default function DashboardPage() {
       ? 'Target Keseluruhan Bulan Ini'
       : currentBudget.category?.name || 'Target Kategori'
     : '';
+  const currentIcon = isOverall ? 'Target' : currentBudget?.category?.icon || 'Tag';
+  const currentColor = isOverall ? '#0A66C2' : currentBudget?.category?.color || '#0A66C2';
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
@@ -95,26 +97,26 @@ export default function DashboardPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-white/90">
                 Total Saldo Semua Dompet
               </span>
+              <button
+                type="button"
+                onClick={toggleBalanceHidden}
+                className="p-1 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
+                title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+                aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+              >
+                {isBalanceHidden ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 min-w-0">
-            <h2 className="min-w-0 truncate text-2xl sm:text-4xl font-extrabold tracking-tight transition-all duration-200" suppressHydrationWarning>
+          <div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight transition-all duration-200" suppressHydrationWarning>
               {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(totalBalance)}
             </h2>
-            <button
-              type="button"
-              onClick={toggleBalanceHidden}
-              className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer shrink-0"
-              title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
-              aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
-            >
-              {isBalanceHidden ? (
-                <EyeOff className="w-4 h-4" />
-              ) : (
-                <Eye className="w-4 h-4" />
-              )}
-            </button>
           </div>
 
           {/* Sub-card: Pemasukan vs Pengeluaran Bulan Ini */}
@@ -191,13 +193,13 @@ export default function DashboardPage() {
 
         {/* Tampilan Tumpukan Kartu (Stacked Deck - sesuai desain referensi) */}
         {budgetCount > 0 && !showAllBudgets && currentBudget && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
             {/* Wrapper tumpukan kartu bertingkat */}
-            <div className="relative isolate pt-1 pb-1">
+            <div className="relative isolate pt-1 pb-4">
               {/* Layer 2: Paling bawah (hanya jika ada >= 3 target) */}
               {budgetCount >= 3 && (
                 <div
-                  className="absolute -bottom-3 left-6 right-6 h-8 rounded-2xl bg-surface-alt/80 border border-border/80 shadow-sm pointer-events-none transition-all duration-300"
+                  className="absolute -bottom-3 left-6 right-6 h-8 rounded-2xl bg-surface-alt/80 border border-border/80 shadow-2xs pointer-events-none transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
@@ -205,41 +207,88 @@ export default function DashboardPage() {
               {/* Layer 1: Tengah (hanya jika ada >= 2 target) */}
               {budgetCount >= 2 && (
                 <div
-                  className="absolute -bottom-1.5 left-3 right-3 h-8 rounded-2xl bg-surface-alt border border-border shadow-sm pointer-events-none transition-all duration-300"
+                  className="absolute -bottom-1.5 left-3 right-3 h-8 rounded-2xl bg-surface-alt border border-border shadow-2xs pointer-events-none transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
 
               {/* Kartu Utama (Active Front Card) */}
-              <div className="relative z-10 bg-surface rounded-2xl border border-border shadow-sm px-5 py-5 sm:px-7 sm:py-6 flex flex-col gap-3 transition-all hover:border-primary/40 hover:shadow-md">
-                <div className="flex items-end justify-between gap-4">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <h4 className="text-base sm:text-lg font-bold text-text-primary leading-snug">
-                        {currentTitle}
-                      </h4>
-                      {currentBudget.isOverBudget && (
-                        <AlertTriangle className="w-4 h-4 text-danger shrink-0" />
-                      )}
+              <div className="relative z-10 bg-surface rounded-2xl sm:rounded-3xl border border-border shadow-xs p-4 sm:p-5 flex flex-col gap-3 transition-all hover:border-primary/40 hover:shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <CategoryIcon
+                      name={currentIcon}
+                      color={currentColor}
+                      size="md"
+                    />
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm sm:text-base font-bold text-text-primary truncate">
+                          {currentTitle}
+                        </span>
+                        {currentBudget.isOverBudget && (
+                          <AlertTriangle className="w-4 h-4 text-danger shrink-0" />
+                        )}
+                      </div>
+                      <span className="text-xs text-text-secondary truncate mt-0.5">
+                        Total Target:{' '}
+                        <strong className="text-text-primary font-semibold">
+                          {formatRupiah(currentBudget.budget.targetAmount)}
+                        </strong>
+                      </span>
                     </div>
-                    <p className="text-sm sm:text-base text-text-secondary mt-1">
-                      Terpakai <strong className="font-semibold text-text-primary">{formatRupiah(currentBudget.spentAmount)}</strong>
-                      <span className="hidden sm:inline"> dari </span>
-                      <span className="sm:hidden"> / </span>
-                      <strong className="font-semibold text-text-primary">{formatRupiah(currentBudget.budget.targetAmount)}</strong>
-                    </p>
                   </div>
-                  <span
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span
+                      className={cn(
+                        'text-xs font-bold px-2.5 py-1 rounded-full shrink-0',
+                        currentBudget.percentage >= 90
+                          ? 'text-danger bg-danger/15'
+                          : currentBudget.percentage >= 70
+                            ? 'text-warning bg-warning/15'
+                            : 'text-secondary bg-secondary/15'
+                      )}
+                    >
+                      {currentBudget.percentage}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Progress Bar Container */}
+                <div className="w-full h-3 rounded-full bg-surface-alt overflow-hidden p-0.5">
+                  <div
+                    key={`bar-${safeIndex}`}
                     className={cn(
-                      'text-sm font-bold shrink-0 pb-0.5',
+                      'h-full rounded-full transition-all duration-700 ease-out animate-progress-fill',
                       currentBudget.percentage >= 90
-                        ? 'text-danger'
+                        ? 'bg-danger'
                         : currentBudget.percentage >= 70
-                        ? 'text-warning'
-                        : 'text-secondary'
+                          ? 'bg-warning'
+                          : 'bg-secondary'
                     )}
-                  >
-                    {currentBudget.percentage}%
+                    style={{ width: `${Math.min(currentBudget.percentage, 100)}%` }}
+                  />
+                </div>
+
+                {/* Footer Informasi Terpakai & Sisa / Lebih */}
+                <div className="flex items-center justify-between text-xs text-text-secondary gap-2 pt-0.5">
+                  <span className="truncate flex-1">
+                    Terpakai:{' '}
+                    <strong className="text-text-primary font-semibold">
+                      {formatRupiah(currentBudget.spentAmount)}
+                    </strong>
+                  </span>
+                  <span className="shrink-0 text-right">
+                    {currentBudget.isOverBudget ? (
+                      <span className="text-danger font-semibold">
+                        Lebih {formatRupiah(Math.abs(currentBudget.remainingAmount))}
+                      </span>
+                    ) : (
+                      <span className="text-secondary font-semibold">
+                        Sisa {formatRupiah(currentBudget.remainingAmount)}
+                      </span>
+                    )}
                   </span>
                 </div>
 
@@ -285,7 +334,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowAllBudgets(true)}
-                className="self-center inline-flex items-center gap-1.5 px-2 py-1 text-xs sm:text-sm font-semibold text-primary hover:underline transition-colors cursor-pointer"
+                className="self-center inline-flex min-h-10 items-center gap-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors cursor-pointer"
               >
                 <span>Lihat semua target ({budgetCount})</span>
                 <ChevronDown className="w-4 h-4" />
@@ -351,8 +400,8 @@ export default function DashboardPage() {
                               cp.percentage >= 90
                                 ? 'text-danger bg-danger/15'
                                 : cp.percentage >= 70
-                                ? 'text-warning bg-warning/15'
-                                : 'text-secondary bg-secondary/15'
+                                  ? 'text-warning bg-warning/15'
+                                  : 'text-secondary bg-secondary/15'
                             )}
                           >
                             {cp.percentage}%
@@ -366,8 +415,8 @@ export default function DashboardPage() {
                               cp.percentage >= 90
                                 ? 'bg-danger'
                                 : cp.percentage >= 70
-                                ? 'bg-warning'
-                                : 'bg-secondary'
+                                  ? 'bg-warning'
+                                  : 'bg-secondary'
                             )}
                             style={{ width: `${Math.min(cp.percentage, 100)}%` }}
                           />
@@ -463,7 +512,7 @@ export default function DashboardPage() {
         onMonthChange={(m) => setCurrentMonth(m)}
         onEditTransaction={(tx) => openTransactionModal(tx.type, tx.id)}
         onDeleteTransaction={(id) => deleteTransaction(id)}
-        onAddTransaction={(type) => openTransactionModal(type)}
+        onAddTransaction={(type, date) => openTransactionModal(type, null, date)}
       />
 
       {/* 4. Transaksi Terbaru (5 items) */}

@@ -11,11 +11,13 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 import { toISODateOnly } from '@/lib/utils/date';
+import { subDays } from 'date-fns';
 import { cn } from '@/lib/utils/cn';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
 export interface TransactionFormProps {
   initialType?: TransactionType;
+  initialDate?: string | null;
   editingTransaction?: Transaction | null;
   onSuccess: () => void;
   onCancel: () => void;
@@ -23,6 +25,7 @@ export interface TransactionFormProps {
 
 export function TransactionForm({
   initialType = 'expense',
+  initialDate,
   editingTransaction,
   onSuccess,
   onCancel,
@@ -44,7 +47,7 @@ export function TransactionForm({
     editingTransaction ? editingTransaction.walletId : (wallets[0]?.id || '')
   );
   const [date, setDate] = useState<string>(
-    editingTransaction ? editingTransaction.date : toISODateOnly()
+    editingTransaction ? editingTransaction.date : (initialDate || toISODateOnly())
   );
   const [note, setNote] = useState<string>(
     editingTransaction?.note || ''
@@ -257,21 +260,62 @@ export function TransactionForm({
       </div>
 
       {/* Tanggal & Catatan */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Input
-          type="date"
-          label="Tanggal"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          error={errors.date}
-        />
-        <Input
-          type="text"
-          label="Catatan (Opsional)"
-          placeholder="Mis: Makan siang bareng teman"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-        />
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-semibold text-text-primary tracking-wide">
+            Tanggal Transaksi
+          </label>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => {
+                setDate(toISODateOnly());
+                setErrors((prev) => ({ ...prev, date: '' }));
+              }}
+              className={cn(
+                'px-2.5 py-0.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer border',
+                date === toISODateOnly()
+                  ? 'bg-primary text-white border-primary shadow-xs'
+                  : 'bg-surface text-text-secondary border-border/70 hover:bg-surface-alt'
+              )}
+            >
+              Hari Ini
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDate(toISODateOnly(subDays(new Date(), 1)));
+                setErrors((prev) => ({ ...prev, date: '' }));
+              }}
+              className={cn(
+                'px-2.5 py-0.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer border',
+                date === toISODateOnly(subDays(new Date(), 1))
+                  ? 'bg-primary text-white border-primary shadow-xs'
+                  : 'bg-surface text-text-secondary border-border/70 hover:bg-surface-alt'
+              )}
+            >
+              Kemarin
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Input
+            type="date"
+            value={date}
+            onChange={(e) => {
+              setDate(e.target.value);
+              if (e.target.value) setErrors((prev) => ({ ...prev, date: '' }));
+            }}
+            error={errors.date}
+          />
+          <Input
+            type="text"
+            placeholder="Catatan (Opsional)"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Buttons */}

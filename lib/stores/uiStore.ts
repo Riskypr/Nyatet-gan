@@ -1,14 +1,25 @@
 import { create } from 'zustand';
-import { TransactionType } from '../types';
+import { Transaction, TransactionType } from '../types';
 import { toast, ToastOptions } from 'react-toastify';
 
 interface UIState {
-  // Modal Transaksi (Bottom Sheet)
+  // Modal Transaksi (Input / Edit Bottom Sheet)
   isTransactionModalOpen: boolean;
   transactionModalType: TransactionType;
   editingTransactionId: string | null;
-  openTransactionModal: (type?: TransactionType, editingId?: string | null) => void;
+  initialTransactionDate: string | null;
+  openTransactionModal: (
+    type?: TransactionType,
+    editingId?: string | null,
+    date?: string | null
+  ) => void;
   closeTransactionModal: () => void;
+
+  // Modal Detail Transaksi (Saat klik transaksi)
+  isDetailModalOpen: boolean;
+  detailTransaction: Transaction | null;
+  openTransactionDetail: (tx: Transaction) => void;
+  closeTransactionDetail: () => void;
 
   // React-Toastify Helper
   showToast: (message: string, type?: 'success' | 'error' | 'info' | 'warning', options?: ToastOptions) => void;
@@ -18,12 +29,14 @@ export const useUIStore = create<UIState>((set) => ({
   isTransactionModalOpen: false,
   transactionModalType: 'expense',
   editingTransactionId: null,
+  initialTransactionDate: null,
 
-  openTransactionModal: (type = 'expense', editingId = null) => {
+  openTransactionModal: (type = 'expense', editingId = null, date = null) => {
     set({
       isTransactionModalOpen: true,
       transactionModalType: type,
       editingTransactionId: editingId,
+      initialTransactionDate: date,
     });
   },
 
@@ -31,6 +44,25 @@ export const useUIStore = create<UIState>((set) => ({
     set({
       isTransactionModalOpen: false,
       editingTransactionId: null,
+      initialTransactionDate: null,
+    });
+  },
+
+  // Modal Detail Transaksi
+  isDetailModalOpen: false,
+  detailTransaction: null,
+
+  openTransactionDetail: (tx: Transaction) => {
+    set({
+      isDetailModalOpen: true,
+      detailTransaction: tx,
+    });
+  },
+
+  closeTransactionDetail: () => {
+    set({
+      isDetailModalOpen: false,
+      detailTransaction: null,
     });
   },
 

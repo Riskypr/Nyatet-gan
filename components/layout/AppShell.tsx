@@ -12,6 +12,8 @@ import { BottomNav } from './BottomNav';
 import { ToastContainer } from 'react-toastify';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { TransactionForm } from '@/components/transactions/TransactionForm';
+import { TransactionDetailModal } from '@/components/transactions/TransactionDetailModal';
+import { confirmWithToast } from '@/lib/utils/confirmToast';
 import { transactionService } from '@/lib/services/transactionService';
 import { Transaction } from '@/lib/types';
 import { useThemeStore } from '@/lib/stores/themeStore';
@@ -23,16 +25,41 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isDbReady, setIsDbReady] = useState(false);
   const { fetchWallets } = useWalletStore();
-  const { fetchMonthlyData, currentMonth } = useTransactionStore();
+  const { fetchMonthlyData, currentMonth, deleteTransaction } = useTransactionStore();
   const { initTheme } = useThemeStore();
   const {
     isTransactionModalOpen,
     transactionModalType,
     editingTransactionId,
+    initialTransactionDate,
+    openTransactionModal,
     closeTransactionModal,
+    isDetailModalOpen,
+    detailTransaction,
+    closeTransactionDetail,
+    showToast,
   } = useUIStore();
 
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+
+  const handleDeleteTransaction = (id: string) => {
+    confirmWithToast({
+      title: 'Hapus Transaksi',
+      message: 'Yakin ingin menghapus transaksi ini? Saldo dompet akan disesuaikan otomatis.',
+      confirmLabel: 'Hapus',
+      cancelLabel: 'Batal',
+      isDestructive: true,
+      onConfirm: async () => {
+        try {
+          await deleteTransaction(id);
+          showToast('Transaksi berhasil dihapus', 'success');
+          closeTransactionDetail();
+        } catch {
+          showToast('Gagal menghapus transaksi', 'error');
+        }
+      },
+    });
+  };
 
   // Inisialisasi Tema & Database IndexedDB
   useEffect(() => {
@@ -118,12 +145,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }
       >
         <TransactionForm
+          key={`${editingTransactionId || 'new'}-${initialTransactionDate || 'today'}-${transactionModalType}`}
           initialType={transactionModalType}
+          initialDate={initialTransactionDate}
           editingTransaction={editingTransaction}
           onSuccess={closeTransactionModal}
           onCancel={closeTransactionModal}
         />
       </BottomSheet>
+
+      {/* Global Transaction Detail Modal / Bottom Sheet */}
+      <TransactionDetailModal
+        isOpen={isDetailModalOpen}
+        transaction={detailTransaction}
+        onClose={closeTransactionDetail}
+        onEdit={(tx) => {
+          closeTransactionDetail();
+          openTransactionModal(tx.type, tx.id);
+        }}
+        onDelete={handleDeleteTransaction}
+      />
     </div>
   );
 }

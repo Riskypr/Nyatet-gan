@@ -18,14 +18,13 @@ import {
   Flame,
   ArrowUpRight,
   ArrowDownLeft,
-  Plus,
   Info,
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
 import { Transaction, Category, Wallet } from '@/lib/types';
 import { formatRupiah } from '@/lib/utils/currency';
-import { formatDateDisplay, toISODateOnly } from '@/lib/utils/date';
+import { formatDateDisplay, toISODateOnly, formatGroupDateHeader } from '@/lib/utils/date';
 import { cn } from '@/lib/utils/cn';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -40,7 +39,7 @@ export interface ExpenseCalendarProps {
   onMonthChange?: (month: string) => void;
   onEditTransaction?: (tx: Transaction) => void;
   onDeleteTransaction?: (id: string) => void;
-  onAddTransaction?: (type: 'expense' | 'income') => void;
+  onAddTransaction?: (type: 'expense' | 'income', date?: string) => void;
 }
 
 const WEEKDAY_NAMES = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
@@ -370,7 +369,9 @@ export function ExpenseCalendar({
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-text-secondary">Ringkasan Hari Ini</span>
+                <span className="text-xs font-semibold text-text-secondary">
+                  {isSelectedDateToday ? 'Ringkasan Hari Ini' : selectedDate ? formatGroupDateHeader(selectedDate) : 'Ringkasan Tanggal'}
+                </span>
                 {isSelectedDatePeak && (
                   <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-danger text-white text-[10px] font-bold shadow-xs">
                     <Flame className="w-3 h-3 fill-[#FFD700] text-[#FFD700]" />
@@ -443,36 +444,64 @@ export function ExpenseCalendar({
                 Tidak ada catatan transaksi pada tanggal ini.
               </p>
               {onAddTransaction && (
-                <Button
-                  size="sm"
-                  variant="primary"
-                  className="mt-3.5 flex items-center gap-1.5"
-                  onClick={() => {
-                    setIsDetailOpen(false);
-                    onAddTransaction('expense');
-                  }}
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Catat Transaksi</span>
-                </Button>
+                <div className="flex flex-wrap items-center justify-center gap-2 mt-3.5">
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    className="flex items-center gap-1.5"
+                    onClick={() => {
+                      setIsDetailOpen(false);
+                      onAddTransaction('expense', selectedDate || undefined);
+                    }}
+                  >
+                    <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <span>Catat Pengeluaran</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="flex items-center gap-1.5"
+                    onClick={() => {
+                      setIsDetailOpen(false);
+                      onAddTransaction('income', selectedDate || undefined);
+                    }}
+                  >
+                    <ArrowDownLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <span>Catat Pemasukan</span>
+                  </Button>
+                </div>
               )}
             </div>
           )}
 
           {/* Action button: Catat transaksi tambahan */}
           {selectedDateTransactions.length > 0 && onAddTransaction && (
-            <Button
-              size="sm"
-              variant="secondary"
-              className="w-full flex items-center justify-center gap-2 mt-1"
-              onClick={() => {
-                setIsDetailOpen(false);
-                onAddTransaction('expense');
-              }}
-            >
-              <Plus className="w-4 h-4 text-primary" />
-              <span>Tambah Transaksi</span>
-            </Button>
+            <div className="grid grid-cols-2 gap-2 mt-1">
+              <Button
+                size="sm"
+                variant="danger"
+                className="flex items-center justify-center gap-1.5"
+                onClick={() => {
+                  setIsDetailOpen(false);
+                  onAddTransaction('expense', selectedDate || undefined);
+                }}
+              >
+                <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>+ Pengeluaran</span>
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="flex items-center justify-center gap-1.5"
+                onClick={() => {
+                  setIsDetailOpen(false);
+                  onAddTransaction('income', selectedDate || undefined);
+                }}
+              >
+                <ArrowDownLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>+ Pemasukan</span>
+              </Button>
+            </div>
           )}
         </div>
       </BottomSheet>
