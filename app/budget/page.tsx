@@ -10,6 +10,7 @@ import { BottomSheet } from '@/components/ui/BottomSheet';
 import { NumberInput } from '@/components/ui/NumberInput';
 import { Button } from '@/components/ui/Button';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
+import { MonthSelector } from '@/components/ui/MonthSelector';
 import { confirmWithToast } from '@/lib/utils/confirmToast';
 import { formatRupiah } from '@/lib/utils/currency';
 import {
@@ -177,18 +178,23 @@ export default function BudgetPage() {
 
   return (
     <div className="flex flex-col gap-5 max-w-3xl mx-auto pb-8">
-      {/* 1. Header Judul + Badge Bulan Aktif */}
-      <div className="flex flex-col gap-1.5">
-        <span className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-secondary/15 text-secondary text-[10px] font-bold uppercase tracking-wider">
-          <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
-          Bulan Aktif: {formatMonthYear(currentMonth)}
-        </span>
-        <h2 className="text-xl sm:text-2xl font-extrabold text-text-primary">
-          Target Anggaran
-        </h2>
-        <p className="text-xs sm:text-sm text-text-secondary">
-          Atur batas pengeluaran per kategori agar arus kas tetap seimbang dan terencana.
-        </p>
+      {/* 1. Header Judul + Badge Bulan Aktif + Filter Bulan Mobile */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/15 text-secondary text-[10px] font-bold uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
+            Bulan Aktif: {formatMonthYear(currentMonth)}
+          </span>
+          <MonthSelector variant="compact" className="sm:hidden shrink-0" />
+        </div>
+        <div>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-text-primary">
+            Target Anggaran
+          </h2>
+          <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
+            Atur batas pengeluaran per kategori agar arus kas tetap seimbang dan terencana.
+          </p>
+        </div>
       </div>
 
       {/* 2. Kartu Pagu Anggaran Keseluruhan */}

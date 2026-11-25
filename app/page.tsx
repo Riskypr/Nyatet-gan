@@ -35,6 +35,7 @@ import { TransactionItem } from '@/components/transactions/TransactionItem';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ExpenseCalendar } from '@/components/calendar/ExpenseCalendar';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
+import { MonthSelector } from '@/components/ui/MonthSelector';
 
 export default function DashboardPage() {
   const { wallets, totalBalance, isBalanceHidden, toggleBalanceHidden } = useWalletStore();
@@ -91,6 +92,9 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
+      {/* Selector Bulan Mobile (menyatu dengan konten, tidak menempel header) */}
+      <MonthSelector variant="full" className="sm:hidden" />
+
       {/* 1. Card Saldo Total (Hero Card) */}
       <div
         className="hero-total-card relative overflow-hidden rounded-3xl p-5 sm:p-6 text-white shadow-lg transition-colors duration-200"

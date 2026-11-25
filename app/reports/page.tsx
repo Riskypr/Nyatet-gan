@@ -24,6 +24,7 @@ import {
 import { TransactionItem } from '@/components/transactions/TransactionItem';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { MonthSelector } from '@/components/ui/MonthSelector';
 import { formatRupiah, formatCompactNumber } from '@/lib/utils/currency';
 import {
   formatDateDisplay,
@@ -555,6 +556,9 @@ export default function ReportsPage() {
             </button>
           </div>
         </div>
+
+        {/* Selector Bulan Mobile (tidak menempel header) */}
+        <MonthSelector variant="full" className="sm:hidden" />
 
         {/* Weekly Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
