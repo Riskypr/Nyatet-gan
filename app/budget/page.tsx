@@ -97,7 +97,7 @@ export default function BudgetPage() {
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto">
       {/* Page Header Notice */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-bold text-text-primary">
             Target Anggaran Bulan {formatMonthYear(currentMonth)}
@@ -106,6 +106,15 @@ export default function BudgetPage() {
             Batasi pengeluaran bulanan Anda agar keuangan tetap terkendali.
           </p>
         </div>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => handleOpenModal(overallBudget ? (expenseCategories[0]?.id || null) : null, 0)}
+          className="gap-1.5 shrink-0 shadow-xs"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Tambah Target</span>
+        </Button>
       </div>
 
       {/* 1. Target Pengeluaran Keseluruhan (Total Budget) */}
@@ -141,22 +150,11 @@ export default function BudgetPage() {
             onClick={() => handleOpenModal(null, overallBudget.budget.targetAmount)}
           />
         ) : (
-          <div className="p-5 bg-surface rounded-2xl border border-dashed border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-            <div>
-              <h4 className="text-sm font-bold text-text-primary">Belum Ada Target Keseluruhan</h4>
-              <p className="text-xs text-text-secondary">
-                Tetapkan batas maksimal pengeluaran Anda di bulan {formatMonthYear(currentMonth)}.
-              </p>
-            </div>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => handleOpenModal(null, 0)}
-              className="gap-2 shrink-0 shadow-xs"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Pasang Target Total</span>
-            </Button>
+          <div className="p-5 bg-surface rounded-2xl border border-dashed border-border text-center sm:text-left">
+            <h4 className="text-sm font-bold text-text-primary">Belum Ada Target Keseluruhan</h4>
+            <p className="text-xs text-text-secondary mt-0.5">
+              Gunakan tombol &ldquo;Tambah Target&rdquo; di atas untuk menetapkan batas maksimal pengeluaran bulan {formatMonthYear(currentMonth)}.
+            </p>
           </div>
         )}
       </div>
@@ -167,15 +165,6 @@ export default function BudgetPage() {
           <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">
             Target Per Kategori
           </h3>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => handleOpenModal(expenseCategories[0]?.id || null, 0)}
-            className="gap-1.5"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Tambah Target Kategori</span>
-          </Button>
         </div>
 
         {categoryBudgets.length > 0 ? (

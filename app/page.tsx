@@ -93,30 +93,28 @@ export default function DashboardPage() {
       >
         <div className="relative z-10 flex flex-col gap-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-white/90">
-                Total Saldo Semua Dompet
-              </span>
-              <button
-                type="button"
-                onClick={toggleBalanceHidden}
-                className="p-1 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
-                title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
-                aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
-              >
-                {isBalanceHidden ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>
-            </div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-white/90">
+              Total Saldo Semua Dompet
+            </span>
           </div>
 
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight transition-all duration-200" suppressHydrationWarning>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <h2 className="min-w-0 truncate text-2xl sm:text-4xl font-extrabold tracking-tight transition-all duration-200" suppressHydrationWarning>
               {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(totalBalance)}
             </h2>
+            <button
+              type="button"
+              onClick={toggleBalanceHidden}
+              className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer shrink-0"
+              title={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+              aria-label={isBalanceHidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}
+            >
+              {isBalanceHidden ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
           </div>
 
           {/* Sub-card: Pemasukan vs Pengeluaran Bulan Ini */}
@@ -127,8 +125,8 @@ export default function DashboardPage() {
               </div>
               <div className="min-w-0">
                 <p className="text-[11px] text-white/80">Pemasukan Bulan Ini</p>
-                <p className="text-xs sm:text-sm font-bold text-white truncate">
-                  {formatRupiah(monthlySummary?.totalIncome || 0)}
+                <p className="text-xs sm:text-sm font-bold text-white truncate" suppressHydrationWarning>
+                  {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(monthlySummary?.totalIncome || 0)}
                 </p>
               </div>
             </div>
@@ -139,8 +137,8 @@ export default function DashboardPage() {
               </div>
               <div className="min-w-0">
                 <p className="text-[11px] text-white/80">Pengeluaran Bulan Ini</p>
-                <p className="text-xs sm:text-sm font-bold text-white truncate">
-                  {formatRupiah(monthlySummary?.totalExpense || 0)}
+                <p className="text-xs sm:text-sm font-bold text-white truncate" suppressHydrationWarning>
+                  {isBalanceHidden ? 'Rp ••••••••' : formatRupiah(monthlySummary?.totalExpense || 0)}
                 </p>
               </div>
             </div>
@@ -162,13 +160,15 @@ export default function DashboardPage() {
                 : 'Pantau batas pengeluaran Anda'}
             </p>
           </div>
-          <Link
-            href="/budget"
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
-          >
-            <span>Kelola</span>
-            <ArrowRight className="w-3 h-3" />
-          </Link>
+          {budgetCount > 0 && (
+            <Link
+              href="/budget"
+              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+            >
+              <span>Kelola</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          )}
         </div>
 
         {/* Jika belum ada target sama sekali */}
