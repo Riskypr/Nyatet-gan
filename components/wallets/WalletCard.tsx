@@ -42,7 +42,7 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
 
     return (
       <div
-        className="relative flex flex-col justify-between rounded-2xl p-4 min-w-[200px] w-[200px] h-[130px] shrink-0 overflow-hidden shadow-sm transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] select-none"
+        className="relative flex flex-col justify-between rounded-2xl p-4 min-w-[172px] w-[172px] sm:min-w-[192px] sm:w-[192px] h-[132px] shrink-0 overflow-hidden shadow-xs transition-all hover:shadow-md hover:scale-[1.01] active:scale-[0.99] select-none"
         style={{
           backgroundColor: wallet.color,
         }}
@@ -52,10 +52,10 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
           <WatermarkIcon className="w-24 h-24" style={{ color: '#fff' }} strokeWidth={1} />
         </div>
 
-        {/* Top-left: Category icon */}
-        <div className="relative z-10">
+        {/* Top-left: Category icon (lingkaran sesuai referensi) */}
+        <div className="relative z-10 flex items-center justify-between">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center backdrop-blur-sm"
+            className="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-xs"
             style={{ backgroundColor: 'rgba(255,255,255,0.22)' }}
           >
             <CategoryIcon name={wallet.icon || 'Wallet'} color="#ffffff" size="sm" className="!bg-transparent !p-0 !w-auto !h-auto" />
@@ -65,13 +65,13 @@ export function WalletCard({ wallet, onEdit, onDelete, isCompact = false }: Wall
         {/* Bottom-left: Name + Balance */}
         <div className="relative z-10 mt-auto min-w-0">
           <p
-            className="text-[11px] font-medium truncate leading-tight"
-            style={{ color: 'rgba(255,255,255,0.78)' }}
+            className="text-xs font-medium truncate leading-tight"
+            style={{ color: 'rgba(255,255,255,0.85)' }}
           >
             {wallet.name}
           </p>
           <p
-            className="text-base font-extrabold tracking-tight truncate mt-0.5"
+            className="text-base sm:text-lg font-extrabold tracking-tight truncate mt-0.5"
             style={{ color: '#ffffff' }}
             suppressHydrationWarning
           >

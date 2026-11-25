@@ -11,6 +11,7 @@ import {
   ChevronUp,
   ChevronLeft,
   ChevronRight,
+  Wallet as WalletIcon,
   PiggyBank,
   Eye,
   EyeOff,
@@ -27,6 +28,7 @@ import { formatRupiah } from '@/lib/utils/currency';
 import { getRemainingDaysLabel } from '@/lib/utils/date';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { WalletCard } from '@/components/wallets/WalletCard';
 import { WalletModal } from '@/components/wallets/WalletModal';
 import { BudgetProgressBar } from '@/components/budget/BudgetProgressBar';
 import { TransactionItem } from '@/components/transactions/TransactionItem';
@@ -426,128 +428,50 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* 3. Sumber Dana */}
+      {/* 3. Dompet dan sumber dana (Horizontal Carousel) */}
       <div className="flex flex-col gap-3">
-        <div className="flex items-start justify-between">
+        <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-extrabold text-text-primary">Sumber Dana</h3>
-            <p className="text-xs text-text-muted mt-0.5">
+            <div className="flex items-center gap-2">
+              <WalletIcon className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold text-text-primary">Dompet dan sumber dana</h3>
+            </div>
+            <p className="text-[11px] text-text-muted mt-0.5 ml-6">
               {wallets.length > 0
-                ? `${wallets.length} dompet terdaftar`
+                ? `${wallets.length} Sumber dana terdaftar`
                 : 'Belum ada sumber dana'}
             </p>
           </div>
           <Link
             href="/wallets"
-            className="text-sm font-bold text-primary hover:underline flex items-center gap-1 mt-0.5"
+            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
           >
             <span>Kelola</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
 
-        {/* Grid 2 kartu per baris, horizontal scroll jika lebih */}
-        {wallets.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3">
-            {wallets.map((w) => {
-              const primaryWallet = wallets.reduce((prev, cur) =>
-                cur.currentBalance > prev.currentBalance ? cur : prev
-              );
-              const isPrimary = w.id === primaryWallet.id;
+        {/* Smooth snap-scroll carousel — rata kiri sejajar judul, card berikutnya mengintip di kanan */}
+        <div
+          className="flex items-stretch gap-3 overflow-x-auto pb-1 snap-x snap-mandatory scroll-smooth scrollbar-none"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {wallets.map((w) => (
+            <div key={w.id} className="snap-start">
+              <WalletCard wallet={w} isCompact />
+            </div>
+          ))}
 
-              // Heuristik badge tipe dari nama/icon
-              const getBadge = () => {
-                const n = w.name.toLowerCase();
-                if (n.includes('tunai') || n.includes('cash') || w.icon === 'Banknote') return 'Tunai';
-                if (n.includes('gopay') || n.includes('ovo') || n.includes('dana') || n.includes('ewallet') || w.icon === 'Smartphone') return 'Digital';
-                if (n.includes('bca') || n.includes('bni') || n.includes('bri') || n.includes('mandiri') || n.includes('rekening') || w.icon === 'CreditCard') return 'Bank';
-                return 'Dompet';
-              };
-
-              return (
-                <div
-                  key={w.id}
-                  className={cn(
-                    'rounded-2xl p-4 flex flex-col justify-between gap-4 min-h-[130px] transition-all',
-                    !isPrimary && 'bg-surface-alt border border-border/50'
-                  )}
-                  style={isPrimary ? { backgroundColor: w.color } : undefined}
-                >
-                  {/* Top row: icon + badge */}
-                  <div className="flex items-center justify-between">
-                    <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                      style={{
-                        backgroundColor: isPrimary
-                          ? 'rgba(255,255,255,0.20)'
-                          : `${w.color}22`,
-                      }}
-                    >
-                      <CategoryIcon
-                        name={w.icon || 'Wallet'}
-                        color={isPrimary ? '#ffffff' : w.color}
-                        size="sm"
-                        className="!bg-transparent !p-0 !w-auto !h-auto"
-                      />
-                    </div>
-                    <span
-                      className={cn(
-                        'text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0',
-                        isPrimary
-                          ? 'bg-white/20 text-white'
-                          : 'bg-surface border border-border text-text-muted'
-                      )}
-                    >
-                      {isPrimary ? 'Utama' : getBadge()}
-                    </span>
-                  </div>
-
-                  {/* Bottom: name + balance */}
-                  <div className="min-w-0">
-                    <p
-                      className={cn(
-                        'text-xs font-medium truncate leading-tight',
-                        isPrimary ? 'text-white/80' : 'text-text-secondary'
-                      )}
-                    >
-                      {w.name}
-                    </p>
-                    <p
-                      className={cn(
-                        'text-sm font-extrabold truncate mt-0.5',
-                        isPrimary ? 'text-white' : 'text-text-primary'
-                      )}
-                      suppressHydrationWarning
-                    >
-                      {isBalanceHidden ? '••••••••' : formatRupiah(w.currentBalance)}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* Tombol tambah dompet baru */}
-            <button
-              onClick={() => setIsWalletModalOpen(true)}
-              className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface/50 hover:bg-surface-alt/60 text-text-secondary transition-all hover:border-primary/40 cursor-pointer min-h-[130px] select-none"
-            >
-              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <Plus className="w-5 h-5" />
-              </div>
-              <span className="text-[11px] font-semibold">Tambah</span>
-            </button>
-          </div>
-        ) : (
           <button
             onClick={() => setIsWalletModalOpen(true)}
-            className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface/50 hover:bg-surface-alt/60 text-text-secondary transition-all hover:border-primary/40 cursor-pointer min-h-[130px] select-none w-full"
+            className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface/50 hover:bg-surface-alt/60 text-text-secondary shrink-0 transition-all hover:border-primary/40 cursor-pointer min-w-[116px] h-[132px] select-none"
           >
-            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center">
               <Plus className="w-5 h-5" />
             </div>
-            <span className="text-[11px] font-semibold">Tambah Dompet</span>
+            <span className="text-xs font-semibold">Tambah</span>
           </button>
-        )}
+        </div>
       </div>
 
       {/* Kalender Transaksi Interaktif */}
