@@ -14,27 +14,34 @@ export const budgetService = {
   },
 
   async setBudget(monthKey: string, targetAmount: number, categoryId: string | null = null): Promise<Budget> {
-    const existing = await db.budgets
-      .where('[month+categoryId]')
-      .equals([monthKey, categoryId || ''])
-      .first();
+    const normalizedCatId = categoryId ?? null;
+    const monthBudgets = await this.getBudgets(monthKey);
+    const matching = monthBudgets.filter(
+      (b) => (b.categoryId ?? null) === normalizedCatId
+    );
 
     const now = new Date().toISOString();
 
-    if (existing) {
+    if (matching.length > 0) {
+      const [primary, ...duplicates] = matching;
       const updated: Budget = {
-        ...existing,
+        ...primary,
+        categoryId: normalizedCatId,
         targetAmount,
         updatedAt: now,
       };
       await db.budgets.put(updated);
+      // Bersihkan duplikat lama jika sempat tercipta sebelumnya
+      if (duplicates.length > 0) {
+        await db.budgets.bulkDelete(duplicates.map((d) => d.id));
+      }
       return updated;
     } else {
       const id = `budget-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
       const newBudget: Budget = {
         id,
         month: monthKey,
-        categoryId,
+        categoryId: normalizedCatId,
         targetAmount,
         createdAt: now,
         updatedAt: now,

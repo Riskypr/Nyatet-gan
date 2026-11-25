@@ -63,9 +63,11 @@ export function NumberInput({
             {label}
           </label>
         )}
-        <div className="flex items-baseline gap-1 w-full justify-center">
+        <div className="flex items-center gap-1.5 w-full justify-center">
           {prefix && (
-            <span className="text-3xl font-extrabold text-text-primary">{prefix}</span>
+            <span className="text-3xl sm:text-4xl leading-none font-extrabold text-text-primary select-none shrink-0">
+              {prefix}
+            </span>
           )}
           <input
             id={inputId}
@@ -76,11 +78,11 @@ export function NumberInput({
             onChange={handleChange}
             placeholder="0"
             className={cn(
-              'bg-transparent border-none outline-none text-4xl font-extrabold text-text-primary',
-              'text-center placeholder-text-muted/50 caret-primary',
-              'min-w-0 w-auto max-w-[220px]',
+              'bg-transparent border-none outline-none text-3xl sm:text-4xl leading-none font-extrabold text-text-primary',
+              'text-left placeholder-text-muted/50 caret-primary',
+              'min-w-[1.2ch] max-w-full p-0',
             )}
-            style={{ width: `${Math.max(3, (displayValue || '0').length + 1)}ch` }}
+            style={{ width: `${Math.max(1, (displayValue || '0').length) + 0.5}ch` }}
           />
         </div>
         {error && <p className="text-xs text-danger font-medium text-center">{error}</p>}

@@ -194,11 +194,11 @@ export default function BudgetPage() {
       {/* 2. Kartu Pagu Anggaran Keseluruhan */}
       <div className="bg-surface rounded-3xl border border-border shadow-xs p-5 flex flex-col gap-4">
         <div className="flex items-start justify-between gap-3">
-          <div>
+          <div className="min-w-0 flex-1">
             <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
               Pagu Anggaran Keseluruhan
             </p>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-text-primary tracking-tight mt-1">
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-text-primary tracking-tight mt-1 whitespace-nowrap truncate">
               {overallBudget
                 ? formatRupiah(overallBudget.budget.targetAmount)
                 : 'Belum Diatur'}
