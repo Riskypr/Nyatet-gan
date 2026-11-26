@@ -11,13 +11,20 @@ export function ServiceWorkerRegister() {
       return;
     }
 
-    // Prefetch all primary routes so Next.js chunks are cached
-    const coreRoutes = ['/', '/transactions', '/wallets', '/budget', '/reports', '/settings'];
+    // Prefetch seluruh route utama agar chunk Next.js ter-cache otomatis
+    const coreRoutes = [
+      '/',
+      '/transactions',
+      '/wallets',
+      '/budget',
+      '/reports',
+      '/settings',
+    ];
     coreRoutes.forEach((route) => {
       try {
         router.prefetch(route);
       } catch {
-        // Ignore prefetch errors
+        // Abaikan error prefetch
       }
     });
 
@@ -27,13 +34,18 @@ export function ServiceWorkerRegister() {
           scope: '/',
         });
 
-        // Check for updates
+        // Paksa cek pembaruan sw.js setiap kali aplikasi dibuka
+        registration.update().catch(() => {});
+
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('[PWA] Versi baru Nyatet Gan tersedia.');
+              if (
+                newWorker.state === 'installed' &&
+                navigator.serviceWorker.controller
+              ) {
+                console.log('[PWA] Versi baru Nyatet Gan aktif di background.');
               }
             });
           }

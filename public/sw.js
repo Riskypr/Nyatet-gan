@@ -1,5 +1,5 @@
 // Service Worker for Nyatet Gan (Offline-First PWA)
-const CACHE_VERSION = 'v1.0.3';
+const CACHE_VERSION = 'v2.0.0';
 const STATIC_CACHE_NAME = `nyatet-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `nyatet-runtime-${CACHE_VERSION}`;
 
@@ -16,55 +16,53 @@ const PRECACHE_ASSETS = [
   '/favicon.ico',
 ];
 
-// Install Event: Precache core shell
+// Install Event: Precache core shell dengan cache-busting agar selalu dapat versi terbaru
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE_NAME).then(async (cache) => {
-      // Use allSettled so if any single URL fails, others still cache successfully
-      await Promise.allSettled(
-        PRECACHE_ASSETS.map((url) =>
-          fetch(url, { cache: 'reload' })
-            .then((res) => {
-              if (res.ok) {
-                return cache.put(url, res);
-              }
-            })
-            .catch((err) => {
-              console.warn(`[SW] Precache failed for ${url}:`, err);
-            })
-        )
-      );
-    }).then(() => self.skipWaiting())
+    caches
+      .open(STATIC_CACHE_NAME)
+      .then(async (cache) => {
+        await Promise.allSettled(
+          PRECACHE_ASSETS.map((url) =>
+            fetch(url, { cache: 'no-store' })
+              .then((res) => {
+                if (res.ok) {
+                  return cache.put(url, res);
+                }
+              })
+              .catch((err) => {
+                console.warn(`[SW] Precache failed for ${url}:`, err);
+              })
+          )
+        );
+      })
+      .then(() => self.skipWaiting())
   );
 });
 
-// Activate Event: Clean up outdated caches
+// Activate Event: Hapus seluruh cache versi lama & langsung ambil alih kontrol halaman
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys
-          .filter((key) => key !== STATIC_CACHE_NAME && key !== RUNTIME_CACHE_NAME)
-          .map((key) => {
-            console.log(`[SW] Deleting old cache: ${key}`);
-            return caches.delete(key);
-          })
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key !== STATIC_CACHE_NAME && key !== RUNTIME_CACHE_NAME)
+            .map((key) => caches.delete(key))
+        )
+      )
+      .then(() => self.clients.claim())
   );
 });
 
-// Fetch Event: Offline-first with network fallback
+// Fetch Event: Pastikan tampilan offline selalu identik dengan tampilan online terbaru
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Ignore non-GET requests
-  if (request.method !== 'GET') {
-    return;
-  }
+  if (request.method !== 'GET') return;
 
-  // Ignore cross-origin, HMR, chrome-extension, and websocket requests
   if (
     url.origin !== self.location.origin ||
     url.pathname.includes('webpack-hmr') ||
@@ -75,7 +73,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 1. Navigation requests (Full HTML page loads / reloads / direct URLs)
+  // 1. Navigation requests (HTML halaman): Network-First, lalu simpan berdasarkan pathname
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
@@ -83,22 +81,21 @@ self.addEventListener('fetch', (event) => {
           if (networkResponse && networkResponse.status === 200) {
             const clone = networkResponse.clone();
             caches.open(RUNTIME_CACHE_NAME).then((cache) => {
-              cache.put(request, clone);
+              cache.put(url.pathname, clone);
             });
           }
           return networkResponse;
         })
         .catch(async () => {
-          // Offline fallback: check exact match first
-          const cachedResponse = await caches.match(request);
-          if (cachedResponse) return cachedResponse;
+          const runtimeCache = await caches.open(RUNTIME_CACHE_NAME);
+          const runtimeMatch = await runtimeCache.match(url.pathname);
+          if (runtimeMatch) return runtimeMatch;
 
-          // Check by pathname (e.g. /transactions)
-          const cachedByPath = await caches.match(url.pathname);
-          if (cachedByPath) return cachedByPath;
+          const anyMatch = await caches.match(url.pathname);
+          if (anyMatch) return anyMatch;
 
-          // Fallback to cached root '/'
-          const cachedRoot = await caches.match('/');
+          const cachedRoot =
+            (await runtimeCache.match('/')) || (await caches.match('/'));
           if (cachedRoot) return cachedRoot;
 
           return new Response(
@@ -110,62 +107,50 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Next.js Static Chunks (_next/static/...) -> Cache-First
+  // 2. Next.js Static Chunks (_next/static/...): Stale-While-Revalidate agar selalu mutakhir
   if (url.pathname.startsWith('/_next/static/')) {
     event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+      caches.open(STATIC_CACHE_NAME).then(async (cache) => {
+        const cachedResponse = await cache.match(request);
+        const networkFetch = fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(request, networkResponse.clone());
+            }
+            return networkResponse;
+          })
+          .catch(() => cachedResponse);
 
-        return fetch(request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clone = networkResponse.clone();
-            caches.open(STATIC_CACHE_NAME).then((cache) => {
-              cache.put(request, clone);
-            });
-          }
-          return networkResponse;
-        });
+        return cachedResponse || networkFetch;
       })
     );
     return;
   }
 
-  // 3. Static assets: Images, icons, manifests, fonts
-  const isStaticAsset = url.pathname.match(/\.(png|jpg|jpeg|svg|gif|ico|webp|woff|woff2|ttf|eot|css|webmanifest|json)$/);
+  // 3. Aset statis: Gambar, ikon, manifest, font, CSS
+  const isStaticAsset = url.pathname.match(
+    /\.(png|jpg|jpeg|svg|gif|ico|webp|woff|woff2|ttf|eot|css|webmanifest|json)$/
+  );
   if (isStaticAsset) {
     event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        if (cachedResponse) {
-          // Return cached and refresh in background if online
-          fetch(request)
-            .then((networkResponse) => {
-              if (networkResponse && networkResponse.status === 200) {
-                caches.open(STATIC_CACHE_NAME).then((cache) => {
-                  cache.put(request, networkResponse);
-                });
-              }
-            })
-            .catch(() => {});
-          return cachedResponse;
-        }
+      caches.open(STATIC_CACHE_NAME).then(async (cache) => {
+        const cachedResponse = await cache.match(request);
+        const networkFetch = fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(request, networkResponse.clone());
+            }
+            return networkResponse;
+          })
+          .catch(() => cachedResponse);
 
-        return fetch(request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clone = networkResponse.clone();
-            caches.open(STATIC_CACHE_NAME).then((cache) => {
-              cache.put(request, clone);
-            });
-          }
-          return networkResponse;
-        });
+        return cachedResponse || networkFetch;
       })
     );
     return;
   }
 
-  // 4. Default: Network-First with Cache fallback (handles Next.js RSC requests / data fetches)
+  // 4. Request lainnya (Next.js RSC payload dll): Network-First dengan fallback cache
   event.respondWith(
     fetch(request)
       .then((networkResponse) => {
@@ -180,13 +165,7 @@ self.addEventListener('fetch', (event) => {
       .catch(async () => {
         const cached = await caches.match(request);
         if (cached) return cached;
-
-        // Try ignoring search params (useful for _rsc query hashes)
-        const cachedIgnoreSearch = await caches.match(request, { ignoreSearch: true });
-        if (cachedIgnoreSearch) return cachedIgnoreSearch;
-
-        // If it's a pathname match
-        return caches.match(url.pathname);
+        return new Response('', { status: 503, statusText: 'Offline' });
       })
   );
 });
