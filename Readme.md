@@ -157,14 +157,10 @@ Nyatet-gan/
 │   ├── icons/                        # PWA Icons (192x192, 512x512)
 │   └── sw.js                         # Custom Service Worker v2.0.0 (Offline-First Engine)
 │
-├── 01-PRD.md                         # Product Requirements Document
-├── 02-Architecture.md                # Dokumentasi Arsitektur Sistem
-├── 03-Design.md                      # Panduan Design System & UI/UX
-├── 04-Schema.md                      # Skema Tabel & Relasi IndexedDB
-├── 05-Rules.md                       # Standar Koding & Konvensi
-│
-├── next.config.ts                    # Konfigurasi Next.js
-├── tailwind.config.ts / postcss      # Konfigurasi Tailwind CSS v4
+├── eslint.config.mjs                 # Konfigurasi ESLint 9
+├── next.config.ts                    # Konfigurasi Next.js 15
+├── postcss.config.mjs                # Konfigurasi PostCSS (@tailwindcss/postcss)
+├── package.json                      # Dependensi & skrip proyek
 ├── tsconfig.json                     # Konfigurasi TypeScript compiler
 └── Readme.md                         # 📖 Dokumentasi Lengkap Proyek
 ```
