@@ -1,15 +1,18 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Search, User } from 'lucide-react';
 import { useTransactionStore } from '@/lib/stores/transactionStore';
+import { useUIStore } from '@/lib/stores/uiStore';
 import { formatMonthYear, getPreviousMonth, getNextMonth } from '@/lib/utils/date';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export function Header() {
   const pathname = usePathname();
   const { currentMonth, setCurrentMonth } = useTransactionStore();
+  const { openSearch } = useUIStore();
 
   const isDashboard = pathname === '/';
   const isReports = pathname === '/reports';
@@ -54,7 +57,7 @@ export function Header() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {/* Selector bulan untuk tablet & desktop */}
         {showMonthSelector && (
           <div className="hidden sm:flex items-center gap-1 bg-surface border border-border rounded-xl px-2 py-1 shadow-xs">
@@ -83,6 +86,27 @@ export function Header() {
 
         {/* Quick Dark Mode / Light Mode Switch */}
         <ThemeToggle />
+
+        {/* Tombol Pencarian Cepat */}
+        <button
+          type="button"
+          onClick={openSearch}
+          className="h-9 w-9 rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors cursor-pointer"
+          title="Cari Transaksi Cepat"
+          aria-label="Cari Transaksi Cepat"
+        >
+          <Search className="w-4 h-4" />
+        </button>
+
+        {/* Tombol Profil (Menuju Pengaturan) */}
+        <Link
+          href="/settings"
+          className="h-9 w-9 rounded-full bg-primary text-white flex items-center justify-center shadow-xs hover:bg-primary/90 transition-colors"
+          title="Profil & Pengaturan"
+          aria-label="Profil & Pengaturan"
+        >
+          <User className="w-4 h-4" />
+        </Link>
       </div>
     </header>
   );

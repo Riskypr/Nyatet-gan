@@ -22,6 +22,11 @@ interface UIState {
   openTransactionDetail: (tx: Transaction) => void;
   closeTransactionDetail: () => void;
 
+  // Quick Search Overlay (Dari tombol search di Header)
+  isSearchOpen: boolean;
+  openSearch: () => void;
+  closeSearch: () => void;
+
   // React-Toastify Helper
   showToast: (message: string, type?: 'success' | 'error' | 'info' | 'warning', options?: ToastOptions) => void;
 }
@@ -83,6 +88,11 @@ export const useUIStore = create<UIState>((set) => ({
       detailTransaction: null,
     });
   },
+
+  // Quick Search Overlay
+  isSearchOpen: false,
+  openSearch: () => set({ isSearchOpen: true }),
+  closeSearch: () => set({ isSearchOpen: false }),
 
   showToast: (message: string, type = 'success', options?: ToastOptions) => {
     const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');

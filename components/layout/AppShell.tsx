@@ -13,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { TransactionForm } from '@/components/transactions/TransactionForm';
 import { TransactionDetailModal } from '@/components/transactions/TransactionDetailModal';
+import { QuickSearchModal } from '@/components/transactions/QuickSearchModal';
 import { confirmWithToast } from '@/lib/utils/confirmToast';
 import { transactionService } from '@/lib/services/transactionService';
 import { Transaction } from '@/lib/types';
@@ -179,6 +180,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }}
         onDelete={handleDeleteTransaction}
       />
+
+      {/* Global Quick Search Overlay */}
+      <QuickSearchModal />
     </div>
   );
 }
