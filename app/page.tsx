@@ -9,8 +9,8 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronUp,
-  ChevronLeft,
-  ChevronRight,
+  Clock,
+  SlidersHorizontal,
   Wallet as WalletIcon,
   PiggyBank,
   Eye,
@@ -25,12 +25,11 @@ import { budgetService } from '@/lib/services/budgetService';
 import { categoryService } from '@/lib/services/categoryService';
 import { BudgetProgress, Category } from '@/lib/types';
 import { formatRupiah } from '@/lib/utils/currency';
-import { getRemainingDaysLabel } from '@/lib/utils/date';
+import { formatMonthYear, getRemainingDaysLabel } from '@/lib/utils/date';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { WalletCard } from '@/components/wallets/WalletCard';
 import { WalletModal } from '@/components/wallets/WalletModal';
-import { BudgetProgressBar } from '@/components/budget/BudgetProgressBar';
 import { TransactionItem } from '@/components/transactions/TransactionItem';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ExpenseCalendar } from '@/components/calendar/ExpenseCalendar';
@@ -47,7 +46,6 @@ export default function DashboardPage() {
   const [categoryBudgets, setCategoryBudgets] = useState<BudgetProgress[]>([]);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [showAllBudgets, setShowAllBudgets] = useState(false);
-  const [activeBudgetIndex, setActiveBudgetIndex] = useState(0);
 
   // Load category lookup map and budget progress for the current month
   useEffect(() => {
@@ -69,26 +67,11 @@ export default function DashboardPage() {
 
   const walletMap = new Map(wallets.map((w) => [w.id, w]));
   const recentTransactions = transactions.slice(0, 5);
-  const allBudgets = [...(overallBudget ? [overallBudget] : []), ...categoryBudgets];
-  const budgetCount = allBudgets.length;
-  const safeIndex = Math.min(activeBudgetIndex, Math.max(0, budgetCount - 1));
-  const currentBudget = allBudgets[safeIndex];
-  const isOverall = currentBudget && currentBudget === overallBudget;
-  const currentTitle = currentBudget
-    ? isOverall
-      ? 'Target Keseluruhan Bulan Ini'
-      : currentBudget.category?.name || 'Target Kategori'
-    : '';
-  const currentIcon = isOverall ? 'Target' : currentBudget?.category?.icon || 'Tag';
-  const currentColor = isOverall ? '#0A66C2' : currentBudget?.category?.color || '#0A66C2';
+  const hasAnyBudget = Boolean(overallBudget) || categoryBudgets.length > 0;
   const remainingDaysLabel = getRemainingDaysLabel(currentMonth);
-
-  const getBudgetStatusLabel = (percentage: number, isOver: boolean) => {
-    if (isOver) return 'Melebihi';
-    if (percentage >= 90) return 'Kritis';
-    if (percentage >= 70) return 'Waspada';
-    return 'Aman';
-  };
+  const visibleCategoryBudgets = showAllBudgets
+    ? categoryBudgets
+    : categoryBudgets.slice(0, 3);
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
@@ -158,275 +141,259 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 2. Target Anggaran (Progress Target Bulanan & Kategori) */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-text-primary">Target Anggaran</h3>
+      {/* 2. Target Anggaran (Kartu Terpadu Bulanan & Posisi per Kategori) */}
+      {!hasAnyBudget ? (
+        <Card className="flex items-center justify-between p-4 bg-surface-alt/50 border-dashed border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <PiggyBank className="w-5 h-5" />
             </div>
-            <p className="text-[11px] text-text-muted mt-0.5 ml-6">
-              {budgetCount > 0
-                ? `${budgetCount} Target aktif bulan ini`
-                : 'Pantau batas pengeluaran Anda'}
-            </p>
+            <div>
+              <p className="text-xs sm:text-sm font-bold text-text-primary">
+                Belum Pasang Target Anggaran
+              </p>
+              <p className="text-[11px] text-text-secondary">
+                Kendalikan belanja Anda dengan memasang limit bulanan
+              </p>
+            </div>
           </div>
-          {budgetCount > 0 && (
-            <Link
-              href="/budget"
-              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
-            >
-              <span>Kelola</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
-          )}
-        </div>
-
-        {/* Jika belum ada target sama sekali */}
-        {budgetCount === 0 && (
-          <Card className="flex items-center justify-between p-4 bg-surface-alt/50 border-dashed border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <PiggyBank className="w-5 h-5" />
+          <Link href="/budget">
+            <Button size="sm" variant="secondary">
+              Pasang Target
+            </Button>
+          </Link>
+        </Card>
+      ) : (
+        <div className="bg-surface rounded-3xl border border-border shadow-xs p-4 sm:p-5 flex flex-col gap-4">
+          {/* Header Card: Icon + Anggaran Bulanan + Badge % + Tombol Kelola */}
+          <div className="flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Target className="w-5 h-5" />
               </div>
-              <div>
-                <p className="text-xs sm:text-sm font-bold text-text-primary">Belum Pasang Target Anggaran</p>
-                <p className="text-[11px] text-text-secondary">Kendalikan belanja Anda dengan memasang limit bulanan</p>
+              <div className="min-w-0">
+                <h3 className="text-base sm:text-lg font-extrabold text-text-primary leading-tight truncate">
+                  Anggaran Bulanan
+                </h3>
+                <p className="text-[11px] text-text-secondary truncate">
+                  Target pengeluaran {formatMonthYear(currentMonth)}
+                </p>
               </div>
             </div>
-            <Link href="/budget">
-              <Button size="sm" variant="secondary">
-                Pasang Target
-              </Button>
-            </Link>
-          </Card>
-        )}
 
-        {/* Tampilan Tumpukan Kartu (Stacked Deck - sesuai desain referensi) */}
-        {budgetCount > 0 && !showAllBudgets && currentBudget && (
-          <div className="flex flex-col gap-3">
-            {/* Wrapper tumpukan kartu bertingkat */}
-            <div className="relative isolate pt-1 pb-4">
-              {/* Layer 2: Paling bawah (hanya jika ada >= 3 target) */}
-              {budgetCount >= 3 && (
-                <div
-                  className="absolute -bottom-3 left-6 right-6 h-8 rounded-2xl bg-surface-alt/80 border border-border/80 shadow-2xs pointer-events-none transition-all duration-300"
-                  aria-hidden="true"
-                />
+            <div className="flex items-center gap-2 shrink-0">
+              {overallBudget && (
+                <span
+                  className={cn(
+                    'text-[11px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap',
+                    overallBudget.isOverBudget || overallBudget.percentage >= 90
+                      ? 'bg-danger/15 text-danger'
+                      : overallBudget.percentage >= 70
+                        ? 'bg-warning/15 text-warning'
+                        : 'bg-secondary/15 text-secondary'
+                  )}
+                >
+                  {overallBudget.percentage}% Terpakai
+                </span>
               )}
+              <Link
+                href="/budget"
+                className="p-2 rounded-xl text-text-secondary hover:text-primary hover:bg-surface-alt transition-colors"
+                title="Kelola Target Anggaran"
+                aria-label="Kelola Target Anggaran"
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
 
-              {/* Layer 1: Tengah (hanya jika ada >= 2 target) */}
-              {budgetCount >= 2 && (
+          {/* Sub-kartu Anggaran Keseluruhan */}
+          {overallBudget ? (
+            <div className="rounded-2xl bg-surface-alt/60 border border-border/60 p-4 flex flex-col gap-3">
+              <div className="flex items-end justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[11px] text-text-secondary">Terpakai</span>
+                  <p className="text-xl sm:text-2xl font-extrabold text-text-primary truncate">
+                    {formatRupiah(overallBudget.spentAmount)}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="text-[11px] text-text-secondary">Pagu Maksimal</span>
+                  <p className="text-sm sm:text-base font-bold text-text-primary">
+                    {formatRupiah(overallBudget.budget.targetAmount)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="w-full h-2.5 rounded-full bg-surface overflow-hidden">
                 <div
-                  className="absolute -bottom-1.5 left-3 right-3 h-8 rounded-2xl bg-surface-alt border border-border shadow-2xs pointer-events-none transition-all duration-300"
-                  aria-hidden="true"
+                  className={cn(
+                    'h-full rounded-full transition-all duration-700 ease-out animate-progress-fill',
+                    overallBudget.isOverBudget || overallBudget.percentage >= 90
+                      ? 'bg-danger'
+                      : overallBudget.percentage >= 70
+                        ? 'bg-warning'
+                        : 'bg-secondary'
+                  )}
+                  style={{ width: `${Math.min(overallBudget.percentage, 100)}%` }}
                 />
-              )}
+              </div>
 
-              {/* Kartu Utama (Active Front Card) */}
-              <div className="relative z-10 bg-surface rounded-2xl sm:rounded-3xl border border-border shadow-xs p-4 sm:p-5 flex flex-col gap-3 transition-all hover:border-primary/40 hover:shadow-sm">
-                {/* Header: Icon + Judul di kiri, Badge Status di kanan */}
-                <div className="flex items-center justify-between gap-2.5">
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <CategoryIcon
-                      name={currentIcon}
-                      color={currentColor}
-                      size="sm"
-                    />
-                    <span className="text-sm sm:text-base font-bold text-text-primary truncate">
-                      {currentTitle}
-                    </span>
-                  </div>
-
+              {/* Footer: Sisa + Sisa Hari */}
+              <div className="flex items-center justify-between text-xs gap-2">
+                <span className="inline-flex items-center gap-1.5 truncate">
                   <span
                     className={cn(
-                      'text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap',
-                      currentBudget.isOverBudget || currentBudget.percentage >= 90
-                        ? 'text-danger bg-danger/15'
-                        : currentBudget.percentage >= 70
-                          ? 'text-warning bg-warning/15'
-                          : 'text-secondary bg-secondary/15'
-                    )}
-                  >
-                    {getBudgetStatusLabel(currentBudget.percentage, currentBudget.isOverBudget)} ({currentBudget.percentage}%)
-                  </span>
-                </div>
-
-                {/* Baris 2 kolom: Terpakai (kiri, besar) & Target Maksimal (kanan) */}
-                <div className="flex items-end justify-between gap-3">
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[11px] text-text-secondary">Terpakai</span>
-                    <span className="text-xl sm:text-2xl font-extrabold text-text-primary truncate">
-                      {formatRupiah(currentBudget.spentAmount)}
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-end shrink-0 text-right">
-                    <span className="text-[11px] text-text-secondary">Target Maksimal</span>
-                    <span className="text-sm sm:text-base font-bold text-text-primary">
-                      {formatRupiah(currentBudget.budget.targetAmount)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Progress Bar Container */}
-                <div className="w-full h-2.5 sm:h-3 rounded-full bg-surface-alt overflow-hidden">
-                  <div
-                    key={`bar-${safeIndex}`}
-                    className={cn(
-                      'h-full rounded-full transition-all duration-700 ease-out animate-progress-fill',
-                      currentBudget.isOverBudget || currentBudget.percentage >= 90
+                      'w-2 h-2 rounded-full shrink-0',
+                      overallBudget.isOverBudget || overallBudget.percentage >= 90
                         ? 'bg-danger'
-                        : currentBudget.percentage >= 70
+                        : overallBudget.percentage >= 70
                           ? 'bg-warning'
                           : 'bg-secondary'
                     )}
-                    style={{ width: `${Math.min(currentBudget.percentage, 100)}%` }}
                   />
-                </div>
-
-                {/* Footer: Dot + Sisa/Lebih di kiri, Tersisa X hari lagi di kanan */}
-                <div className="flex items-center justify-between text-xs text-text-secondary gap-2 pt-0.5">
-                  <span className="inline-flex items-center gap-1.5 truncate">
-                    <span
-                      className={cn(
-                        'w-2 h-2 rounded-full shrink-0',
-                        currentBudget.isOverBudget || currentBudget.percentage >= 90
-                          ? 'bg-danger'
-                          : currentBudget.percentage >= 70
-                            ? 'bg-warning'
-                            : 'bg-secondary'
-                      )}
-                    />
-                    {currentBudget.isOverBudget ? (
-                      <span className="text-danger font-semibold">
-                        Lebih: {formatRupiah(Math.abs(currentBudget.remainingAmount))}
-                      </span>
-                    ) : (
-                      <span>
-                        Sisa:{' '}
-                        <strong className="text-text-primary font-semibold">
-                          {formatRupiah(currentBudget.remainingAmount)}
-                        </strong>
-                      </span>
-                    )}
-                  </span>
-                  {remainingDaysLabel && (
-                    <span className="shrink-0 text-right text-[11px] text-text-secondary">
-                      {remainingDaysLabel}
+                  {overallBudget.isOverBudget ? (
+                    <span className="text-danger font-semibold">
+                      Lebih: {formatRupiah(Math.abs(overallBudget.remainingAmount))}
+                    </span>
+                  ) : (
+                    <span className="text-text-secondary">
+                      Sisa:{' '}
+                      <strong className="text-secondary font-bold">
+                        {formatRupiah(overallBudget.remainingAmount)}
+                      </strong>
                     </span>
                   )}
-                </div>
+                </span>
 
-                {/* Navigasi Ganti Kartu dalam Tumpukan */}
-                {budgetCount > 1 && (
-                  <div className="flex items-center justify-between pt-2.5 border-t border-border/70 text-xs text-text-secondary">
-                    <span className="font-semibold text-[11px] text-text-primary">
-                      Target {safeIndex + 1} dari {budgetCount}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setActiveBudgetIndex((prev) => (prev > 0 ? prev - 1 : allBudgets.length - 1));
-                        }}
-                        className="h-7 w-7 flex items-center justify-center rounded-lg border border-border bg-surface hover:bg-surface-alt text-text-primary transition-colors cursor-pointer"
-                        title="Target Sebelumnya"
-                        aria-label="Target Sebelumnya"
-                      >
-                        <ChevronLeft className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setActiveBudgetIndex((prev) => (prev < allBudgets.length - 1 ? prev + 1 : 0));
-                        }}
-                        className="h-7 w-7 flex items-center justify-center rounded-lg border border-border bg-surface hover:bg-surface-alt text-text-primary transition-colors cursor-pointer"
-                        title="Target Berikutnya"
-                        aria-label="Target Berikutnya"
-                      >
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
+                {remainingDaysLabel && (
+                  <span className="inline-flex items-center gap-1 text-[11px] text-text-secondary shrink-0">
+                    <Clock className="w-3.5 h-3.5 text-text-muted" />
+                    <span>{remainingDaysLabel}</span>
+                  </span>
                 )}
               </div>
             </div>
+          ) : (
+            <Link
+              href="/budget"
+              className="rounded-2xl bg-surface-alt/50 border border-dashed border-border p-3.5 flex items-center justify-between text-xs hover:border-primary/40 transition-colors"
+            >
+              <span className="text-text-secondary">
+                Belum ada pagu keseluruhan bulan ini.
+              </span>
+              <span className="font-bold text-primary inline-flex items-center gap-1 shrink-0">
+                <span>Atur Pagu</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </span>
+            </Link>
+          )}
 
-            {/* Tombol Lihat Semua Tumpukan */}
-            {budgetCount > 1 && (
-              <button
-                type="button"
-                onClick={() => setShowAllBudgets(true)}
-                className="self-center inline-flex min-h-10 items-center gap-2 px-4 rounded-xl text-xs sm:text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors cursor-pointer"
-              >
-                <span>Lihat semua target ({budgetCount})</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        )}
+          {/* Posisi per Kategori */}
+          {categoryBudgets.length > 0 && (
+            <div className="flex flex-col gap-2.5">
+              <div className="flex items-center justify-between px-0.5">
+                <span className="text-xs font-bold text-text-primary">
+                  Posisi per Kategori
+                </span>
+                <span className="text-[11px] text-text-muted">
+                  Plafon vs Realisasi
+                </span>
+              </div>
 
-        {/* Tampilan Buka Semua Target (Expanded View) */}
-        {budgetCount > 0 && showAllBudgets && (
-          <div className="motion-enter flex flex-col gap-3">
-            {/* Target Keseluruhan (Total) jika ada */}
-            {overallBudget && (
-              <Link href="/budget" className="block group">
-                <BudgetProgressBar
-                  title="Target Keseluruhan Bulan Ini"
-                  spentAmount={overallBudget.spentAmount}
-                  targetAmount={overallBudget.budget.targetAmount}
-                  month={currentMonth}
-                  className="group-hover:border-primary/40 group-hover:bg-surface-alt/20 transition-all cursor-pointer"
-                />
-              </Link>
-            )}
-
-            {/* Target Per Kategori dalam grid 2 kolom */}
-            {categoryBudgets.length > 0 && (
               <div className="flex flex-col gap-2">
-                {overallBudget && (
-                  <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider pt-1">
-                    Target Per Kategori ({categoryBudgets.length})
-                  </h4>
-                )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {categoryBudgets.map((cp) => (
-                    <Link key={cp.budget.id} href="/budget" className="block group">
-                      <BudgetProgressBar
-                        title={cp.category?.name || 'Kategori'}
-                        spentAmount={cp.spentAmount}
-                        targetAmount={cp.budget.targetAmount}
-                        month={currentMonth}
-                        icon={
+                {visibleCategoryBudgets.map((cp) => {
+                  const isCritical = cp.isOverBudget || cp.percentage >= 90;
+                  const isWarning = !isCritical && cp.percentage >= 70;
+                  const barColor = isCritical
+                    ? 'bg-danger'
+                    : isWarning
+                      ? 'bg-warning'
+                      : 'bg-secondary';
+                  const targetShort = formatRupiah(cp.budget.targetAmount).replace(
+                    /^Rp\s*/,
+                    ''
+                  );
+
+                  return (
+                    <Link
+                      key={cp.budget.id}
+                      href="/budget"
+                      className="rounded-2xl bg-surface-alt/50 border border-border/60 p-3 flex flex-col gap-2 hover:border-primary/40 transition-colors"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
                           <CategoryIcon
                             name={cp.category?.icon || 'Tag'}
                             color={cp.category?.color || '#0A66C2'}
                             size="sm"
                           />
-                        }
-                        className="group-hover:border-primary/40 group-hover:bg-surface-alt/20 hover:shadow-sm cursor-pointer"
-                      />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+                          <span className="text-xs font-bold text-text-primary truncate">
+                            {cp.category?.name || 'Kategori'}
+                          </span>
+                        </div>
 
-            <button
-              type="button"
-              onClick={() => setShowAllBudgets(false)}
-              className="self-center inline-flex min-h-10 items-center gap-2 px-4 mt-1 rounded-xl text-xs sm:text-sm font-semibold text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors cursor-pointer"
-            >
-              <ChevronUp className="w-4 h-4" />
-              <span>Tumpuk kembali</span>
-            </button>
-          </div>
-        )}
-      </div>
+                        <div className="flex items-center gap-1.5 shrink-0 text-[11px]">
+                          <span className="font-bold text-text-primary">
+                            {formatRupiah(cp.spentAmount)}
+                          </span>
+                          <span className="text-text-muted">/ {targetShort}</span>
+                          <span
+                            className={cn(
+                              'font-bold px-1.5 py-0.5 rounded-full text-[10px]',
+                              isCritical
+                                ? 'bg-danger/15 text-danger'
+                                : isWarning
+                                  ? 'bg-warning/15 text-warning'
+                                  : 'bg-secondary/15 text-secondary'
+                            )}
+                          >
+                            {cp.isOverBudget
+                              ? `${cp.percentage}% Lebih`
+                              : isCritical || isWarning
+                                ? `${cp.percentage}% Waspada`
+                                : `${cp.percentage}%`}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="w-full h-1.5 rounded-full bg-surface overflow-hidden">
+                        <div
+                          className={cn(
+                            'h-full rounded-full transition-all duration-700',
+                            barColor
+                          )}
+                          style={{ width: `${Math.min(cp.percentage, 100)}%` }}
+                        />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {categoryBudgets.length > 3 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllBudgets((prev) => !prev)}
+                  className="w-full py-2.5 px-4 rounded-2xl bg-surface-alt/70 hover:bg-surface-alt border border-border/60 text-xs font-bold text-text-primary flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <span>
+                    {showAllBudgets
+                      ? 'Tampilkan Lebih Sedikit'
+                      : `Lihat Semua Kategori (${categoryBudgets.length})`}
+                  </span>
+                  {showAllBudgets ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 3. Dompet dan sumber dana (Horizontal Carousel) */}
       <div className="flex flex-col gap-3">
