@@ -37,7 +37,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-bg/85 backdrop-blur-md border-b border-border/80 px-4 py-3 flex items-center justify-between gap-2 transition-colors">
+    <header className="sticky top-0 z-50 bg-bg/95 backdrop-blur-md border-b border-border/80 px-4 py-3 flex items-center justify-between gap-2 transition-colors">
       <div className="flex items-center gap-2.5">
         <div className="md:hidden w-8 h-8 rounded-xl bg-primary text-white flex items-center justify-center overflow-hidden shadow-sm">
           <img src="/Logo.png" alt="Nyatet Gan" className="w-full h-full object-cover" />

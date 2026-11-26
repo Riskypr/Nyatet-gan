@@ -4,10 +4,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   Check,
   Clock,
+  History,
   Lightbulb,
   Search,
-  Trash2,
   X,
+  XCircle,
 } from 'lucide-react';
 import { db } from '@/lib/db/dexie';
 import { categoryService } from '@/lib/services/categoryService';
@@ -187,8 +188,8 @@ export function QuickSearchModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-bg/95 backdrop-blur-md overflow-y-auto">
-      <div className="max-w-2xl mx-auto px-4 py-4 flex flex-col gap-4 pb-10">
+    <div className="fixed inset-x-0 bottom-0 top-[61px] sm:top-[65px] z-40 bg-bg/98 backdrop-blur-md overflow-y-auto border-t border-border/40">
+      <div className="max-w-2xl mx-auto px-4 py-3.5 flex flex-col gap-4 pb-12">
         {/* Header Bar */}
         <div className="flex items-center justify-between gap-2">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/15 text-secondary text-[10px] font-bold uppercase tracking-wider">
@@ -199,7 +200,7 @@ export function QuickSearchModal() {
           <button
             type="button"
             onClick={closeSearch}
-            className="h-9 w-9 rounded-full bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-alt transition-colors cursor-pointer"
             aria-label="Tutup Pencarian"
           >
             <X className="w-4 h-4" />
@@ -215,7 +216,7 @@ export function QuickSearchModal() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Cari catatan, kategori, dompet, atau >100rb..."
-            className="w-full h-12 pl-11 pr-10 rounded-full bg-surface border border-border text-sm font-medium text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary shadow-xs"
+            className="w-full h-11 pl-11 pr-10 rounded-2xl bg-surface-alt border border-border/80 text-sm font-medium text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary"
           />
           {query && (
             <button
@@ -224,12 +225,12 @@ export function QuickSearchModal() {
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary cursor-pointer"
               aria-label="Hapus kata kunci"
             >
-              <X className="w-4 h-4" />
+              <XCircle className="w-4 h-4" />
             </button>
           )}
         </div>
 
-        {/* Filter Pills */}
+        {/* Filter Pills: Semua | Pengeluaran | Pemasukan | Kategori */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           {(
             [
@@ -260,16 +261,34 @@ export function QuickSearchModal() {
             );
           })}
 
-          {selectedCatId && (
-            <button
-              type="button"
-              onClick={() => setSelectedCatId(null)}
-              className="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-secondary text-white shadow-xs cursor-pointer"
-            >
-              <span>{categoryMap.get(selectedCatId)?.name || 'Kategori'}</span>
-              <X className="w-3 h-3" />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('quick-search-categories');
+              el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }}
+            className={cn(
+              'shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer',
+              selectedCatId
+                ? 'bg-secondary text-white border-secondary shadow-xs'
+                : 'bg-surface text-text-secondary border-border hover:text-text-primary'
+            )}
+          >
+            <span>
+              {selectedCatId
+                ? categoryMap.get(selectedCatId)?.name || 'Kategori'
+                : 'Kategori'}
+            </span>
+            {selectedCatId && (
+              <X
+                className="w-3 h-3 ml-0.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedCatId(null);
+                }}
+              />
+            )}
+          </button>
         </div>
 
         {/* Hasil Pencarian */}
@@ -287,8 +306,8 @@ export function QuickSearchModal() {
           </div>
 
           {displayedResults.length > 0 ? (
-            <div className="bg-surface rounded-2xl border border-border shadow-xs divide-y divide-border/60 overflow-hidden">
-              {displayedResults.map((tx) => {
+            <div className="bg-surface rounded-2xl border border-border shadow-xs p-2 flex flex-col gap-1">
+              {displayedResults.map((tx, idx) => {
                 const cat = categoryMap.get(tx.categoryId);
                 const wallet = walletMap.get(tx.walletId);
                 const isExpense = tx.type === 'expense';
@@ -297,7 +316,12 @@ export function QuickSearchModal() {
                     key={tx.id}
                     type="button"
                     onClick={() => handleSelectTransaction(tx)}
-                    className="w-full p-3 flex items-center justify-between gap-3 hover:bg-surface-alt/60 transition-colors text-left cursor-pointer"
+                    className={cn(
+                      'w-full p-2.5 rounded-xl flex items-center justify-between gap-3 transition-colors text-left cursor-pointer',
+                      idx === 0
+                        ? 'bg-surface-alt/70 hover:bg-surface-alt'
+                        : 'hover:bg-surface-alt/60'
+                    )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <CategoryIcon
@@ -326,7 +350,12 @@ export function QuickSearchModal() {
                         {isExpense ? '-' : '+'}
                         {formatRupiah(tx.amount)}
                       </p>
-                      <span className="text-[10px] text-text-muted">
+                      <span
+                        className={cn(
+                          'text-[10px] font-medium',
+                          isExpense ? 'text-danger/80' : 'text-secondary'
+                        )}
+                      >
                         {isExpense ? 'Pengeluaran' : 'Masuk'}
                       </span>
                     </div>
@@ -351,9 +380,9 @@ export function QuickSearchModal() {
               <button
                 type="button"
                 onClick={clearAllRecent}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-danger hover:underline cursor-pointer"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline cursor-pointer"
               >
-                <Trash2 className="w-3 h-3" />
+                <History className="w-3 h-3" />
                 <span>Hapus</span>
               </button>
             </div>
@@ -387,7 +416,7 @@ export function QuickSearchModal() {
 
         {/* Cari Cepat Kategori */}
         {quickCategories.length > 0 && (
-          <div className="flex flex-col gap-2">
+          <div id="quick-search-categories" className="flex flex-col gap-2">
             <span className="text-xs font-bold text-text-primary px-0.5">
               Cari Cepat Kategori
             </span>
@@ -403,7 +432,7 @@ export function QuickSearchModal() {
                       setTypeFilter('all');
                     }}
                     className={cn(
-                      'p-3 rounded-2xl bg-surface border flex flex-col items-center text-center gap-1.5 transition-all cursor-pointer',
+                      'p-3 rounded-2xl bg-surface border flex flex-col items-center text-center gap-1.5 transition-all cursor-pointer shadow-2xs',
                       isSelected
                         ? 'border-primary ring-2 ring-primary/20'
                         : 'border-border hover:border-primary/40'
