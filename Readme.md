@@ -1,7 +1,7 @@
 # 🌿 Nyatet Gan (MoneyEarth) — Offline-First Personal Finance Sanctuary
 
 <p align="center">
-  <img src="public/icons/icon-192x192.png" alt="Nyatet Gan Logo" width="96" height="96" style="border-radius: 24px;" />
+  <img src="public/Logo.png" alt="Nyatet Gan Logo" width="96" height="96" style="border-radius: 24px;" />
 </p>
 
 <p align="center">
