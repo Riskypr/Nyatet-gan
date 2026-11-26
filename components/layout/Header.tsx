@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight, Calendar, Search, User } from 'lucide-react'
 import { useTransactionStore } from '@/lib/stores/transactionStore';
 import { useUIStore } from '@/lib/stores/uiStore';
 import { formatMonthYear, getPreviousMonth, getNextMonth } from '@/lib/utils/date';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export function Header() {
   const pathname = usePathname();
@@ -83,9 +82,6 @@ export function Header() {
             </button>
           </div>
         )}
-
-        {/* Quick Dark Mode / Light Mode Switch */}
-        <ThemeToggle />
 
         {/* Tombol Pencarian Cepat */}
         <button
