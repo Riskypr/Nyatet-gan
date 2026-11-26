@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   Plus,
   ArrowRight,
+  Calendar,
   ChevronDown,
   ChevronUp,
   Clock,
@@ -25,7 +26,7 @@ import { budgetService } from '@/lib/services/budgetService';
 import { categoryService } from '@/lib/services/categoryService';
 import { BudgetProgress, Category } from '@/lib/types';
 import { formatRupiah } from '@/lib/utils/currency';
-import { formatMonthYear, getRemainingDaysLabel } from '@/lib/utils/date';
+import { formatMonthYear, getCurrentMonth, getRemainingDaysLabel } from '@/lib/utils/date';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { WalletCard } from '@/components/wallets/WalletCard';
@@ -69,6 +70,19 @@ export default function DashboardPage() {
   const recentTransactions = transactions.slice(0, 5);
   const hasAnyBudget = Boolean(overallBudget) || categoryBudgets.length > 0;
   const remainingDaysLabel = getRemainingDaysLabel(currentMonth);
+  const remainingDaysCount = (() => {
+    const [yStr, mStr] = currentMonth.split('-');
+    const daysInMonth = new Date(parseInt(yStr, 10), parseInt(mStr, 10), 0).getDate();
+    const currKey = getCurrentMonth();
+    if (currentMonth === currKey) {
+      return Math.max(1, daysInMonth - new Date().getDate() + 1);
+    }
+    if (currentMonth < currKey) return 1;
+    return daysInMonth;
+  })();
+  const overallDailyQuota = overallBudget
+    ? Math.max(0, Math.round(overallBudget.remainingAmount / remainingDaysCount))
+    : 0;
   const visibleCategoryBudgets = showAllBudgets
     ? categoryBudgets
     : categoryBudgets.slice(0, 3);
@@ -274,6 +288,55 @@ export default function DashboardPage() {
                   </span>
                 )}
               </div>
+
+              {/* Kotak Saran Kuota Harian */}
+              <div className="rounded-xl bg-surface border border-border/70 p-3 flex items-center justify-between gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className={cn(
+                      'w-8 h-8 rounded-lg flex items-center justify-center shrink-0',
+                      overallBudget.isOverBudget || overallBudget.percentage >= 90
+                        ? 'bg-danger/10 text-danger'
+                        : overallBudget.percentage >= 70
+                          ? 'bg-warning/10 text-warning'
+                          : 'bg-secondary/10 text-secondary'
+                    )}
+                  >
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-text-primary leading-tight">
+                      Saran Kuota Harian
+                    </p>
+                    <p className="text-[10px] text-text-secondary truncate mt-0.5">
+                      {remainingDaysCount} hari ke depan agar tetap aman
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-right shrink-0">
+                  <span
+                    className={cn(
+                      'text-[10px] font-bold block leading-none mb-0.5',
+                      overallBudget.isOverBudget || overallBudget.percentage >= 90
+                        ? 'text-danger'
+                        : overallBudget.percentage >= 70
+                          ? 'text-warning'
+                          : 'text-secondary'
+                    )}
+                  >
+                    {overallBudget.isOverBudget
+                      ? 'Melebihi'
+                      : overallBudget.percentage >= 70
+                        ? 'Waspada'
+                        : 'Aman'}
+                  </span>
+                  <p className="text-sm sm:text-base font-extrabold text-text-primary whitespace-nowrap">
+                    {formatRupiah(overallDailyQuota)}{' '}
+                    <span className="text-[10px] font-medium text-text-secondary">/ hari</span>
+                  </p>
+                </div>
+              </div>
             </div>
           ) : (
             <Link
@@ -366,6 +429,35 @@ export default function DashboardPage() {
                           )}
                           style={{ width: `${Math.min(cp.percentage, 100)}%` }}
                         />
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 text-[11px]">
+                        <span className="text-text-secondary truncate">
+                          {cp.isOverBudget ? (
+                            <span className="text-danger font-semibold">
+                              Lebih: {formatRupiah(Math.abs(cp.remainingAmount))}
+                            </span>
+                          ) : (
+                            <>
+                              Sisa:{' '}
+                              <strong className="text-text-primary font-semibold">
+                                {formatRupiah(cp.remainingAmount)}
+                              </strong>
+                            </>
+                          )}
+                        </span>
+                        <span
+                          className={cn(
+                            'px-2 py-0.5 rounded-full text-[10px] font-semibold shrink-0 whitespace-nowrap',
+                            isCritical
+                              ? 'bg-danger/10 text-danger'
+                              : isWarning
+                                ? 'bg-warning/15 text-warning'
+                                : 'bg-secondary/10 text-secondary'
+                          )}
+                        >
+                          Jatah: ~{formatRupiah(Math.max(0, Math.round(cp.remainingAmount / remainingDaysCount)))}/hari
+                        </span>
                       </div>
                     </Link>
                   );
