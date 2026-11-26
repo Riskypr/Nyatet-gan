@@ -216,7 +216,7 @@ export function QuickSearchModal() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Cari catatan, kategori, dompet, atau >100rb..."
-            className="w-full h-11 pl-11 pr-10 rounded-2xl bg-surface-alt border border-border/80 text-sm font-medium text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary"
+            className="w-full h-11 pl-11 pr-10 rounded-full bg-surface-alt border border-border/80 text-sm font-medium text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary"
           />
           {query && (
             <button
@@ -330,20 +330,20 @@ export function QuickSearchModal() {
                         size="sm"
                       />
                       <div className="min-w-0">
-                        <p className="text-xs sm:text-sm font-bold text-text-primary truncate">
+                        <p className="text-[15px] sm:text-base font-bold text-text-primary leading-snug truncate">
                           {tx.note || cat?.name || 'Transaksi'}
                         </p>
-                        <p className="text-[11px] text-text-secondary truncate">
+                        <p className="text-[11px] text-text-secondary leading-tight truncate mt-0.5">
                           {formatDateDisplay(tx.date)} • {wallet?.name || 'Dompet'} •{' '}
                           {cat?.name || '-'}
                         </p>
                       </div>
                     </div>
 
-                    <div className="text-right shrink-0">
+                    <div className="text-right shrink-0 flex flex-col items-end">
                       <p
                         className={cn(
-                          'text-xs sm:text-sm font-extrabold',
+                          'text-xs sm:text-sm font-extrabold leading-tight',
                           isExpense ? 'text-danger' : 'text-secondary'
                         )}
                       >
@@ -352,7 +352,7 @@ export function QuickSearchModal() {
                       </p>
                       <span
                         className={cn(
-                          'text-[10px] font-medium',
+                          'text-[10px] font-medium leading-tight',
                           isExpense ? 'text-danger/80' : 'text-secondary'
                         )}
                       >
@@ -432,19 +432,21 @@ export function QuickSearchModal() {
                       setTypeFilter('all');
                     }}
                     className={cn(
-                      'p-3 rounded-2xl bg-surface border flex flex-col items-center text-center gap-1.5 transition-all cursor-pointer shadow-2xs',
+                      'p-3 rounded-2xl bg-surface border flex flex-col items-center text-center gap-2 transition-all cursor-pointer shadow-2xs',
                       isSelected
                         ? 'border-primary ring-2 ring-primary/20'
                         : 'border-border hover:border-primary/40'
                     )}
                   >
                     <CategoryIcon name={c.icon} color={c.color} size="sm" />
-                    <span className="text-xs font-bold text-text-primary truncate w-full">
-                      {c.name}
-                    </span>
-                    <span className="text-[10px] text-text-muted">
-                      {c.txCount} transaksi
-                    </span>
+                    <div className="w-full min-w-0 flex flex-col items-center">
+                      <span className="text-xs font-bold text-text-primary leading-tight truncate w-full">
+                        {c.name}
+                      </span>
+                      <span className="text-[10px] text-text-muted leading-tight mt-0.5">
+                        {c.txCount} transaksi
+                      </span>
+                    </div>
                   </button>
                 );
               })}
