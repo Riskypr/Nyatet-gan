@@ -26,6 +26,7 @@ import {
   Calendar,
   CheckCircle2,
   ChevronDown,
+  Hand,
   ReceiptText,
   ShieldCheck,
   TrendingDown,
@@ -245,7 +246,7 @@ export default function TransactionsPage() {
       {/* 5. Daftar Transaksi Dikelompokkan Per Tanggal */}
       {sortedDates.length > 0 ? (
         <div className="flex flex-col gap-4">
-          {sortedDates.map((dateStr) => {
+          {sortedDates.map((dateStr, dateIndex) => {
             const txs = groupedTransactions[dateStr];
             const dayIncome = txs
               .filter((t) => t.type === 'income')
@@ -284,6 +285,18 @@ export default function TransactionsPage() {
                     {formatRupiah(dayNet)}
                   </span>
                 </div>
+
+                {dateIndex === 0 && (
+                  <div className="flex items-center justify-between px-1.5 py-0.5">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-secondary">
+                      <Hand className="w-3.5 h-3.5 shrink-0" />
+                      <span>← Geser kiri untuk aksi cepat (Ubah / Hapus)</span>
+                    </span>
+                    <span className="text-[10px] font-bold tracking-wider uppercase text-text-muted shrink-0">
+                      AKTIF
+                    </span>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-2">
                   {txs.map((tx) => (
